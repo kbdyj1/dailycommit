@@ -1,9 +1,18 @@
 QT += quick qml
 
 SOURCES += \
-        main.cpp
+   main.cpp \
+   invokeMethod.cpp \
+   nestedItem.cpp
 
-resources.files = main.qml 
+HEADERS += \
+    Actor.h \
+    Rectangle.h
+
+resources.files = \
+    main.qml \
+    nested.qml
+
 resources.prefix = /$${TARGET}
 RESOURCES += resources
 
@@ -17,7 +26,3 @@ QML_DESIGNER_IMPORT_PATH =
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-HEADERS += \
-    Actor.h \
-    Rectangle.h

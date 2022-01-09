@@ -3,10 +3,6 @@
 #include "Rectangle.h"
 #include <QDebug>
 #include <QQuickView>
-#include <QQuickItem>
-#include <QDate>
-
-#include "Actor.h"
 
 /*
  * Qt property binding example
@@ -35,77 +31,18 @@ void launchGuiApplication(QGuiApplication &app) {
     Qt::endPropertyUpdateGroup();
 }
 
-/*
- * deliver Qt sequence to qml
- *
- */
-void testQtSequenceType(QObject *rootObject)
-{
-    QVariantList list;
-    list << 10 << QColor(Qt::green) << "botle";
-
-    QVariantMap map;
-    map["language"] = "QML";
-    map["released"] = QDate(2022,1,8);
-
-    QMetaObject::invokeMethod(rootObject,
-        "read",
-        Q_ARG(QVariant, QVariant::fromValue(list)),
-        Q_ARG(QVariant, QVariant::fromValue(map)));
-}
-
-/*
- * test QDateTime
- *
- */
-void testQtDateTimeType(QObject *rootObject)
-{
-    auto dt = QDateTime::currentDateTime();
-    auto ret = QVariant{};
-
-#if (1)
-    QMetaObject::invokeMethod(rootObject,
-        "readDate",
-        Q_RETURN_ARG(QVariant, ret),
-        Q_ARG(QVariant, QVariant::fromValue(dt)));
-
-    qDebug() << "qml ret : " << ret.value<QDateTime>();
-#else
-    QVariant v{dt};
-    qDebug() << "canConvert<QDateTime>() : " << v.canConvert<QDateTime>();
-#endif
-}
-
-/*
- * Test GADGET
- *
- */
-void testQtGadget(QObject *rootObject)
-{
-    Actor actor;
-    actor.setName("devilqoo");
-    actor.setStatus(Actor::Loading);
-
-    QMetaObject::invokeMethod(rootObject, "readActor", Q_ARG(QVariant, QVariant::fromValue(actor)));
-}
+void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
+void testNestedItem(QQuickView *view);
 
 /*
  * Conversion between Qt and JavaScript Types
  *
  */
 void launchQuickView() {
-    QQuickView *view = new QQuickView;
+    QQuickView *view = new QQuickView;    
 
-    //Register the Action (eg. in main(), before creating a Qml View/Context):
-    Actor::declareToQml();
-
-    view->setSource(QUrl("qrc:/untitled/main.qml"));
-
-    auto rootObject = view->rootObject();
-
-    testQtSequenceType(rootObject);
-    testQtDateTimeType(rootObject);
-    testQtGadget(rootObject);
+    //testConversionBetweenQtAndJavascriptTypes(view);
+    testNestedItem(view);
 
     view->show();
 }
