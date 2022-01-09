@@ -61,15 +61,18 @@ void testQtSequenceType(QObject *rootObject)
 void testQtDateTimeType(QObject *rootObject)
 {
     auto dt = QDateTime::currentDateTime();
-    QDateTime ret;
+    auto ret = QVariant{};
 
-#if (0) // COMPILE ERROR !!! 22/01/08
-    QMetaObject::invokeMethod(view->rootObject(),
+#if (1)
+    QMetaObject::invokeMethod(rootObject,
         "readDate",
-        Q_RETURN_ARG(QVariant, ret), // ???
+        Q_RETURN_ARG(QVariant, ret),
         Q_ARG(QVariant, QVariant::fromValue(dt)));
 
-    qDebug() << "qml ret : " << ret;
+    qDebug() << "qml ret : " << ret.value<QDateTime>();
+#else
+    QVariant v{dt};
+    qDebug() << "canConvert<QDateTime>() : " << v.canConvert<QDateTime>();
 #endif
 }
 
