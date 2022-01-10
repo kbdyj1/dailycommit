@@ -1,13 +1,29 @@
 QT += quick qml
 
+KDBINDINGS = ./kdbindings
+
+INCLUDEPATH += $$KDBINDINGS
+
 SOURCES += \
    main.cpp \
    invokeMethod.cpp \
-   nestedItem.cpp
+   nestedItem.cpp \
+   test_kdbindings.cpp
 
 HEADERS += \
     Actor.h \
-    Rectangle.h
+    Rectangle.h \
+    binding.h \
+    binding_evaluator.h \
+    genindex_array.h \
+    make_node.h \
+    node.h \
+    node_functions.h \
+    node_operators.h \
+    property.h \
+    property_updater.h \
+    signal.h \
+    utils.h
 
 resources.files = \
     main.qml \
