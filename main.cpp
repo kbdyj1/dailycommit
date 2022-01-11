@@ -34,6 +34,7 @@ void launchGuiApplication(QGuiApplication &app) {
 void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
 void testKDBindings();
+void testNewQmlGrammer(QQuickView *view);
 
 /*
  * Conversion between Qt and JavaScript Types
@@ -44,7 +45,8 @@ void launchQuickView() {
 
     //testConversionBetweenQtAndJavascriptTypes(view);
     //testNestedItem(view);
-    testKDBindings();
+    //testKDBindings();
+    testNewQmlGrammer(view);
 
     view->show();
 }

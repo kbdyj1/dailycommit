@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/after.png</file>
+        <file>res/before.png</file>
+    </qresource>
+</RCC>
