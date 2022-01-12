@@ -1,9 +1,9 @@
+#include <iostream>
+#include <string>
+
 #include <binding.h>
 #include <property.h>
 #include <signal.h>
-
-#include <iostream>
-#include <string>
 
 namespace internal
 {
@@ -117,7 +117,7 @@ void testWidget()
     w.mValue = 10;
     w.mValue = 20;
 
-    //std::cout << "Property value is : " << w.mValue << std::endl; // compile error ???
+    std::cout << "Property value is : " << w.mValue.get() << std::endl; // compile error ???
 }
 
 /*

@@ -3,6 +3,7 @@
 #include "Rectangle.h"
 #include <QDebug>
 #include <QQuickView>
+#include <QQuick3D>
 
 /*
  * Qt property binding example
@@ -35,6 +36,7 @@ void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
 void testKDBindings();
 void testNewQmlGrammer(QQuickView *view);
+void testQuick3D(QQuickView *view);
 
 /*
  * Conversion between Qt and JavaScript Types
@@ -46,7 +48,8 @@ void launchQuickView() {
     //testConversionBetweenQtAndJavascriptTypes(view);
     //testNestedItem(view);
     //testKDBindings();
-    testNewQmlGrammer(view);
+    //testNewQmlGrammer(view);
+    testQuick3D(view);
 
     view->show();
 }
@@ -54,6 +57,8 @@ void launchQuickView() {
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    //qputenv("QT_QUICK_BACKEND", "software");
+
 #if (0)
     launchGuiApplication(app);
 #else

@@ -1,4 +1,4 @@
-QT += quick qml
+QT += quick qml quick3d
 
 KDBINDINGS = ./kdbindings
 
@@ -9,7 +9,8 @@ SOURCES += \
    invokeMethod.cpp \
    nestedItem.cpp \
    test_kdbindings.cpp \
-   test_newQmlGrammer.cpp
+   test_newQmlGrammer.cpp \
+   test_quick3d.cpp
 
 HEADERS += \
     Actor.h \
@@ -32,7 +33,8 @@ resources.files = \
     NullishCoalescing.qml \
     AccessbilityButton.qml \
     UseNewQmlLanguageFeature.qml \
-    Images.qml
+    Images.qml \
+    simple3d.qml
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
