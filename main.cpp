@@ -32,16 +32,16 @@ void launchGuiApplication(QGuiApplication &app) {
     Qt::endPropertyUpdateGroup();
 }
 
+/*
+ * Qt QuickView test codes
+ *
+ */
 void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
 void testKDBindings();
 void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
 
-/*
- * Conversion between Qt and JavaScript Types
- *
- */
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
 
@@ -54,10 +54,10 @@ void launchQuickView() {
     view->show();
 }
 
-int main(int argc, char *argv[])
+int mainQuickView(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    //qputenv("QT_QUICK_BACKEND", "software");
+    qputenv("QT_QPA_PLATFORM", "offscreen");
 
 #if (0)
     launchGuiApplication(app);
@@ -65,4 +65,29 @@ int main(int argc, char *argv[])
     launchQuickView();
 #endif
     return app.exec();
+}
+
+/*
+ * Qt console test codes
+ *
+ */
+void testStringView();
+
+int mainConsole(int argc, char *argv[])
+{
+    Q_UNUSED(argc)
+    Q_UNUSED(argv)
+
+    testStringView();
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+#if (0)
+    return mainQuickView(argc, argv);
+#else
+    return mainConsole(argc, argv);
+#endif
 }

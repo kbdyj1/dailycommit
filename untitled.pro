@@ -10,7 +10,8 @@ SOURCES += \
    nestedItem.cpp \
    test_kdbindings.cpp \
    test_newQmlGrammer.cpp \
-   test_quick3d.cpp
+   test_quick3d.cpp \
+   test_stringview.cpp
 
 HEADERS += \
     Actor.h \
