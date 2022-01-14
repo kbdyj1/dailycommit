@@ -38,9 +38,10 @@ void launchGuiApplication(QGuiApplication &app) {
  */
 void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
-void testKDBindings();
 void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
+void testKDBindings();
+void testStringView();
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -49,7 +50,8 @@ void launchQuickView() {
     //testNestedItem(view);
     //testKDBindings();
     //testNewQmlGrammer(view);
-    testQuick3D(view);
+    //testQuick3D(view);
+    testStringView();
 
     view->show();
 }
@@ -67,27 +69,7 @@ int mainQuickView(int argc, char *argv[])
     return app.exec();
 }
 
-/*
- * Qt console test codes
- *
- */
-void testStringView();
-
-int mainConsole(int argc, char *argv[])
-{
-    Q_UNUSED(argc)
-    Q_UNUSED(argv)
-
-    testStringView();
-
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
-#if (0)
     return mainQuickView(argc, argv);
-#else
-    return mainConsole(argc, argv);
-#endif
 }

@@ -1,17 +1,20 @@
 QT += quick qml quick3d
 
 KDBINDINGS = ./kdbindings
+QMLS = ./qml
+SRC_DIR = ./src
+HDR_DIR = ./include
 
-INCLUDEPATH += $$KDBINDINGS
+INCLUDEPATH += $$KDBINDINGS $$HDR_DIR
 
 SOURCES += \
    main.cpp \
-   invokeMethod.cpp \
-   nestedItem.cpp \
-   test_kdbindings.cpp \
-   test_newQmlGrammer.cpp \
-   test_quick3d.cpp \
-   test_stringview.cpp
+   $$SRC_DIR/invokeMethod.cpp \
+   $$SRC_DIR/nestedItem.cpp \
+   $$SRC_DIR/test_kdbindings.cpp \
+   $$SRC_DIR/test_newQmlGrammer.cpp \
+   $$SRC_DIR/test_quick3d.cpp \
+   $$SRC_DIR/test_stringview.cpp
 
 HEADERS += \
     Actor.h \
@@ -29,13 +32,13 @@ HEADERS += \
     utils.h
 
 resources.files = \
-    main.qml \
-    nested.qml \
-    NullishCoalescing.qml \
-    AccessbilityButton.qml \
-    UseNewQmlLanguageFeature.qml \
-    Images.qml \
-    simple3d.qml
+    $$QMLS/main.qml \
+    $$QMLS/nested.qml \
+    $$QMLS/NullishCoalescing.qml \
+    $$QMLS/AccessbilityButton.qml \
+    $$QMLS/UseNewQmlLanguageFeature.qml \
+    $$QMLS/Images.qml \
+    $$QMLS/simple3d.qml
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
