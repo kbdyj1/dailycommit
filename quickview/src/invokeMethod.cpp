@@ -70,7 +70,7 @@ void testConversionBetweenQtAndJavascriptTypes(QQuickView *view)
     //Register the Action (eg. in main(), before creating a Qml View/Context):
     Actor::declareToQml();
 
-    view->setSource(QUrl("qrc:/untitled/main.qml"));
+    view->setSource(QUrl("qrc:/quickview/qml/main.qml"));
 
     auto *rootObject = view->rootObject();
 

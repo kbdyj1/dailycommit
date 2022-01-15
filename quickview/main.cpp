@@ -3,7 +3,6 @@
 #include "Rectangle.h"
 #include <QDebug>
 #include <QQuickView>
-#include <QQuick3D>
 
 /*
  * Qt property binding example
@@ -12,7 +11,7 @@
 void launchGuiApplication(QGuiApplication &app) {
 
     QQmlApplicationEngine engine;
-    const QUrl url(u"qrc:/untitled/main.qml"_qs);
+    const QUrl url(u"qrc:/quickview/qml/main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
@@ -40,18 +39,14 @@ void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
 void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
-void testKDBindings();
-void testStringView();
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
 
     //testConversionBetweenQtAndJavascriptTypes(view);
     //testNestedItem(view);
-    //testKDBindings();
-    //testNewQmlGrammer(view);
+    testNewQmlGrammer(view);
     //testQuick3D(view);
-    testStringView();
 
     view->show();
 }

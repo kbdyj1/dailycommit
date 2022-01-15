@@ -3,5 +3,5 @@
 
 void testNestedItem(QQuickView *view)
 {
-    view->setSource(QUrl("qrc:/untitled/nested.qml"));
+    view->setSource(QUrl("qrc:/quickview/qml/nested.qml"));
 }

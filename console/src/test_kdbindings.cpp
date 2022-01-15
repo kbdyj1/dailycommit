@@ -4,6 +4,7 @@
 #include <binding.h>
 #include <property.h>
 #include <signal.h>
+#include <binding_evaluator.h>
 
 namespace internal
 {

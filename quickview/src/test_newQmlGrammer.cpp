@@ -8,13 +8,13 @@ void testNullishCoalescing(QQuickView *view)
 {
     auto *rootObject = view->rootObject();
 
-    view->setSource(QUrl("qrc:/untitled/NullishCoalescing.qml"));
+    view->setSource(QUrl("qrc:/quickview/qml/NullishCoalescing.qml"));
     QMetaObject::invokeMethod(rootObject, "testNullishCoalescing");
 }
 
 void testRequiredProperties(QQuickView *view)
 {
-    view->setSource(QUrl("qrc:/untitled/UseNewQmlLanguageFeature.qml"));
+    view->setSource(QUrl("qrc:/quickview/qml/UseNewQmlLanguageFeature.qml"));
 }
 
 }//internal

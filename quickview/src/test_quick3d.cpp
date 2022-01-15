@@ -6,9 +6,7 @@ namespace internal
 
 void testSimple3D(QQuickView *view)
 {
-    auto *rootObject = view->rootObject();
-
-    view->setSource(QUrl("qrc:/untitled/simple3d.qml"));
+    view->setSource(QUrl("qrc:/quickview/qml/simple3d.qml"));
 }
 
 }
