@@ -2,11 +2,13 @@
 
 void testStringView();
 void testKDBindings();
+void testQtContinaer();
 
 void testConsole()
 {
-    testKDBindings();
+    //testKDBindings();
     //testStringView();
+    testQtContinaer();
 }
 
 int main(int argc, char *argv[])

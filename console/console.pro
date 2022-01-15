@@ -9,5 +9,6 @@ INCLUDEPATH += ./include \
     ./include/kdbindings
 
 SOURCES = main.cpp \
+        src/test_qtcontainer.cpp \
         src/test_stringview.cpp \
         src/test_kdbindings.cpp
