@@ -3,12 +3,14 @@
 void testStringView();
 void testKDBindings();
 void testQtContinaer();
+void testNetwork();
 
 void testConsole()
 {
     //testKDBindings();
     //testStringView();
-    testQtContinaer();
+    //testQtContinaer();
+    testNetwork();
 }
 
 int main(int argc, char *argv[])
