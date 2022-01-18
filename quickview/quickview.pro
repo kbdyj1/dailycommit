@@ -1,6 +1,6 @@
 TARGET = quickview
 
-QT += quick qml quick3d
+QT += quick qml quick3d statemachine
 
 QMLS = ./qml
 SRC_DIR = ./src
@@ -13,7 +13,8 @@ SOURCES += \
    $$SRC_DIR/invokeMethod.cpp \
    $$SRC_DIR/nestedItem.cpp \
    $$SRC_DIR/test_newQmlGrammer.cpp \
-   $$SRC_DIR/test_quick3d.cpp
+   $$SRC_DIR/test_quick3d.cpp \
+   $$SRC_DIR/test_stateMachine.cpp
 
 HEADERS += \
     $$HDR_DIR/Actor.h \
@@ -26,7 +27,8 @@ resources.files = \
     $$QMLS/AccessbilityButton.qml \
     $$QMLS/UseNewQmlLanguageFeature.qml \
     $$QMLS/Images.qml \
-    $$QMLS/simple3d.qml
+    $$QMLS/simple3d.qml \
+    $$QMLS/TestStateMachine.qml
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
@@ -43,4 +45,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+

@@ -39,14 +39,16 @@ void testConversionBetweenQtAndJavascriptTypes(QQuickView *view);
 void testNestedItem(QQuickView *view);
 void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
+void testStateMachine(QQuickView *view);
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
 
     //testConversionBetweenQtAndJavascriptTypes(view);
     //testNestedItem(view);
-    testNewQmlGrammer(view);
+    //testNewQmlGrammer(view);
     //testQuick3D(view);
+    testStateMachine(view);
 
     view->show();
 }
