@@ -44,6 +44,14 @@ public:
         });
     }
 
+public Q_SLOTS:
+    void print() {
+        qDebug() << "Listener";
+    }
+    void print(QString str) {
+        qDebug() << "Listener: " << str;
+    }
+
 private:
     QStateMachine machine;
 };
@@ -53,7 +61,15 @@ void testStateMachine(QQuickView *view)
     view->setSource(QUrl("qrc:/quickview/qml/TestStateMachine.qml"));
 
     auto *rootObject = view->rootObject();
-    new Listener(rootObject, view);
+    auto *listener = new Listener(rootObject, view);
+    const auto *metaObject = listener->metaObject();
+
+    qDebug() << "className: " << metaObject->className();
+    qDebug() << "methodOffset: " << metaObject->methodOffset() << ", methodCount: " << metaObject->methodCount();
+
+    for (auto i = metaObject->methodOffset(); i < metaObject->methodCount(); i++) {
+        qDebug() << metaObject->method(i).methodSignature();
+    }
 }
 
 #include "test_stateMachine.moc"
