@@ -8,8 +8,9 @@ resources.files = \
         qml/actions/AppActions.qml \
         qml/dispatcher/Dispatcher.qml \
         qml/stores/MainStore.qml \
-        qml/stores/RootStore.qml \
-        qml/views/MainView.qml
+        qml/stores/SubStore.qml \
+        qml/views/MainView.qml \
+        qml/views/SubView.qml
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources
@@ -26,3 +27,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+

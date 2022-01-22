@@ -30,4 +30,11 @@ Item {
         text: "push"
         onClicked: root.buttonPressed()
     }
+
+    Text {
+        color: "limegreen"
+        font.pixelSize: 32
+        text: "FLUX with QML"
+        anchors.centerIn: parent
+    }
 }
