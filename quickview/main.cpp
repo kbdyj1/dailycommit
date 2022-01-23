@@ -40,6 +40,7 @@ void testNestedItem(QQuickView *view);
 void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
 void testStateMachine(QQuickView *view);
+void testJsValue();
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -48,7 +49,8 @@ void launchQuickView() {
     //testNestedItem(view);
     //testNewQmlGrammer(view);
     //testQuick3D(view);
-    testStateMachine(view);
+    //testStateMachine(view);
+    testJsValue();
 
     view->show();
 }
