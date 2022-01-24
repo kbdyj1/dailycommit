@@ -15,7 +15,8 @@ SOURCES += \
    $$SRC_DIR/test_newQmlGrammer.cpp \
    $$SRC_DIR/test_quick3d.cpp \
    $$SRC_DIR/test_stateMachine.cpp \
-   $$SRC_DIR/test_jsvalue.cpp
+   $$SRC_DIR/test_jsvalue.cpp \
+   src/test_jsengine.cpp
 
 HEADERS += \
     $$HDR_DIR/Actor.h \

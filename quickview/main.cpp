@@ -41,6 +41,7 @@ void testNewQmlGrammer(QQuickView *view);
 void testQuick3D(QQuickView *view);
 void testStateMachine(QQuickView *view);
 void testJsValue();
+void testJsEngine();
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -50,7 +51,8 @@ void launchQuickView() {
     //testNewQmlGrammer(view);
     //testQuick3D(view);
     //testStateMachine(view);
-    testJsValue();
+    //testJsValue();
+    testJsEngine();
 
     view->show();
 }

@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>res/after.png</file>
         <file>res/before.png</file>
+        <file>res/math.mjs</file>
+        <file>res/twice.mjs</file>
+        <file>res/version.mjs</file>
     </qresource>
 </RCC>
