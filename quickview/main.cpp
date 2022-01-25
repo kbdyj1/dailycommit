@@ -42,6 +42,7 @@ void testQuick3D(QQuickView *view);
 void testStateMachine(QQuickView *view);
 void testJsValue();
 void testJsEngine();
+void testJavaScript(QQuickView *view);
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -52,7 +53,8 @@ void launchQuickView() {
     //testQuick3D(view);
     //testStateMachine(view);
     //testJsValue();
-    testJsEngine();
+    //testJsEngine();
+    testJavaScript(view);
 
     view->show();
 }

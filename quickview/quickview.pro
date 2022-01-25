@@ -3,6 +3,7 @@ TARGET = quickview
 QT += quick qml quick3d statemachine
 
 QMLS = ./qml
+JS_DIR = ./js
 SRC_DIR = ./src
 HDR_DIR = ./include
 
@@ -16,6 +17,7 @@ SOURCES += \
    $$SRC_DIR/test_quick3d.cpp \
    $$SRC_DIR/test_stateMachine.cpp \
    $$SRC_DIR/test_jsvalue.cpp \
+   src/test_javascript.cpp \
    src/test_jsengine.cpp
 
 HEADERS += \
@@ -30,7 +32,11 @@ resources.files = \
     $$QMLS/UseNewQmlLanguageFeature.qml \
     $$QMLS/Images.qml \
     $$QMLS/simple3d.qml \
-    $$QMLS/TestStateMachine.qml
+    $$QMLS/TestStateMachine.qml \
+    $$QMLS/MyButton.qml \
+    $$QMLS/my_button_impl.js \
+    $$QMLS/factorial.js \
+    $$QMLS/common_button_impl.js
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
@@ -48,4 +54,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+
+
+
 
