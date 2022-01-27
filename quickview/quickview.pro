@@ -1,6 +1,6 @@
 TARGET = quickview
 
-QT += quick qml quick3d statemachine
+QT += quick qml quick3d statemachine webview
 
 QMLS = ./qml
 JS_DIR = ./js

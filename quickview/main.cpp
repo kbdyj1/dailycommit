@@ -3,6 +3,7 @@
 #include "Rectangle.h"
 #include <QDebug>
 #include <QQuickView>
+#include <QtWebView>
 
 /*
  * Qt property binding example
@@ -65,6 +66,8 @@ int mainQuickView(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
     qputenv("QT_QPA_PLATFORM", "offscreen");
+
+    QtWebView::initialize();
 
 #if (0)
     launchGuiApplication(app);
