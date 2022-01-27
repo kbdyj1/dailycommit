@@ -17,6 +17,7 @@ SOURCES += \
    $$SRC_DIR/test_quick3d.cpp \
    $$SRC_DIR/test_stateMachine.cpp \
    $$SRC_DIR/test_jsvalue.cpp \
+   src/test_http.cpp \
    src/test_javascript.cpp \
    src/test_jsengine.cpp
 
@@ -25,18 +26,19 @@ HEADERS += \
     $$HDR_DIR/Rectangle.h
 
 resources.files = \
-    $$QMLS/main.qml \
-    $$QMLS/nested.qml \
-    $$QMLS/NullishCoalescing.qml \
-    $$QMLS/AccessbilityButton.qml \
-    $$QMLS/UseNewQmlLanguageFeature.qml \
-    $$QMLS/Images.qml \
-    $$QMLS/simple3d.qml \
-    $$QMLS/TestStateMachine.qml \
-    $$QMLS/MyButton.qml \
-    $$QMLS/my_button_impl.js \
-    $$QMLS/factorial.js \
-    $$QMLS/common_button_impl.js
+    qml/main.qml \
+    qml/nested.qml \
+    qml/NullishCoalescing.qml \
+    qml/AccessbilityButton.qml \
+    qml/UseNewQmlLanguageFeature.qml \
+    qml/Images.qml \
+    qml/simple3d.qml \
+    qml/TestStateMachine.qml \
+    qml/MyButton.qml \
+    qml/HttpWindow.qml \
+    qml/my_button_impl.js \
+    qml/factorial.js \
+    qml/common_button_impl.js
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
@@ -54,6 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+
 
 
 
