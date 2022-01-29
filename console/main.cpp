@@ -5,6 +5,7 @@ void testKDBindings();
 void testQtContinaer();
 void testNetwork();
 void test_cxx20_features();
+void test_concurrent();
 
 void testConsole()
 {
@@ -12,7 +13,8 @@ void testConsole()
     //testStringView();
     //testQtContinaer();
     //testNetwork();
-    test_cxx20_features();
+    //test_cxx20_features();
+    test_concurrent();
 }
 
 int main(int argc, char *argv[])

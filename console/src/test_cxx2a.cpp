@@ -1,6 +1,9 @@
 #include <span>
 #include <ranges>
-#include <coroutine>
+//#include <coroutine>  //#error "the coroutine header requires -fcoroutines"
+#include <vector>
+#include <map>
+#include <set>
 #include <QDebug>
 
 template <class T, std::size_t N> [[nodiscard]]
@@ -142,9 +145,78 @@ void test_cxx20_coroutine()
 
 }
 
+/******************************************************************************
+ * 3-way comparison
+ *
+ */
+void test_cxx20_3way_comparision()
+{
+    // #1
+    {
+        qDebug() << "int comparison";
+
+        auto a = 91;
+        auto b = 92;
+        auto comp = a <=> b;
+        if (comp < 0) {
+            qDebug() << "a < b";
+        } else if (comp == 0) {
+            qDebug() << "a == b";
+        } else if (comp > 0) {
+            qDebug() << "a > b";
+        }
+    }
+
+    // #2
+    {
+        qDebug() << "std::vector comparison";
+
+        auto a = std::vector{ 1, 2, 3 };
+        auto b = std::vector{ 1, 2, 3 };
+        auto comp = a <=> b;
+        if (comp < 0) {
+            qDebug() << "a < b";
+        } else if (comp == 0) {
+            qDebug() << "a == b";
+        } else if (comp > 0) {
+            qDebug() << "a > b";
+        }
+    }
+}
+
+/******************************************************************************
+ * map/set contains
+ *
+ */
+void test_cxx20_map_set_contains()
+{
+    auto m = std::map<int, char>{
+        {1, 'a' },
+        {2, 'b' }
+    };
+    // old
+    qDebug() << "m.find(2):" << (m.find(2) != m.end());
+    // new
+    qDebug() << "m.contains(2): " << m.contains(2);
+}
+
+/******************************************************************************
+ * range based loop with initialization
+ *
+ */
+void test_cxx20_range_base_loop_with_initialization()
+{
+    for (std::vector vlist{1, 2, 3}; auto &v : vlist) {
+        qDebug() << v;
+    }
+}
+
 }
 
 void test_cxx20_features()
 {
-    internal::test_cxx20_span();
+    //internal::test_cxx20_span();
+    //internal::test_cxx20_3way_comparision();
+    //internal::test_cxx20_map_set_contains();
+    internal::test_cxx20_range_base_loop_with_initialization();
 }
