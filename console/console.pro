@@ -11,6 +11,7 @@ INCLUDEPATH += ./include \
 
 SOURCES = main.cpp \
         src/test_concurrent.cpp \
+        src/test_cxx17.cpp \
         src/test_cxx2a.cpp \
         src/test_network.cpp \
         src/test_qtcontainer.cpp \
