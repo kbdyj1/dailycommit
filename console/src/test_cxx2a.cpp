@@ -1,10 +1,17 @@
 #include <span>
-#include <ranges>
 //#include <coroutine>  //#error "the coroutine header requires -fcoroutines"
 #include <vector>
 #include <map>
 #include <set>
 #include <QDebug>
+
+#ifndef Q_OS_MACOS
+#define CXX20_SUPPORT_RANGES_FEATURE
+#endif
+
+#ifdef CXX20_SUPPORT_RANGES_FEATURE
+#include <ranges>
+#endif
 
 template <class T, std::size_t N> [[nodiscard]]
 constexpr auto slide(std::span<T,N> s, std::size_t offset, std::size_t width) {
@@ -169,6 +176,7 @@ void test_cxx20_3way_comparision()
 
     // #2
     {
+#ifndef Q_OS_MACOS
         qDebug() << "std::vector comparison";
 
         auto a = std::vector{ 1, 2, 3 };
@@ -181,6 +189,7 @@ void test_cxx20_3way_comparision()
         } else if (comp > 0) {
             qDebug() << "a > b";
         }
+#endif
     }
 }
 
