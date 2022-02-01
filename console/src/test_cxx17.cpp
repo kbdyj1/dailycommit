@@ -1,9 +1,69 @@
 #include <variant>
 #include <any>
+#include <iostream>
 #include <QDebug>
 
 namespace internal
 {
+
+/******************************************************************************
+ * fold expression
+ *
+ */
+template <typename... Args>
+bool all(Args... args)
+{
+    return (... && args);
+}
+
+template <typename... Args>
+int sum(Args&&... args)
+{
+    return (args + ... + (1 * 2));
+}
+
+template <typename... Args>
+void printer(Args&&... args)
+{
+    (std::cout << ... << args) << std::endl;
+}
+
+template  <typename T, typename... Args>
+void push_back_vec(std::vector<T>& v, Args&&... args)
+{
+    static_assert((std::is_constructible_v<T, Args&&> && ...));
+    (v.push_back(std::forward<Args>(args)), ...);
+}
+
+template <class T, std::size_t... N>
+constexpr T bswap_impl(T i, std::index_sequence<N...>)
+{
+    return (((i >> N*CHAR_BIT & std::uint8_t(-1)) << (sizeof(T)-1-N)*CHAR_BIT) | ...);
+}
+
+template <class T, class U = std::make_unsigned_t<T>>
+constexpr U bswap(T i)
+{
+    return bswap_impl<U>(i, std::make_index_sequence<sizeof(T)>{});
+}
+
+void test_fold_expression()
+{
+    auto b = all(true, true, true, false);
+
+    // (((true & true) & true) & false)
+    qDebug() << "all(true, true, true, false) -> " << b;
+
+    // (1 + (2 + (3 + (4 + 5 + (1 * 2))))) = 17
+    qDebug() << "sum(1, 2, 3, 4, 5)" << sum(1, 2, 3, 4, 5);
+
+    printer(1, 2, 3.14, "hello, Qt");
+
+    auto v = std::vector<int>{};
+    push_back_vec(v, 1, 2, 3, 4);
+
+    qDebug() << (bswap<std::uint16_t>(0x1234u) == 0x3412u);
+}
 
 /******************************************************************************
  * variant
@@ -92,6 +152,7 @@ void test_any()
 
 void test_cxx17_features()
 {
-    internal::test_variant();
-    internal::test_any();
+    //internal::test_variant();
+    //internal::test_any();
+    internal::test_fold_expression();
 }

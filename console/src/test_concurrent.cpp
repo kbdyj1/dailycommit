@@ -1,8 +1,31 @@
 #include <QtConcurrent>
+#include <QFuture>
 
 namespace internal //==========================================================
 {
 
+/******************************************************************************
+ * task
+ *
+ */
+void test_concurrent_task()
+{
+#if (0)
+    auto s = QString{"Hello,"};
+    QtConcurrent::task([](QString &s){
+        s.append("Qt");
+    })
+    .withArguments(std::ref(s))
+    .spawn();
+
+    qDebug() << s;
+#else
+    auto task = [](const QString &s){ qDebug().noquote() << "Hello, " << s; };
+    QtConcurrent::task(std::move(task))
+            .withArguments("Qt")
+            .spawn();
+#endif
+}
 /******************************************************************************
  * map
  *
@@ -67,5 +90,6 @@ void test_concurrent_filter()
 void test_concurrent()
 {
     //internal::test_concurrent_map();
-    internal::test_concurrent_filter();
+    //internal::test_concurrent_filter();
+    internal::test_concurrent_task();
 }
