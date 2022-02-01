@@ -16,8 +16,8 @@ void testConsole()
     //testQtContinaer();
     //testNetwork();
     //test_cxx20_features();
-    test_concurrent();
-    //test_cxx17_features();
+    //test_concurrent();
+    test_cxx17_features();
 }
 
 int main(int argc, char *argv[])
