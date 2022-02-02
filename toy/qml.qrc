@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>View.qml</file>
+        <file>Login.qml</file>
+    </qresource>
+</RCC>
