@@ -23,7 +23,7 @@ View::View(const QString &viewName, QObject *parent)
 
 View::~View()
 {
-
+    delete d;
 }
 
 void View::setQml(QObject *o)

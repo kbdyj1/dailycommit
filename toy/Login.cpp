@@ -18,7 +18,7 @@ public:
 void Login::registerMetaType()
 {
     qRegisterMetaType<Login>();
-    qmlRegisterType<Login>("Login", 1, 0, "LoginStore");
+    qmlRegisterType<Login>("Login", 1, 0, "Login");
 }
 
 Login::Login(QObject *parent)
@@ -42,6 +42,16 @@ bool Login::subscribe(int action, const QVariant &param)
 
     case Login::Created:
         qDebug() << "Login.Created.";
+        break;
+
+    case Login::CheckUser:
+        {
+            auto m = param.toMap();
+            auto id = m["id"].toString();
+            auto password = m["password"].toString();
+
+            qDebug() << "Login::CheckUser(id:" << id << ", password:" << password << ")";
+        }
         break;
     }
     return false;

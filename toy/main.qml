@@ -10,6 +10,10 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
+    function createSystemAction(action, param) {
+        dispatcher.dispatch(action, param)
+    }
+
     Item {
         id: root
 
@@ -17,8 +21,8 @@ Window {
         height: window.height
 
         Component.onCompleted: {
-            dispatcher.dispatch(Action.RegisterRoot, {'root':root})
-            dispatcher.dispatch(Action.CreateView, {'viewName':'Login', 'args':{}})
+            createSystemAction(Action.RegisterRoot, {'root':root})
+            createSystemAction(Action.CreateView, {'viewName':'Login', 'args':{}})
         }
     }
 }

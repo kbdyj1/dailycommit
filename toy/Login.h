@@ -15,7 +15,8 @@ public:
     static void registerMetaType();
 
     enum LoginAction {
-        Created = Action::User
+        Created = Action::User,
+        CheckUser
     };
     Q_ENUM(LoginAction)
 
