@@ -97,6 +97,7 @@ void SystemDispatcher::dispatch(int action, const QVariant &param)
                 item->setParentItem(d->mRoot);
             } else {
                 qDebug() << "load fail:" << qmlPath;
+                qDebug() << c->errorString();
             }
 
             // #2. for setting qml properties
