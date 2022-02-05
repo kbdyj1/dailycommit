@@ -8,6 +8,7 @@ void test_cxx20_features();
 void test_cxx17_features();
 void test_variant();
 void test_concurrent();
+void test_iodevice();
 
 void testConsole()
 {
@@ -17,7 +18,8 @@ void testConsole()
     //testNetwork();
     //test_cxx20_features();
     //test_concurrent();
-    test_cxx17_features();
+    //test_cxx17_features();
+    test_iodevice();
 }
 
 int main(int argc, char *argv[])
