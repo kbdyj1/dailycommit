@@ -118,6 +118,35 @@ void test_qdir()
     qDebug() << "dir.path():" << dir.path();     //dir.path(): "/home/xxx"
     qDebug() << "dir.isAbsolute():" << dir.isAbsolute();    //dir.isAbsolute(): true
     qDebug() << "dir.dirName():" << dir.dirName();  //dir.dirName(): "xxx"
+
+    //dir.mkpath("my/qt/program");
+
+#if (0)
+    dir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    dir.setSorting(QDir::Size | QDir::Reversed);
+
+    auto list = dir.entryInfoList();
+    for (auto i=0; i<list.size(); i++) {
+        auto info = list.at(i);
+        qDebug() << QString{"%1 %2"}
+                    .arg(info.size(), 10)
+                    .arg(info.fileName());
+    }
+#endif
+
+    auto bin = QString{"/sbin"};    // symlink to /usr/sbin
+    auto binDir = QDir{bin};
+    auto canonicalBin = binDir.canonicalPath();
+
+    qDebug() << bin << "->" << canonicalBin;
+
+    auto projectDir = QDir{"../project"};
+    qDebug() << projectDir.path() << ".isAbsolute():" << projectDir.isAbsolute() << projectDir.absolutePath();
+
+    projectDir.makeAbsolute();
+    qDebug() << "makeAbsolute:" << projectDir.path();
+
+
 }
 
 }
