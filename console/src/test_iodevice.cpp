@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QVariant>
 #include <QDir>
+#include <QTemporaryDir>
+#include <QTemporaryFile>
 
 namespace internal
 {
@@ -146,7 +148,33 @@ void test_qdir()
     projectDir.makeAbsolute();
     qDebug() << "makeAbsolute:" << projectDir.path();
 
+    qDebug() << "separator:" << QDir::separator();
 
+    auto rFile = QFileInfo{"local/bin"};
+    QDir::setCurrent("/tmp");
+    qDebug() << rFile.absoluteFilePath();   // "/tmp/local/bin"
+
+    QDir::setSearchPaths("sources", QStringList{{QDir::homePath() + "/project/dailycommit/console/src"}});
+    auto cppFile = QFile{"sources:test_iodevice.cpp"};
+    if (cppFile.open(QFile::ReadOnly)) {
+        qDebug() << cppFile.fileName() << "open success";
+        cppFile.close();
+    }
+
+    auto tempDir = QTemporaryDir{"Qt6"};
+    if (tempDir.isValid()) {
+        qDebug() << "auto generated temp dir:" << tempDir.path();   // "/tmp/Qt6.XnromS"
+        qDebug() << "filePath():" << tempDir.filePath("hello.cpp"); // "/tmp/Qt6.ZHGCuU/hello.cpp"
+    }
+
+    auto tempFile = QTemporaryFile{};
+
+    qDebug() << "before open temp file:" << tempFile.fileName();    // empty string
+    if (tempFile.open()) {
+        qDebug() << "after open temp file:" << tempFile.fileName(); // "/tmp/console.NoIcMg"
+        tempFile.write("hello, Qt");
+        tempFile.close();
+    }
 }
 
 }
