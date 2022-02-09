@@ -177,11 +177,35 @@ void test_qdir()
     }
 }
 
+void test_qbytearray()
+{
+    auto b1 = QByteArray{"ca\0r\0t"};
+    qDebug() << "b1.size():" << b1.size() << ", b1.constData():" << b1.constData();
+
+    auto b2 = QByteArray{"ca\0r\0t", 3};
+    qDebug() << "b2.size():" << b2.size() << ", b2.constData():" << b2.constData();
+
+    auto b3 = QByteArray{"ca\0r\0t", 4};
+    qDebug() << "b3.size():" << b3.size() << ", b3.constData():" << b3.constData();
+
+    const char cart[] = {'c', 'a', '\0', 'r', '\0', 't'};
+    auto b4 = QByteArray::fromRawData(cart, 6);
+    qDebug() << "b4.size():" << b4.size() << ", b4.constData():" << b4.constData();
+
+    auto b5 = QByteArray{"we must be <b>bold</b>, very <b>bold</b>"};
+    qsizetype j = 0;
+    while ((j = b5.indexOf("<b>", j)) != -1) {
+        qDebug() << "found <b> :" << j;
+        ++j;
+    }
+}
+
 }
 
 void test_iodevice()
 {
-//    internal::test_qbuffer();
-//    internal::test_serialize();
-    internal::test_qdir();
+    //internal::test_qbuffer();
+    //internal::test_serialize();
+    //internal::test_qdir();
+    internal::test_qbytearray();
 }
