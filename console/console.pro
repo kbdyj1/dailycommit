@@ -1,7 +1,7 @@
 TARGET = console
 
 QT -= gui
-QT += network concurrent
+QT += network concurrent sql
 
 CONFIG += c++2a console
 CONFIG -= app_bundle
@@ -16,6 +16,7 @@ SOURCES = main.cpp \
         src/test_iodevice.cpp \
         src/test_network.cpp \
         src/test_qtcontainer.cpp \
+        src/test_sql.cpp \
         src/test_stringview.cpp \
         src/test_kdbindings.cpp
 

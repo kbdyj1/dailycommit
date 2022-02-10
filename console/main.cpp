@@ -9,6 +9,7 @@ void test_cxx17_features();
 void test_variant();
 void test_concurrent();
 void test_iodevice();
+void test_sql();
 
 void testConsole()
 {
@@ -19,7 +20,8 @@ void testConsole()
     //test_cxx20_features();
     //test_concurrent();
     //test_cxx17_features();
-    test_iodevice();
+    //test_iodevice();
+    test_sql();
 }
 
 int main(int argc, char *argv[])
