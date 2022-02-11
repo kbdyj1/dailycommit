@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>note.xml</file>
+    </qresource>
+</RCC>
