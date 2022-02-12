@@ -19,7 +19,8 @@ SOURCES += \
    $$SRC_DIR/test_jsvalue.cpp \
    src/test_http.cpp \
    src/test_javascript.cpp \
-   src/test_jsengine.cpp
+   src/test_jsengine.cpp \
+   src/test_localStorage.cpp
 
 HEADERS += \
     $$HDR_DIR/Actor.h \
@@ -36,6 +37,7 @@ resources.files = \
     qml/TestStateMachine.qml \
     qml/MyButton.qml \
     qml/HttpWindow.qml \
+    qml/LocalStorageSample.qml \
     qml/my_button_impl.js \
     qml/factorial.js \
     qml/common_button_impl.js
@@ -56,6 +58,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+
 
 
 

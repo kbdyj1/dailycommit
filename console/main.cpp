@@ -11,6 +11,7 @@ void test_concurrent();
 void test_iodevice();
 void test_sql();
 void test_xml();
+void test_json();
 
 void testConsole()
 {
@@ -23,7 +24,8 @@ void testConsole()
     //test_cxx17_features();
     //test_iodevice();
     //test_sql();
-    test_xml();
+    //test_xml();
+    test_json();
 }
 
 int main(int argc, char *argv[])

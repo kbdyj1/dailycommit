@@ -45,6 +45,7 @@ void testJsValue();
 void testJsEngine();
 void testJavaScript(QQuickView *view);
 void test_http(QQuickView *view);
+void testLocalStorage(QQuickView *view);
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -57,7 +58,8 @@ void launchQuickView() {
     //testJsValue();
     //testJsEngine();
     //testJavaScript(view);
-    test_http(view);
+    //test_http(view);
+    testLocalStorage(view);
 
     view->show();
 }

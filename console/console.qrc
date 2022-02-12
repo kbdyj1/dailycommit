@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>note.xml</file>
+        <file>person.json</file>
     </qresource>
 </RCC>
