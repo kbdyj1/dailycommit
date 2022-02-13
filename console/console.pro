@@ -15,6 +15,7 @@ SOURCES = main.cpp \
         src/test_cxx2a.cpp \
         src/test_iodevice.cpp \
         src/test_json.cpp \
+        src/test_locale.cpp \
         src/test_network.cpp \
         src/test_qtcontainer.cpp \
         src/test_sql.cpp \
