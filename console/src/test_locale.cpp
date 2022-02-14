@@ -1,4 +1,5 @@
 #include <QLocale>
+#include <QDate>
 
 namespace internal
 {
@@ -19,15 +20,41 @@ void test_egytian()
     qDebug() << i;
 }
 
-void test_default()
+void print_locale_info(const QLocale &locale)
 {
-    auto locale = QLocale::system();
     auto language = locale.language();
     auto languageStr = locale.languageToString(language);
     auto territory = locale.territory();
     auto territoryStr = locale.territoryToString(territory);
 
     qDebug() << "lang:" << languageStr << ", country:" << territoryStr;
+}
+
+void test_default()
+{
+    auto locale = QLocale::system();
+
+    qDebug() << "currency symbole:" << locale.currencySymbol();
+    qDebug() << "formatted data size:" << locale.formattedDataSize(1024*1024);
+    qDebug().noquote() << "quote string(standard):" << locale.quoteString("Qt6");
+    qDebug().noquote() << "quote string(alternate):" << locale.quoteString("Qt6", QLocale::AlternateQuotation);
+    qDebug() << "amText:" << locale.amText();
+    qDebug() << "pmText:" << locale.pmText();
+    qDebug() << "bcp47Name:" << locale.bcp47Name();
+    qDebug() << "dateFormat:" << locale.dateFormat() << ", " << QDate::currentDate();
+    qDebug() << "dayName:" << locale.dayName(1);
+    qDebug() << "decimalPoint:" << locale.decimalPoint();
+    qDebug() << "exponential:" << locale.exponential();
+    for (auto i=1; i<12; i++) {
+        qDebug() << "month(" << i << "):" << locale.monthName(i);
+    }
+
+    print_locale_info(locale);
+
+    locale = QLocale{"ko"};
+
+    print_locale_info(locale);
+
 }
 
 void test_group_separator()
@@ -43,6 +70,6 @@ void test_group_separator()
 void test_locale()
 {
     //internal::test_egytian();
-    //internal::test_default();
-    internal::test_group_separator();
+    internal::test_default();
+    //internal::test_group_separator();
 }
