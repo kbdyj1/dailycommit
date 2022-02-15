@@ -28,11 +28,6 @@ void print_locale_info(const QLocale &locale)
     auto territoryStr = locale.territoryToString(territory);
 
     qDebug() << "lang:" << languageStr << ", country:" << territoryStr;
-}
-
-void test_default()
-{
-    auto locale = QLocale::system();
 
     qDebug() << "currency symbole:" << locale.currencySymbol();
     qDebug() << "formatted data size:" << locale.formattedDataSize(1024*1024);
@@ -48,13 +43,24 @@ void test_default()
     for (auto i=1; i<12; i++) {
         qDebug() << "month(" << i << "):" << locale.monthName(i);
     }
+    qDebug() << "zeroDigit:" << locale.zeroDigit();
 
+    qDebug() << "uiLanguages.---------------------------------------------------";
+    for (auto uiLanguage : locale.uiLanguages()) {
+        qDebug() << uiLanguage;
+    }
+    qDebug() << "uiLanguages.---------------------------------------------------";
+}
+
+void test_default()
+{
+    qDebug() << "system locale =================================================";
+    auto locale = QLocale::system();
     print_locale_info(locale);
 
+    qDebug() << "locale{ko} ====================================================";
     locale = QLocale{"ko"};
-
     print_locale_info(locale);
-
 }
 
 void test_group_separator()

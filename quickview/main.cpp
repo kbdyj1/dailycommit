@@ -46,6 +46,7 @@ void testJsEngine();
 void testJavaScript(QQuickView *view);
 void test_http(QQuickView *view);
 void testLocalStorage(QQuickView *view);
+void testSimpleQml(QQuickView *view, const QString &url);
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -59,7 +60,8 @@ void launchQuickView() {
     //testJsEngine();
     //testJavaScript(view);
     //test_http(view);
-    testLocalStorage(view);
+    //testLocalStorage(view);
+    testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
 
     view->show();
 }
