@@ -13,6 +13,7 @@ void test_sql();
 void test_xml();
 void test_json();
 void test_locale();
+void test_atomic();
 
 void testConsole()
 {
@@ -27,7 +28,8 @@ void testConsole()
     //test_sql();
     //test_xml();
     //test_json();
-    test_locale();
+    //test_locale();
+    test_atomic();
 }
 
 int main(int argc, char *argv[])
