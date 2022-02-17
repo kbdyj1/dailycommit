@@ -1,6 +1,6 @@
 TARGET = quickview
 
-QT += quick qml quick3d statemachine webview
+QT += quick qml quick3d statemachine webview networkauth
 
 QMLS = ./qml
 JS_DIR = ./js
@@ -21,6 +21,7 @@ SOURCES += \
    src/test_javascript.cpp \
    src/test_jsengine.cpp \
    src/test_localStorage.cpp \
+   src/test_oauth2.cpp \
    src/test_simpleQml.cpp
 
 HEADERS += \

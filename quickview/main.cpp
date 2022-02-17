@@ -9,6 +9,21 @@
  * Qt property binding example
  *
  */
+void test_oauth2();
+void testBinding()
+{
+    Rectangle rect;
+
+    auto notifier = rect.bindableArea().addNotifier([&]{
+        qDebug() << "area: " << rect.area();
+    });
+
+    Qt::beginPropertyUpdateGroup();
+    rect.setWidth(30);
+    rect.setHeight(30);
+    Qt::endPropertyUpdateGroup();
+}
+
 void launchGuiApplication(QGuiApplication &app) {
 
     QQmlApplicationEngine engine;
@@ -20,16 +35,7 @@ void launchGuiApplication(QGuiApplication &app) {
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    Rectangle rect;
-
-    auto notifier = rect.bindableArea().addNotifier([&]{
-        qDebug() << "area: " << rect.area();
-    });
-
-    Qt::beginPropertyUpdateGroup();
-    rect.setWidth(30);
-    rect.setHeight(30);
-    Qt::endPropertyUpdateGroup();
+    testBinding();
 }
 
 /*
@@ -73,11 +79,10 @@ int mainQuickView(int argc, char *argv[])
 
     QtWebView::initialize();
 
-#if (0)
-    launchGuiApplication(app);
-#else
-    launchQuickView();
-#endif
+    //launchGuiApplication(app);
+    //launchQuickView();
+    test_oauth2();
+
     return app.exec();
 }
 
