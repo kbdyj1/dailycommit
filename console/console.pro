@@ -18,6 +18,7 @@ SOURCES = main.cpp \
         src/test_json.cpp \
         src/test_locale.cpp \
         src/test_network.cpp \
+        src/test_qsettings.cpp \
         src/test_qtcontainer.cpp \
         src/test_sql.cpp \
         src/test_stringview.cpp \
