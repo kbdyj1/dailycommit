@@ -1,11 +1,12 @@
 #include <concepts>
 #include <iostream>
-#include <ranges>
+//#include <ranges>
 #include <vector>
 #include <span>
 #include <cmath>
 #include <chrono>
 #include <string>
+#include <utility>
 
 #if (0) // not supported in my environment.
 export module ch1;
@@ -163,12 +164,15 @@ void test_math_util()
         std::cout << " x<y: false";
     }
     std::cout << std::endl;
+
+#if !defined(OS_MAC)
     if (std::cmp_less(x, y)) {
         std::cout << "std::cmp_less(x,y): true";
     } else {
         std::cout << "std::cmp_less(x,y): false";
     }
     std::cout << std::endl;
+#endif
 }
 
 /******************************************************************************
