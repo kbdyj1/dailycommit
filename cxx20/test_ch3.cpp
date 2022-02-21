@@ -112,11 +112,53 @@ void test_overload()
     std::cout << std::endl;
 }
 
+/******************************************************************************
+ * same_as
+ */
+template <typename T, typename ... U>
+concept IsAnyOf = (std::same_as<T, U> || ...);
+
+template <typename T>
+concept IsPrintable = std::integral<T> || std::floating_point<T> ||
+        IsAnyOf<std::remove_cvref_t<std::remove_pointer_t<std::decay_t<T>>>, char, wchar_t>;
+
+void println(IsPrintable auto const ... args)
+{
+    (std::wcout << ... << args) << std::endl;
 }
+
+void test_same_as()
+{
+    println("Example: ", 3.14, " : ", 42, " : [", 'a', L'-', L"Z]");
+}
+
+/******************************************************************************
+ * derived_from
+ */
+class A{};
+class B : public A{};
+class C : private A{};
+
+void test_derived_from()
+{
+    static_assert(std::derived_from<B, B> == true);
+    static_assert(std::derived_from<int, int> == false);
+    static_assert(std::derived_from<B, A> == true);
+    static_assert(std::derived_from<C, A> == false);
+
+    static_assert(std::is_base_of<B, B>() == true);
+    static_assert(std::is_base_of<int, int>() == false);
+    static_assert(std::is_base_of<A, B>() == true);
+    static_assert(std::is_base_of<A, C>() == true);
+}
+
+} // namespace
 
 void test_ch3()
 {
     //test_sort();
     //test_sum();
-    test_overload();
+    //test_overload();
+    //test_same_as();
+    test_derived_from();
 }
