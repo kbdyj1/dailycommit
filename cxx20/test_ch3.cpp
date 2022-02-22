@@ -2,6 +2,15 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+#include <utility>
+
+#define SHOW(...)   \
+    std::cout   << #__VA_ARGS__ << " : "\
+                << std:: __VA_ARGS__    \
+                << std::endl;
 
 namespace
 {
@@ -135,9 +144,12 @@ void test_same_as()
 /******************************************************************************
  * derived_from
  */
+namespace derived_from
+{
 class A{};
 class B : public A{};
 class C : private A{};
+class D{};
 
 void test_derived_from()
 {
@@ -145,14 +157,221 @@ void test_derived_from()
     static_assert(std::derived_from<int, int> == false);
     static_assert(std::derived_from<B, A> == true);
     static_assert(std::derived_from<C, A> == false);
+#if (0)
+    static_assert(std::is_base_of<B, B>::value == true);
+    static_assert(std::is_base_of<int, int>::value == false);
+    static_assert(std::is_base_of<A, B>::value == true);
+    static_assert(std::is_base_of<A, C>::value == true);
+#else
+    std::cout << std::boolalpha;
+    SHOW( is_base_of_v<A, A> );
+    SHOW( is_base_of_v<A, B> );
+    SHOW( is_base_of_v<A, C> );
+    SHOW( is_base_of_v<A, D> );
+    SHOW( is_base_of_v<B, A> );
+    SHOW( is_base_of_v<int, int> );
+#endif
+}
+} // derived_from
 
-    static_assert(std::is_base_of<B, B>() == true);
-    static_assert(std::is_base_of<int, int>() == false);
-    static_assert(std::is_base_of<A, B>() == true);
-    static_assert(std::is_base_of<A, C>() == true);
+/******************************************************************************
+ * derived_from
+ */
+namespace convertible_to
+{
+class A{};
+class B : public A{};
+class C : private A{};
+class D{};
+
+void test_convertible_to()
+{
+    std::cout << std::boolalpha;
+    SHOW( convertible_to<A, B> );
+    SHOW( convertible_to<A, C> );
+    SHOW( convertible_to<A, D> );
+    SHOW( convertible_to<B, A> );
+    SHOW( convertible_to<C, A> );
+    SHOW( convertible_to<D, A> );
+    SHOW( convertible_to<int, double> );
+    SHOW( convertible_to<int, bool> );
+    SHOW( convertible_to<bool, int> );
+    SHOW( convertible_to<const char*, std::string> );
+}
+} // convertible_to
+
+/******************************************************************************
+ * common_reference_with
+ */
+template <typename T, typename U>
+concept common_reference_with =
+        std::same_as<std::common_reference_t<T, U>, std::common_reference_t<U, T>> &&
+        std::convertible_to<T, std::common_reference_t<T, U>> &&
+        std::convertible_to<U, std::common_reference_t<T, U>>;
+
+template <typename T, typename U>
+requires common_reference_with<T, U>
+void f()
+{
+    std::cout << "T, U share a common reference type." << std::endl;
+}
+
+template <typename T, typename U>
+void f()
+{
+    std::cout << "T, U does not share a common reference type." << std::endl;
+}
+
+void test_common_reference_with()
+{
+    f<std::size_t&, int&>();
+    f<std::string&, std::string_view&>();
+    f<std::vector<int>, std::vector<int>&>();
+    f<std::vector<int>, std::vector<double>>();
+    f<std::pair<int&, double&>, std::pair<int, double>>();
+}
+
+template <typename T, typename U>
+requires std::common_with<T, U>
+void g()
+{
+    std::cout << "T, U share a common type" << std::endl;
+}
+
+template <typename T, typename U>
+void g()
+{
+    std::cout << "T, U does not share a common type" << std::endl;
+}
+
+void test_common_with()
+{
+    g<std::size_t&, int&>();
+    g<std::string&, std::string_view&>();
+    g<std::vector<int>, std::vector<int>&>();
+    g<std::vector<int>, std::vector<double>>();
+    g<std::pair<int&, double&>, std::pair<int, double>>();
 }
 
 } // namespace
+
+namespace assignable_from
+{
+template <typename T, typename U>
+requires std::assignable_from<T, U>
+void h(const char *name, const char *arg)
+{
+    std::cout << name << " is assignable from " << arg << std::endl;
+}
+
+template <typename T, typename U>
+void h(const char *name, const char *arg)
+{
+    std::cout << name << " is not assignable from " << arg << std::endl;
+}
+
+struct S
+{
+    S& operator=(const S&) = default;
+    S& operator=(S&&) = delete;
+};
+
+void test_assign_from()
+{
+    h<int&, short>("int&", "short");
+    h<std::vector<int>&, std::vector<int>>("std::vector<int>&", "std::vector<int>");
+    h<std::unique_ptr<int>&, std::unique_ptr<int>>("std::unique_ptr<int>&", "std::unique_ptr<int>");
+    h<S&, S&>("S&", "S&");
+    h<std::unique_ptr<int>&, std::unique_ptr<int>&>("std::unique_ptr<int>&", "std::unique_ptr<int>&");
+    h<S&, S>("S&", "S");
+}
+} // assignable_from
+
+/******************************************************************************
+ * swappalbe
+ */
+namespace swappable
+{
+
+template <typename T>
+requires std::swappable<T>
+void f(const char *name)
+{
+    std::cout << name << " is swappable" << std::endl;
+}
+
+template <typename T>
+void f(const char *name)
+{
+    std::cout << name << " is not swappable" << std::endl;
+}
+
+struct Swappable1
+{
+    Swappable1(int m) : n(m)
+    {}
+    Swappable1(Swappable1 &&) = delete;
+
+    int n;
+};
+void swap(Swappable1 &lhs, Swappable1 &rhs)
+{
+    std::swap(lhs.n, rhs.n);
+}
+
+struct Swappable2
+{
+    Swappable2(double v) : d(v)
+    {}
+    Swappable2(Swappable2&&) = delete;
+
+    double d;
+
+    friend void swap(Swappable2& lhs, Swappable2& rhs) {
+        std::swap(lhs.d, rhs.d);
+    }
+};
+
+struct NotSwappalbe
+{
+    NotSwappalbe(NotSwappalbe &&) = delete;
+    NotSwappalbe& operator==(NotSwappalbe&&) = delete;
+};
+
+void test_swappable()
+{
+    // OK
+    f<int>("int");
+    f<int&&>("int&&");
+    f<Swappable1>("Swappable1");
+    f<Swappable2>("Swappable2");
+    f<int[5]>("int[5]");
+
+    std::cout << std::endl;
+
+    // NG
+    f<const int>("const int");
+    f<NotSwappalbe>("NotSwappable");
+}
+
+} // swappable
+
+/******************************************************************************
+ * is_object
+ */
+namespace is_object
+{
+class A{};
+
+void test_is_object()
+{
+    std::cout << std::boolalpha;
+    SHOW( is_object_v<int>  );
+    SHOW( is_object_v<int&> );
+    SHOW( is_object_v<A>    );
+    SHOW( is_object_v<A&>   );
+}
+} // is_object
 
 void test_ch3()
 {
@@ -160,5 +379,11 @@ void test_ch3()
     //test_sum();
     //test_overload();
     //test_same_as();
-    test_derived_from();
+    //derived_from::test_derived_from();
+    //convertible_to::test_convertible_to();
+    //test_common_reference_with();
+    //test_common_with();
+    //assignable_from::test_assign_from();
+    swappable::test_swappable();
+    //is_object::test_is_object();
 }
