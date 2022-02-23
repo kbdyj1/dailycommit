@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <utility>
+#include <random>
 
 #define SHOW(...)   \
     std::cout   << #__VA_ARGS__ << " : "\
@@ -373,6 +374,173 @@ void test_is_object()
 }
 } // is_object
 
+/******************************************************************************
+ * movable concepts
+ */
+namespace movable
+{
+
+template <std::movable T>
+void f(const char *name)
+{
+    std::cout << name << " is movable" << std::endl;
+}
+
+template <typename T>
+void f(const char *name)
+{
+    std::cout << name << " is not movable" << std::endl;
+}
+
+struct Movable
+{
+    Movable(Movable&&) = default;
+    Movable& operator=(Movable&&) = default;
+};
+
+struct NotMovable1
+{
+    NotMovable1(NotMovable1&&) = delete;
+};
+
+struct NotMovable2
+{
+    NotMovable2& operator=(NotMovable2&&) = delete;
+};
+
+void test_movable()
+{
+    // OK
+
+    f<int>("int");
+    f<double>("double");
+    f<std::nullptr_t>("std::nullptr_t");
+    f<std::size_t>("std::size_t");
+    f<Movable>("Movable");
+
+    std::cout << std::endl;
+
+    // NG
+
+    f<void>("void");
+    f<NotMovable1>("NotMovable1");
+    f<NotMovable2>("NotMovable2");
+}
+
+} // movable
+
+/******************************************************************************
+ * invocable
+ */
+namespace invocable
+{
+
+template <typename F, typename... Args>
+requires std::invocable<F, Args...>
+void f(const char *name)
+{
+    std::cout << name << " is invocalbe" << std::endl;
+}
+
+template <typename F, typename... Args>
+void f(const char *name)
+{
+    std::cout << name << " is not invocalbe" << std::endl;
+}
+
+void func(int);
+auto lambda = [](auto a) { return a; };
+auto mut_lambda = [n = 0](auto a) mutable { ++n; return n + a; };
+
+struct Invocable
+{
+    template <typename T>
+    void operator()(T&& t) const {
+        return t;
+    }
+};
+
+struct NotInvocable
+{};
+
+void test_invocable()
+{
+    // OK
+
+    f<decltype(func), int>("func(int)");
+    f<decltype(lambda), int>("lambda(int)");
+    f<decltype(lambda), int*>("lambda(int*)");
+    f<Invocable, int>("Invocable(int)");
+    f<Invocable, int***>("Invocable(int***)");
+
+    f<decltype(mut_lambda), int>("mut_lambda(int)");
+    f<std::mt19937>("std::mt19937()");
+
+    std::cout << std::endl;
+
+    // NG
+
+    f<decltype(func), int*>("func(int*)");
+    f<NotInvocable>("NotInvocable()");
+    f<NotInvocable, int>("NotInvocalbe(int)");
+}
+
+} // invocable
+
+/******************************************************************************
+ * predicate
+ */
+namespace predicate
+{
+
+template <typename F, typename... Args>
+requires std::predicate<F, Args...>
+void f(const char *name)
+{
+    std::cout << name << " is predicate" << std::endl;
+}
+
+template <typename F, typename... Args>
+void f(const char *name)
+{
+    std::cout << name << " is not predicate" << std::endl;
+}
+
+bool func1(int);
+int func2(int);
+int* func3(int);
+auto lambda = [](auto a) { return a < 10; };
+
+struct Predicate {
+    bool operator()(int n) const {
+        return n < 10;
+    }
+};
+
+struct NotPredicate {
+    void operator()(int)
+    {}
+};
+
+void test_predicate()
+{
+    f<decltype(func1), int>("func1(int)");
+    f<decltype(func2), int>("func1(int)");
+    f<decltype(func3), int>("func1(int)");
+    f<decltype(lambda), int>("lambda(int)");
+    f<std::mt19937>("std::mt19937()");
+    f<Predicate, int>("Predicate(int)");
+
+    std::cout << std::endl;
+
+    f<NotPredicate, int>("NotPredicate(int)");
+}
+
+} // predicate
+
+/*=============================================================================
+ * M A I N
+ */
 void test_ch3()
 {
     //test_sort();
@@ -384,6 +552,9 @@ void test_ch3()
     //test_common_reference_with();
     //test_common_with();
     //assignable_from::test_assign_from();
-    swappable::test_swappable();
+    //swappable::test_swappable();
     //is_object::test_is_object();
+    //movable::test_movable();
+    //invocable::test_invocable();
+    predicate::test_predicate();
 }
