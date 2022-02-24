@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 #include <random>
+#include <unordered_set>
 
 #define SHOW(...)   \
     std::cout   << #__VA_ARGS__ << " : "\
@@ -538,6 +539,119 @@ void test_predicate()
 
 } // predicate
 
+/******************************************************************************
+ * custom
+ */
+namespace custom
+{
+
+template <typename T>
+concept Addable = requires (T a, T b) {
+    a + b;
+};
+
+template <Addable T>
+T tadd(T a, T b) {
+    return a + b;
+}
+
+template <typename>
+struct Other;
+
+template <>
+struct Other<std::vector<int>>
+{};
+
+template <typename T>
+concept TypeRequirement = requires {
+        typename T::value_type;
+        typename Other<T>;
+};
+
+void test_type_requirement()
+{
+    TypeRequirement auto vec = std::vector<int>{1, 2, 3};
+}
+
+// compound requirement
+template <typename T>
+concept Equal = requires(T a, T b) {
+    { a == b } -> std::convertible_to<bool>;
+    { a != b } -> std::convertible_to<bool>;
+};
+
+bool isEqual(Equal auto a, Equal auto b)
+{
+    return a == b;
+}
+
+struct WithoutEqual {
+    bool operator==(const WithoutEqual&) = delete;
+};
+
+struct WithoutNotEqual {
+    bool operator!=(const WithoutNotEqual&) = delete;
+};
+
+void test_compound_requirement()
+{
+    std::cout << std::boolalpha;
+    std::cout << "isEqual(1, 5) : " << isEqual(1, 5) << std::endl;
+
+#if (0)
+    WithoutEqual we0, we1;
+
+    //note: because 'a == b' would be invalid: overload resolution selected deleted operator '=='
+    //{ a == b } -> std::convertible_to<bool>;
+    isEqual(we0, we1);
+#endif
+}
+
+// nested requirement
+template <typename T>
+concept Integral = std::is_integral_v<T>;
+
+template <typename T>
+concept SignedIntegral = Integral<T> && std::is_signed_v<T>;
+
+template <typename T>
+concept UnsignedIntegral = Integral<T> &&
+requires(T) {
+    requires !SignedIntegral<T>;
+};
+
+void test_nested_requirement()
+{
+    UnsignedIntegral auto n = 5u;
+}
+
+template <typename T>
+concept Ordering =
+    Equal<T> &&
+    requires (T a, T b) {
+        { a <= b } -> std::convertible_to<bool>;
+        { a < b } -> std::convertible_to<bool>;
+        { a > b } -> std::convertible_to<bool>;
+        { a >= b } -> std::convertible_to<bool>;
+};
+
+template <Ordering T>
+T getSmaller(const T& a, const T& b) {
+    return (a < b) ? a : b;
+}
+
+void test_ordering()
+{
+    std::cout << std::boolalpha;
+    std::cout << "getSmaller(1, 5) : " << getSmaller(1, 5) << std::endl;
+    std::unordered_set<int> set0{1, 2, 3, 4, 5};
+    std::unordered_set<int> set1{5, 4, 3, 2, 1};
+
+    std::cout << "isEqual(set0, set1) : " << isEqual(set0, set1) << std::endl;
+}
+
+} // custom
+
 /*=============================================================================
  * M A I N
  */
@@ -556,5 +670,8 @@ void test_ch3()
     //is_object::test_is_object();
     //movable::test_movable();
     //invocable::test_invocable();
-    predicate::test_predicate();
+    //predicate::test_predicate();
+    //custom::test_type_requirement();
+    //custom::test_compound_requirement();
+    custom::test_ordering();
 }
