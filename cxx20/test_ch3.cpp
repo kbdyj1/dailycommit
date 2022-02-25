@@ -650,6 +650,62 @@ void test_ordering()
     std::cout << "isEqual(set0, set1) : " << isEqual(set0, set1) << std::endl;
 }
 
+template <typename T>
+struct IsSemiRegular : std::integral_constant<bool,
+        std::is_default_constructible_v<T> &&
+        std::is_copy_constructible_v<T> &&
+        std::is_copy_assignable_v<T> &&
+        std::is_move_constructible_v<T> &&
+        std::is_move_assignable_v<T> &&
+        std::is_destructible_v<T> &&
+        std::is_swappable_v<T>>
+{};
+
+template <typename T>
+concept SemiRegular = IsSemiRegular<T>::value;
+
+template <typename T>
+concept Regular = Equal<T> && SemiRegular<T>;
+
+template <Regular T>
+void likeInt(T)
+{
+    std::cout << "like int" << std::endl;
+}
+
+template <std::regular T>
+void likeStdInt(T)
+{
+    std::cout << "like std int" << std::endl;
+}
+
+struct EqualityComparable{};
+bool operator==(EqualityComparable const &, EqualityComparable const &)
+{
+    return true;
+}
+
+struct NonEqualityComparable{};
+
+void test_reqular()
+{
+    auto myInt = int{};
+    likeInt(myInt);
+    likeStdInt(myInt);
+
+    auto myVec = std::vector<int>{};
+    likeInt(myVec);
+    likeStdInt(myVec);
+
+    auto eq = EqualityComparable{};
+    likeInt(eq);
+    likeStdInt(eq);
+
+    auto neq = NonEqualityComparable{};
+    likeInt(neq);
+    likeStdInt(neq);
+}
+
 } // custom
 
 /*=============================================================================
