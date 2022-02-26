@@ -700,10 +700,11 @@ void test_reqular()
     auto eq = EqualityComparable{};
     likeInt(eq);
     likeStdInt(eq);
-
+#if (0)
     auto neq = NonEqualityComparable{};
     likeInt(neq);
     likeStdInt(neq);
+#endif
 }
 
 } // custom
