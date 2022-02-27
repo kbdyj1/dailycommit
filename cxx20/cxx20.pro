@@ -16,4 +16,5 @@ SOURCES += \
         main.cpp \
         test_ch1.cpp \
         test_ch3.cpp \
-        test_ch3_2_module.cpp
+        test_ch3_2_module.cpp \
+        test_ch3_3_3way_comparision.cpp

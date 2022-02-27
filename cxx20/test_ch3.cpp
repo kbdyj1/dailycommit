@@ -9,6 +9,8 @@
 #include <random>
 #include <unordered_set>
 
+#ifndef OS_MAC
+
 #define SHOW(...)   \
     std::cout   << #__VA_ARGS__ << " : "\
                 << std:: __VA_ARGS__    \
@@ -732,3 +734,5 @@ void test_ch3()
     //custom::test_compound_requirement();
     custom::test_ordering();
 }
+
+#endif // OS_MAC
