@@ -6,6 +6,8 @@ using namespace std;
 void test_ch1();
 void test_ch3();
 void test_ch3_3_3way_comparision();
+void test_ch3_4_initialize();
+void test_ch3_5_const();
 
 #ifdef USE_CXX20_FEATURE_MODULE
 import math;
@@ -25,7 +27,9 @@ int main()
 #ifndef OS_MAC
     test_ch3();
 #endif
-    test_ch3_3_3way_comparision();
+    //test_ch3_3_3way_comparision();
+    //test_ch3_4_initialize();
+    test_ch3_5_const();
 
     return 0;
 }
