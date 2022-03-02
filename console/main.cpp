@@ -15,6 +15,7 @@ void test_json();
 void test_locale();
 void test_atomic();
 void test_qsettings();
+void test_rreference();
 
 void testConsole()
 {
@@ -31,7 +32,8 @@ void testConsole()
     //test_json();
     //test_locale();
     //test_atomic();
-    test_qsettings();
+    //test_qsettings();
+    test_rreference();
 }
 
 int main(int argc, char *argv[])
