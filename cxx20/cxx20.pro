@@ -19,4 +19,6 @@ SOURCES += \
         test_ch3_2_module.cpp \
         test_ch3_3_3way_comparision.cpp \
         test_ch3_4_initialize.cpp \
-        test_ch3_5_const.cpp
+        test_ch3_5_const.cpp \
+        test_ch3_5_const_init_order.cpp \
+        test_ch3_6_template_improve.cpp

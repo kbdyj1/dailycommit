@@ -1,6 +1,10 @@
 #include <iostream>
 
-namespace
+extern constinit int staticA;
+
+auto staticB = staticA;
+
+namespace //===================================================================
 {
 
 consteval int sqr(int n) {
@@ -51,15 +55,37 @@ void test3()
     int x = 15;
 
     auto n3 = sqrRunTime(x);
-    auto n4 = sqrCompileTime(x);
+    //auto n4 = sqrCompileTime(x);
 }
 
-} // namespace
+constexpr int constExprValue = 1000;
+constinit int constInitValue = 1100;
+
+int inc4(int value) { return ++value; }
+
+void test4()
+{
+    auto val = 1000;
+    const auto res = inc4(val);
+    std::cout << "res: " << res << std::endl;
+
+    //++res;
+    //++constExprValue;
+    std::cout << "++constInitValue: " << ++constInitValue << std::endl;
+
+    constexpr auto localConstExpr = 2000;
+    //constinit auto localConstInit = localConstExpr;
+
+    std::cout << "staticB: " << staticB << std::endl;
+}
+
+} // namespace ================================================================
 
 void test_ch3_5_const()
 {
     std::cout << std::endl;
 
     //test1();
-    test2();
+    //test2();
+    test4();
 }

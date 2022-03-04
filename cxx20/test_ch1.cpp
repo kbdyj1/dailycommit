@@ -91,8 +91,8 @@ void test_initialize()
 
     //warning: ISO C++ requires field designators to be specified in declaration order; field 'z' will be initialized after field 'y' [-Wreorder-init-list]
     //    auto p1 = Point { .x = 1, .z = 3, .y = 2 };
-    auto p1 = Point { .x = 1, .z = 3, .y = 2 };
-    print_point(p1);
+    //auto p1 = Point { .x = 1, .z = 3, .y = 2 };
+    //print_point(p1);
 }
 
 void test_ranges()
