@@ -9,6 +9,7 @@ void test_ch3_3_3way_comparision();
 void test_ch3_4_initialize();
 void test_ch3_5_const();
 void test_ch3_6();
+void test_ch3_7();
 
 #ifdef USE_CXX20_FEATURE_MODULE
 import math;
@@ -31,7 +32,8 @@ int main()
     //test_ch3_3_3way_comparision();
     //test_ch3_4_initialize();
     //test_ch3_5_const();
-    test_ch3_6();
+    //test_ch3_6();
+    test_ch3_7();
 
     return 0;
 }
