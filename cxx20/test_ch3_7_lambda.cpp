@@ -42,7 +42,7 @@ void test1()
 
 auto containerSizeGen = [](const auto &container) { return container.size(); };
 auto vectorSize = []<typename T>(const std::vector<T> &container) { return container.size(); };
-auto integralVectorSize = []<std::integral T>(const std::vector<T> &container) { return container.size(); };
+//auto integralVectorSize = []<std::integral T>(const std::vector<T> &container) { return container.size(); };
 
 class A
 {
@@ -70,7 +70,7 @@ void test2()
 
     std::cout << "containerSizeGen(vi) : " << containerSizeGen(vi) << std::endl;
     std::cout << "vectorSize(vi) : " << vectorSize(vi) << std::endl;
-    std::cout << "integralVectorSize(vi) : " << integralVectorSize(vi) << std::endl;
+//    std::cout << "integralVectorSize(vi) : " << integralVectorSize(vi) << std::endl;
 
     std::cout << std::endl;
 
@@ -136,7 +136,7 @@ void test5()
 
     auto set1 = std::set<std::string>{"Hello", "Qt", "Creator", "planet.qt.io"};
     printContainer(set1);
-
+#if (0)
     using SetDecreasing = std::set<std::string, decltype([](const auto &l, const auto &r){
         return l > r;
     })>;
@@ -158,6 +158,7 @@ void test5()
     })>;
     auto set5 = SetAbsolute{-10, 5, 3, 100, 0, -25};
     printContainer(set5);
+#endif
 }
 
 } // namespace ================================================================

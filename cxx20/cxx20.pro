@@ -24,4 +24,5 @@ SOURCES += \
         test_ch3_6_template_improve.cpp \
         test_ch3_7_lambda.cpp \
         test_ch3_8_attributes.cpp \
-        test_ch3_9_etc.cpp
+        test_ch3_9_etc.cpp \
+        test_ch4_2_span.cpp
