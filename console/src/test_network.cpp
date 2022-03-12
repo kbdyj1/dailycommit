@@ -3,11 +3,11 @@
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFuture>
 
-namespace internal
-{
+namespace { //=================================================================
 
-void testNetworkAccessManager()
+void test0()
 {
     QEventLoop eventLoop;
     QNetworkAccessManager manager;
@@ -29,9 +29,21 @@ void testNetworkAccessManager()
     delete reply;
 }
 
-} // internal
+void test1()
+{
+    auto manager = QNetworkAccessManager{};
+    auto url = QUrl{"https://api.spark.io/v1/devices/53ff70066667574852212067/reading?access_token=94f1858893b749831ee5704732a1814beea6b678"};
+    auto *reply = manager.get(QNetworkRequest{url});
+    auto future = QtFuture::connect(reply, &QNetworkReply::finished)
+            .then([reply]{
+                return reply->readAll();
+            });
+}
+
+} // namespace ================================================================
 
 void testNetwork()
 {
-    internal::testNetworkAccessManager();
+    //test0();
+    test1();
 }
