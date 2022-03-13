@@ -67,7 +67,8 @@ void launchQuickView() {
     //testJavaScript(view);
     //test_http(view);
     //testLocalStorage(view);
-    testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
+    //testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
+    testSimpleQml(view, "qrc:/quickview/qml/AttachedPropertiesAndSignalHandlers.qml");
 
     view->show();
 }
@@ -80,8 +81,8 @@ int mainQuickView(int argc, char *argv[])
     QtWebView::initialize();
 
     //launchGuiApplication(app);
-    //launchQuickView();
-    test_oauth2();
+    launchQuickView();
+    //test_oauth2();
 
     return app.exec();
 }
