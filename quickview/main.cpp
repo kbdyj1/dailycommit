@@ -53,6 +53,7 @@ void testJavaScript(QQuickView *view);
 void test_http(QQuickView *view);
 void testLocalStorage(QQuickView *view);
 void testSimpleQml(QQuickView *view, const QString &url);
+void test_defaultProperty(QQuickView *view, const QString &url);
 
 void launchQuickView() {
     QQuickView *view = new QQuickView;    
@@ -68,7 +69,8 @@ void launchQuickView() {
     //test_http(view);
     //testLocalStorage(view);
     //testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
-    testSimpleQml(view, "qrc:/quickview/qml/AttachedPropertiesAndSignalHandlers.qml");
+    //testSimpleQml(view, "qrc:/quickview/qml/AttachedPropertiesAndSignalHandlers.qml");
+    test_defaultProperty(view, "qrc:/quickview/qml/TestDefaultProperty.qml");
 
     view->show();
 }

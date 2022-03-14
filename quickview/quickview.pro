@@ -17,6 +17,7 @@ SOURCES += \
    $$SRC_DIR/test_quick3d.cpp \
    $$SRC_DIR/test_stateMachine.cpp \
    $$SRC_DIR/test_jsvalue.cpp \
+   src/test_defaultProperty.cpp \
    src/test_http.cpp \
    src/test_javascript.cpp \
    src/test_jsengine.cpp \
@@ -26,7 +27,9 @@ SOURCES += \
 
 HEADERS += \
     $$HDR_DIR/Actor.h \
-    $$HDR_DIR/Rectangle.h
+    $$HDR_DIR/Rectangle.h \
+    include/BirthdayParty.h \
+    include/Person.h
 
 resources.files = \
     qml/main.qml \
@@ -42,6 +45,7 @@ resources.files = \
     qml/LocalStorageSample.qml \
     qml/TestInput.qml \
     qml/AttachedPropertiesAndSignalHandlers.qml \
+    qml/TestDefaultProperty.qml \
     qml/my_button_impl.js \
     qml/factorial.js \
     qml/common_button_impl.js
@@ -62,6 +66,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+
 
 
 
