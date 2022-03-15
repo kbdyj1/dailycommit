@@ -70,7 +70,8 @@ void launchQuickView() {
     //testLocalStorage(view);
     //testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
     //testSimpleQml(view, "qrc:/quickview/qml/AttachedPropertiesAndSignalHandlers.qml");
-    test_defaultProperty(view, "qrc:/quickview/qml/TestDefaultProperty.qml");
+    //test_defaultProperty(view, "qrc:/quickview/qml/TestDefaultProperty.qml");
+    testSimpleQml(view, "qrc:/quickview/qml/TestQuick.qml");
 
     view->show();
 }
