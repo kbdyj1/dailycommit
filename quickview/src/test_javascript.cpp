@@ -2,7 +2,7 @@
 #include <QQuickItem>
 #include <QQmlEngine>
 
-#include <sys/sysinfo.h>
+//#include <sys/sysinfo.h>
 #include <unistd.h>
 
 // QML provides a JavaScript host environment (ECMA-262 7th edition)

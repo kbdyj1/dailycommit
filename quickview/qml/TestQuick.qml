@@ -31,8 +31,23 @@ Rectangle {
             name: "Stop"
             when: count == 10
             PropertyChanges { target: clickArea; enabled: false }
+            StateChangeScript { name: "playBanner"; script: playBanner.start() }
         }
     ]
+    // animates transitions during state changes
+    Behavior on color { ColorAnimation { target: signal; duration: 250 } }
+
+    transitions: [
+        Transition {
+            from: "Normal"; to: "Critical";
+            NumberAnimation { target: text; properties: "font.pixelSize"; to: 36; easing: Easing.InBack; duration: 200 }
+        },
+        Transition {
+            from: "Critical"; to: "Normal";
+            NumberAnimation { target: text; properties: "font.pixelSize"; to: 18; easing: Easing.OutElastic; duration: 200 }
+        }
+    ]
+
     Item {
         id: smallArea
 
@@ -75,5 +90,40 @@ Rectangle {
         font.bold: true
         font.pointSize: 18
         color: "yellow"
+    }
+    Item {
+        id: banner
+        anchors.fill: parent
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: 16
+            spacing: 4
+            Text {
+                id: textAnimation
+                text: "Animation"
+                opacity: 0.0
+                color: "white"
+            }
+            Text {
+                id: textDone
+                text: "Done"
+                opacity: 0.0
+                color: "white"
+            }
+            Text {
+                id: textByMe
+                text: "by ymhong"
+                opacity: 0.0
+                color: "white"
+            }
+        }
+        SequentialAnimation {
+            id: playBanner
+            running: false
+            NumberAnimation { target: textAnimation; properties: "opacity"; to: 0.75; duration: 200 }
+            NumberAnimation { target: textDone; properties: "opacity"; to: 0.75; duration: 200 }
+            NumberAnimation { target: textByMe; properties: "opacity"; to: 0.75; duration: 200 }
+        }
     }
 }
