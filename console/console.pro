@@ -22,6 +22,7 @@ SOURCES = main.cpp \
         src/test_qsettings.cpp \
         src/test_qtcontainer.cpp \
         src/test_rreference.cpp \
+        src/test_sharedmemory.cpp \
         src/test_sql.cpp \
         src/test_stringview.cpp \
         src/test_kdbindings.cpp \

@@ -17,6 +17,7 @@ void test_atomic();
 void test_qsettings();
 void test_rreference();
 void test_promise();
+void test_sharedMemory();
 
 void testConsole()
 {
@@ -35,7 +36,8 @@ void testConsole()
     //test_atomic();
     //test_qsettings();
     //test_rreference();
-    test_promise();
+    //test_promise();
+    test_sharedMemory();
 }
 
 int main(int argc, char *argv[])
