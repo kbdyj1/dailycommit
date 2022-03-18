@@ -71,7 +71,8 @@ void launchQuickView() {
     //testSimpleQml(view, "qrc:/quickview/qml/TestInput.qml");
     //testSimpleQml(view, "qrc:/quickview/qml/AttachedPropertiesAndSignalHandlers.qml");
     //test_defaultProperty(view, "qrc:/quickview/qml/TestDefaultProperty.qml");
-    testSimpleQml(view, "qrc:/quickview/qml/TestQuick.qml");
+    //testSimpleQml(view, "qrc:/quickview/qml/TestQuick.qml");
+    testSimpleQml(view, "qrc:/quickview/qml/TestAnimation.qml");
 
     view->show();
 }
