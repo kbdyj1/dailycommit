@@ -103,6 +103,10 @@ Item {
         if (0 < easingIndex)
             easingIndex--
     }
+    Component.onCompleted: {
+        banner0.opacity = 0.25
+        banner1.opacity = 0.25
+    }
 
     NumberAnimation {
         id: animX
@@ -123,28 +127,51 @@ Item {
         easing.type: Easing.Linear
     }
 
-    Text {
-        anchors.bottom: dummy.top; anchors.bottomMargin: 4
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 32
-        font.bold: true
-        color: "green"
-        text: "QML animations"
-        opacity: 0.25
+    component OpacityAnimation : SequentialAnimation {
+        PauseAnimation { duration: 500 }
+        NumberAnimation { duration: 3000; easing.type: Easing.InBack }
     }
+
     Item {
-        id: dummy
-        width: parent.width; height: 1
-        anchors.centerIn: parent
-    }
-    Text {
-        anchors.top: dummy.bottom; anchors.topMargin: 4
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 24
-        font.bold: true
-        color: "green"
-        text: "github.com/kbdyj1/dailycommit"
-        opacity: 0.25
+        id: banner
+        width: parent.width; height: parent.height
+
+        Text {
+            id: banner0
+            anchors.bottom: dummy.top; anchors.bottomMargin: 4
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 32
+            font.bold: true
+            color: "green"
+            text: "QML animations"
+            opacity: 0.0
+            Behavior on opacity { OpacityAnimation{} }
+        }
+        Item {
+            id: dummy
+            width: parent.width; height: 1
+            anchors.centerIn: parent
+        }
+        Text {
+            id: banner1
+            anchors.top: dummy.bottom; anchors.topMargin: 4
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 24
+            font.bold: true
+            color: "green"
+            text: "github.com/kbdyj1/dailycommit"
+            opacity: 0.0
+            Behavior on opacity { OpacityAnimation{} }
+        }
+
+        Behavior on x { SmoothedAnimation { velocity: 200 } }
+        Behavior on y { SmoothedAnimation { velocity: 200 } }
+
+        focus: true
+        Keys.onRightPressed: x = x + 100
+        Keys.onLeftPressed: x = x - 100
+        Keys.onUpPressed: y = y - 100
+        Keys.onDownPressed: y = y + 100
     }
 
     Item {
