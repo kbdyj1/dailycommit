@@ -35,9 +35,9 @@ void testConsole()
     //test_locale();
     //test_atomic();
     //test_qsettings();
-    //test_rreference();
+    test_rreference();
     //test_promise();
-    test_sharedMemory();
+    //test_sharedMemory();
 }
 
 int main(int argc, char *argv[])
