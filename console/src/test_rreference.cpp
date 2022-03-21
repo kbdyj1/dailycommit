@@ -2,6 +2,7 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <set>
 
 namespace
 {
@@ -193,6 +194,102 @@ void test6()
     //g(v);
 }
 
+class Matrix
+{
+public:
+    Matrix() { std::cout << "Matrix()" << std::endl; }
+    Matrix(const Matrix &rhs) { std::cout << "Matrix(const Matrix&)" << std::endl; }
+    Matrix(Matrix &&rhs) { std::cout << "Matrix(Matrix&&)" << std::endl; }
+
+    Matrix& operator+=(const Matrix &rhs)
+    {
+        std::cout << "operator+=(const Matrix&)" << std::endl;
+        return *this;
+    }
+};
+Matrix operator+(Matrix &&l, const Matrix &r)
+{
+    l += r;
+    return std::move(l);
+}
+class Fraction
+{
+public:
+    Fraction() { std::cout << "Fraction()" << std::endl; }
+    Fraction(const Fraction &) { std::cout << "Fraction(const Fraction&)" << std::endl; }
+    Fraction(Fraction&&) { std::cout << "Fraction(Fraction&&)" << std::endl; }
+
+    void reduce() { std::cout << "Fraction.reduce()" << std::endl; }
+};
+
+template <typename T>
+Fraction reduceAndCopy(T&& frac)
+{
+    frac.reduce();
+    return std::forward<T>(frac);
+}
+
+void test7()
+{
+    Matrix m0, m1;
+    Matrix m2 = std::move(m0) + m1;
+
+    auto frac = reduceAndCopy(Fraction{});
+}
+
+std::multiset<std::string> gNames;
+
+void log(std::chrono::time_point<std::chrono::system_clock> t, std::string str)
+{
+    std::cout << "log(t, " << str << ")" << std::endl;
+}
+#if (0)
+void logAndAdd(const std::string& name)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, name);
+
+    gNames.emplace(name);
+}
+#else
+template <typename T>
+void logAndAdd(T&& name)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, name);
+
+    gNames.emplace(std::forward<T>(name));
+}
+#endif
+
+std::string nameFromIndex(int index)
+{
+    return std::string{""};
+}
+void logAndAdd(int index)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, "logAndAdd");
+
+    gNames.emplace(nameFromIndex(index));
+}
+void test8()
+{
+    auto petName = std::string{"dog"};
+
+    logAndAdd(petName);
+    logAndAdd(std::string{"cat"});
+    logAndAdd("bird");
+
+    logAndAdd(0);
+
+//    short index = 2;
+//    logAndAdd(index);
+}
+
 } // namespace
 
 void test_rreference()
@@ -200,5 +297,6 @@ void test_rreference()
     //test2();
     //test3();
     //test4();
-    test5();
+    //test5();
+    test7();
 }
