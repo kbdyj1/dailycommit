@@ -1,5 +1,8 @@
 #include <QSharedMemory>
 #include <QDebug>
+#ifndef Q_OS_WINDOWS
+#include <unistd.h>
+#endif
 
 namespace { //=================================================================
 

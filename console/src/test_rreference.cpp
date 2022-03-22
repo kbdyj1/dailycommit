@@ -2,6 +2,8 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <set>
+#include <chrono>
 
 namespace
 {
@@ -139,11 +141,255 @@ void test4()
     s2 = s;
 }
 
+class Annotation {
+public:
+    Annotation(const std::string text) : mText(std::move(text))
+    {}
+private:
+    std::string mText;
+};
+
+class Widget
+{
+};
+
+void process(const Widget &w)
+{
+    std::cout << "process(const Widget&)" << std::endl;
+}
+void process(Widget &&w)
+{
+    std::cout << "process(Widget&&)" << std::endl;
+}
+
+template <typename T>
+void logAndProcess(T&& param)
+{
+    process(std::forward<T>(param));
+}
+
+void test5()
+{
+    Widget w;
+    logAndProcess(w);
+    logAndProcess(std::move(w));
+}
+
+template <typename T>
+void f(T&& param)
+{
+}
+
+template <typename T>
+void g(std::vector<T>&& param)
+{
+}
+
+void test6()
+{
+    Widget w;
+    f(w);
+    f(std::move(w));
+
+    auto v = std::vector<Widget>{};
+    //g(v);
+}
+
+class Matrix
+{
+public:
+    Matrix() { std::cout << "Matrix()" << std::endl; }
+    Matrix(const Matrix &rhs) { std::cout << "Matrix(const Matrix&)" << std::endl; }
+    Matrix(Matrix &&rhs) { std::cout << "Matrix(Matrix&&)" << std::endl; }
+
+    Matrix& operator+=(const Matrix &rhs)
+    {
+        std::cout << "operator+=(const Matrix&)" << std::endl;
+        return *this;
+    }
+};
+Matrix operator+(Matrix &&l, const Matrix &r)
+{
+    l += r;
+    return std::move(l);
+}
+class Fraction
+{
+public:
+    Fraction() { std::cout << "Fraction()" << std::endl; }
+    Fraction(const Fraction &) { std::cout << "Fraction(const Fraction&)" << std::endl; }
+    Fraction(Fraction&&) { std::cout << "Fraction(Fraction&&)" << std::endl; }
+
+    void reduce() { std::cout << "Fraction.reduce()" << std::endl; }
+};
+
+template <typename T>
+Fraction reduceAndCopy(T&& frac)
+{
+    frac.reduce();
+    return std::forward<T>(frac);
+}
+
+void test7()
+{
+    Matrix m0, m1;
+    Matrix m2 = std::move(m0) + m1;
+
+    auto frac = reduceAndCopy(Fraction{});
+}
+
+std::multiset<std::string> gNames;
+
+void log(std::chrono::time_point<std::chrono::system_clock> t, std::string str)
+{
+    std::cout << "log(t, " << str << ")" << std::endl;
+}
+#if (0)
+void logAndAdd(const std::string& name)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, name);
+
+    gNames.emplace(name);
+}
+#else
+template <typename T>
+void logAndAdd(T&& name)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, name);
+
+    gNames.emplace(std::forward<T>(name));
+}
+#endif
+
+std::string nameFromIndex(int index)
+{
+    return std::string{"[index]"};
+}
+void logAndAdd(int index)
+{
+    auto now = std::chrono::system_clock::now();
+
+    log(now, "logAndAdd");
+
+    gNames.emplace(nameFromIndex(index));
+}
+void test8()
+{
+    auto petName = std::string{"dog"};
+
+    logAndAdd(petName);
+    logAndAdd(std::string{"cat"});
+    logAndAdd("bird");
+
+    logAndAdd(0);
+
+//    short index = 2;
+//    logAndAdd(index);
+}
+
+class Person
+{
+public:
+#if (0)
+    template <typename T>
+    explicit Person(T&& n) : mName(std::forward<T>(n))
+    {
+        std::cout << "Person(T&&)" << std::endl;
+    }
+#else
+    explicit Person(std::string n)
+        : mName(std::move(n))
+    {}
+#endif
+
+    explicit Person(int index)
+    {
+        std::cout << "Person(int)" << std::endl;
+    }
+
+private:
+    std::string mName;
+};
+#if (0)
+class SpecialPerson : public Person
+{
+public:
+    SpecialPerson(const SpecialPerson& rhs)
+        : Person(rhs)
+    {}
+    SpecialPerson(SpecialPerson&& rhs)
+        : Person(std::move(rhs))
+    {}
+    SpecialPerson()
+        : Person("noname")
+    {}
+};
+#endif
+
+void test9()
+{
+
+#if (0)
+    //error: no matching function for call to ‘std::__cxx11::basic_string<char>::basic_string({anonymous}::Person&)’
+    //  298 |     explicit Person(T&& n) : mName(std::forward<T>(n))
+    //      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+    auto p = Person{"Nancy"};
+#else
+    const auto p = Person{"Nancy"};
+#endif
+    auto p2{p};
+
+#if (0)
+    //error: no matching function for call to ‘std::__cxx11::basic_string<char>::basic_string(const {anonymous}::SpecialPerson&)’
+    //  298 |     explicit Person(T&& n) : mName(std::forward<T>(n))
+    //      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~
+    auto s = SpecialPerson{};
+
+    auto s2{s};
+#endif
+}
+
+template <typename T>
+void logAndAddImpl(T&& name, std::false_type) // non integral type
+{
+    std::cout << "logAndAddImpl(T&&, std::false_type)" << std::endl;
+    auto now = std::chrono::system_clock::now();
+    log(now, name);
+}
+
+void logAndAddImpl(int index, std::true_type) // integral type
+{
+    std::cout << "logAndAddImpl(int, std::true_type)" << std::endl;
+    logAndAdd(nameFromIndex(index));
+}
+
+template <typename T>
+void logAndAdd2(T&& name)
+{
+    logAndAddImpl(std::forward<T>(name), std::is_integral<typename std::remove_reference_t<T>>());
+}
+
+void test10()
+{
+    logAndAdd2("Hello, Qt");
+    short index = 0;
+    logAndAdd2(index);
+}
+
 } // namespace
 
 void test_rreference()
 {
     //test2();
     //test3();
-    test4();
+    //test4();
+    //test5();
+    //test7();
+    //test9();
+    test10();
 }
