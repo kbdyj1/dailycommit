@@ -18,6 +18,7 @@ void test_qsettings();
 void test_rreference();
 void test_promise();
 void test_sharedMemory();
+void test_typeTraits();
 
 void testConsole()
 {
@@ -35,9 +36,10 @@ void testConsole()
     //test_locale();
     //test_atomic();
     //test_qsettings();
-    test_rreference();
+    //test_rreference();
     //test_promise();
     //test_sharedMemory();
+    test_typeTraits();
 }
 
 int main(int argc, char *argv[])

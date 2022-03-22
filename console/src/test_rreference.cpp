@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <chrono>
+#include <type_traits>
 
 namespace
 {
@@ -294,8 +295,12 @@ void test8()
 class Person
 {
 public:
-#if (0)
-    template <typename T>
+#if (1)
+    template <typename T,
+              typename = typename std::enable_if<
+                  !std::is_same_v<Person, typename std::decay<T>::type>
+              >::type
+    >
     explicit Person(T&& n) : mName(std::forward<T>(n))
     {
         std::cout << "Person(T&&)" << std::endl;

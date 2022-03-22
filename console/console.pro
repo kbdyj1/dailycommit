@@ -26,6 +26,7 @@ SOURCES = main.cpp \
         src/test_sql.cpp \
         src/test_stringview.cpp \
         src/test_kdbindings.cpp \
+        src/test_typetraits.cpp \
         src/test_xml.cpp
 
 HEADERS +=
