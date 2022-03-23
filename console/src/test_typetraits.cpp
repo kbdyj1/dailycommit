@@ -1,5 +1,8 @@
 #include <type_traits>
 #include <iostream>
+#include <iterator>
+#include <algorithm>
+#include <typeinfo>
 
 namespace detail {
 
@@ -148,6 +151,169 @@ void test2()
     A<double>{};
 }
 
+template <class T>
+struct my_decay
+{
+private:
+    typedef typename std::remove_reference<T>::type U;
+
+public:
+    typedef typename std::conditional<
+        std::is_array<U>::value,
+        typename std::remove_extent<U>::type*,
+        typename std::conditional<
+            std::is_function<U>::value,
+            typename std::add_pointer<U>::type,
+            typename std::remove_cv<U>::type
+        >::type
+    >::type type;
+};
+
+template <class T, class U>
+struct decay_equiv : std::is_same<typename my_decay<T>::type, U>::type
+{};
+
+void test3()
+{
+    std::cout << "decay_equiv<int, int> : " << decay_equiv<int, int>::value << std::endl;
+    std::cout << "decay_equiv<int&, int> : " << decay_equiv<int&, int>::value << std::endl;
+    std::cout << "decay_equiv<int&&, int> : " << decay_equiv<int&&, int>::value << std::endl;
+    std::cout << "decay_equiv<const int&, int> : " << decay_equiv<const int&, int>::value << std::endl;
+    std::cout << "decay_equiv<int[2], int*> : " << decay_equiv<int[2], int*>::value << std::endl;
+    std::cout << "decay_equiv<int(int), int(*)(int)> : " << decay_equiv<int(int), int(*)(int)>::value << std::endl;
+}
+
+//-------------------------------------------------------------------
+//  conditional
+//-------------------------------------------------------------------
+
+template <bool B, class T, class F>
+struct my_conditional { using type = T; };
+
+template <class T, class F>
+struct my_conditional<false, T, F> { using type = F; };
+
+void test4()
+{
+    typedef my_conditional<true, int, double>::type Type1;
+    typedef my_conditional<false, int, double>::type Type2;
+    typedef my_conditional<sizeof(int) >= sizeof(double), int, double>::type Type3;
+
+    std::cout << typeid(Type1).name() << std::endl; // i
+    std::cout << typeid(Type2).name() << std::endl; // d
+    std::cout << typeid(Type3).name() << std::endl; // d
+}
+
+//-------------------------------------------------------------------
+//  is_function
+//-------------------------------------------------------------------
+
+struct B {
+    int fun() const&;
+};
+template <typename>
+struct PM_traits
+{};
+
+template <class T, class U>
+struct PM_traits<U T::*> {
+    using member_type = U;
+};
+
+int func();
+
+void test5()
+{
+    std::cout << "std::is_function<B> : " << std::is_function<B>::value << std::endl;
+    std::cout << "std::is_function<int(int)> : " << std::is_function<int(int)>::value << std::endl;
+    std::cout << "std::is_function<decltype (func)> : " << std::is_function<decltype (func)>::value << std::endl;
+    std::cout << "std::is_function<int> : " << std::is_function<int>::value << std::endl;
+
+    using T = PM_traits<decltype (&B::fun)>::member_type;
+    std::cout << "std::is_function<T> : " << std::is_function<T>::value << std::endl;
+}
+
+//-------------------------------------------------------------------
+//  add_pointer
+//-------------------------------------------------------------------
+
+void test6()
+{
+
+}
+
+//-------------------------------------------------------------------
+//  remove_extent
+//-------------------------------------------------------------------
+template <class T>
+struct my_remove_extent { typedef T type; };
+
+template <class T>
+struct my_remove_extent<T[]> { typedef T type; };
+
+template <class T, std::size_t N>
+struct my_remove_extent<T[N]> { typedef T type; };
+
+template <class A>
+typename std::enable_if< std::rank<A>::value == 1 >::type
+print_1d(const A& a)
+{
+#if (0)
+    std::copy(a, a+std::extent<A>::value, std::ostream_iterator<typename my_remove_extent<A>::type>(std::cout, " "));
+#else
+    std::copy(a, a+3, std::ostream_iterator<int>(std::cout, " "));
+#endif
+    std::cout << std::endl;
+}
+
+void test7()
+{
+    int a[][3] = {{1, 2, 3}, {4, 5, 6}};
+    //print_1d(a);
+    print_1d(a[1]); //4 5 6
+}
+
+//-------------------------------------------------------------------
+//  rank
+//-------------------------------------------------------------------
+
+void test8()
+{
+    std::cout << std::rank<int>::value << std::endl;
+    std::cout << std::rank<int[4]>::value << std::endl;
+    std::cout << std::rank<int[2][3]>::value << std::endl;
+    std::cout << std::rank<int[][3][4]>::value << std::endl;
+    std::cout << std::rank<int[]>::value << std::endl;
+}
+
+//-------------------------------------------------------------------
+//  is_object
+//-------------------------------------------------------------------
+
+void test9()
+{
+
+}
+
+//-------------------------------------------------------------------
+//  extent
+//-------------------------------------------------------------------
+
+void test10()
+{
+    std::cout << std::extent<int[3]>::value << std::endl;
+    std::cout << std::extent<int[3][4][5], 0>::value << std::endl;
+    std::cout << std::extent<int[3][4][5], 1>::value << std::endl;
+    std::cout << std::extent<int[3][4][5], 2>::value << std::endl;
+    std::cout << std::extent<int[]>::value << std::endl;
+
+    const auto ext = std::extent<int[9]>{};
+    std::cout << ext << std::endl;
+
+    const int array[] = {1, 2, 3, 4};
+    std::cout << std::extent<decltype (array)>::value << std::endl;
+}
+
 } // namespace ================================================================
 
 void test_typeTraits()
@@ -156,5 +322,11 @@ void test_typeTraits()
 
     //test0();
     //test1();
-    test2();
+    //test2();
+    //test3();
+    //test4();
+    //test5();
+    //test7();
+    test8();
+    //test10();
 }
