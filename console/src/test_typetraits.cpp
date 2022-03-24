@@ -235,11 +235,60 @@ void test5()
 
 //-------------------------------------------------------------------
 //  add_pointer
+//
+//  If T is a reference type, then provides the member typedef type which is a pointer to the referred type.
+//  Otherwise, if T names an object type, a function type that is not cv- or ref-qualified,
+//  or a (possibly cv-qualified) void type, provides the member typedef type which is the type T*.
+//  Otherwise (if T is a cv- or ref-qualified function type), provides the member typedef type which is the type T.
 //-------------------------------------------------------------------
+
+template <class T>
+struct type_identity { using type = T; };
+
+template <class T>
+auto try_add_pointer(int) -> type_identity<typename std::remove_reference<T>::type*>;
+template <class T>
+auto try_add_pointer(...) -> type_identity<T>;
+
+template <class T>
+struct my_add_pointer : decltype(try_add_pointer<T>(0)) {};
+
+template <typename F, typename Class>
+void ptr_to_member_func_cvref_test(F Class::*)
+{
+    using FF = std::add_pointer_t<F>;
+    static_assert(std::is_same_v<F, FF>, "FF should be precisely F");
+}
+
+struct C
+{
+    void f_ref() & {}
+    void f_const() const {}
+};
 
 void test6()
 {
+    int i = 123;
+    int& ri = i;
+    typedef std::add_pointer<decltype (i)>::type IntPtr;
+    typedef std::add_pointer<decltype (ri)>::type IntRefPtr;
+    IntPtr pi = &i;
+    std::cout << "i = " << i << std::endl;
+    std::cout << "*pi = " << *pi << std::endl;
 
+    std::cout << "std::is_pointer<IntPtr> : " << std::is_pointer<IntPtr>::value << std::endl;
+    std::cout << "std::is_same<IntPtr, int*> : " << std::is_same<IntPtr, int*>::value << std::endl;
+    std::cout << "std::is_same<IntRefPtr, IntPtr> : " << std::is_same<IntRefPtr, IntPtr>::value << std::endl;
+
+    typedef std::remove_pointer<IntPtr>::type Int;
+    Int j = i;
+    std::cout << "j = " << j << std::endl;
+
+    std::cout << "std::is_pointer<Int> : " << std::is_pointer<Int>::value << std::endl;
+    std::cout << "std::is_same<Int, int> : " << std::is_same<Int, int>::value << std::endl;
+
+    ptr_to_member_func_cvref_test(&C::f_ref);
+    ptr_to_member_func_cvref_test(&C::f_const);
 }
 
 //-------------------------------------------------------------------
@@ -290,9 +339,24 @@ void test8()
 //  is_object
 //-------------------------------------------------------------------
 
+template <class T>
+struct my_is_object : std::integral_constant<bool,
+        std::is_scalar<T>::value ||
+        std::is_array<T>::value ||
+        std::is_union<T>::value ||
+        std::is_class<T>::value>
+{};
+
+class D
+{
+};
+
 void test9()
 {
-
+    std::cout << "std::is_object<int> : " << std::is_object<int>::value << std::endl;
+    std::cout << "std::is_object<int&> : " << std::is_object<int&>::value << std::endl;
+    std::cout << "std::is_object<D> : " << std::is_object<D>::value << std::endl;
+    std::cout << "std::is_object<D&> : " << std::is_object<D&>::value << std::endl;
 }
 
 //-------------------------------------------------------------------
@@ -314,6 +378,40 @@ void test10()
     std::cout << std::extent<decltype (array)>::value << std::endl;
 }
 
+//-------------------------------------------------------------------
+//  is_scalar
+//-------------------------------------------------------------------
+
+template <class T>
+struct my_is_scalar : std::integral_constant<bool,
+        std::is_arithmetic<T>::value ||
+        std::is_enum<T>::value ||
+        std::is_pointer<T>::value ||
+        std::is_member_pointer<T>::value ||
+        std::is_null_pointer<T>::value>
+{};
+
+template <typename Head, typename... Tail>
+void are_scalars(Head&& head, Tail&&... tail)
+{
+    using T = std::decay_t<decltype (head)>;
+    std::cout << typeid(T).name() << " is " << (std::is_scalar<T>::value ? "" : "not ") << "a scalar" << std::endl;
+    if constexpr (sizeof... (Tail)) {
+        are_scalars(std::forward<decltype (tail)>(tail)...);
+    }
+}
+
+struct S { int m; };
+
+void test11()
+{
+    S s;
+    int S::* p = &S::m;
+    enum class E { e };
+
+    are_scalars(42, 3.14, E::e, "str", p, nullptr, s);
+}
+
 } // namespace ================================================================
 
 void test_typeTraits()
@@ -326,7 +424,10 @@ void test_typeTraits()
     //test3();
     //test4();
     //test5();
+    //test6();
     //test7();
-    test8();
+    //test8();
+    //test9();
     //test10();
+    test11();
 }
