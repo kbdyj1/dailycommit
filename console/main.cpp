@@ -19,6 +19,7 @@ void test_rreference();
 void test_promise();
 void test_sharedMemory();
 void test_typeTraits();
+void test_functional();
 
 void testConsole()
 {
@@ -39,7 +40,8 @@ void testConsole()
     //test_rreference();
     //test_promise();
     //test_sharedMemory();
-    test_typeTraits();
+    //test_typeTraits();
+    test_functional();
 }
 
 int main(int argc, char *argv[])

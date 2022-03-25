@@ -14,6 +14,7 @@ SOURCES = main.cpp \
         src/test_concurrent.cpp \
         src/test_cxx17.cpp \
         src/test_cxx2a.cpp \
+        src/test_function.cpp \
         src/test_iodevice.cpp \
         src/test_json.cpp \
         src/test_locale.cpp \
