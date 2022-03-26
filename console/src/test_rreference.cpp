@@ -298,11 +298,12 @@ public:
 #if (1)
     template <typename T,
               typename = typename std::enable_if<
-                  !std::is_same_v<Person, typename std::decay<T>::type>
+                  !std::is_base_of_v<Person, typename std::decay<T>::type>
               >::type
     >
     explicit Person(T&& n) : mName(std::forward<T>(n))
     {
+        static_assert (std::is_constructible<std::string, T>::value, "n can't be used to construct a std::string");
         std::cout << "Person(T&&)" << std::endl;
     }
 #else
@@ -386,6 +387,16 @@ void test10()
     logAndAdd2(index);
 }
 
+void test11()
+{
+#if (0)
+    //error: static assertion failed: n can't be used to construct a std::string
+    //  306 |         static_assert (std::is_constructible<std::string, T>::value, "n can't be used to construct a std::string");
+    //      |                                                               ^~~~~
+    Person p{u"Hello, Qt6"};
+#endif
+}
+
 } // namespace
 
 void test_rreference()
@@ -396,5 +407,6 @@ void test_rreference()
     //test5();
     //test7();
     //test9();
-    test10();
+    //test10();
+    test11();
 }
