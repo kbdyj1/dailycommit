@@ -22,6 +22,7 @@ void test_sharedMemory();
 void test_typeTraits();
 void test_functional();
 void test_array();
+void test_forwarding();
 
 void testConsole()
 {
@@ -44,7 +45,8 @@ void testConsole()
     //test_sharedMemory();
     //test_typeTraits();
     //test_functional();
-    test_array();
+    //test_array();
+    test_forwarding();
 }
 
 int main(int argc, char *argv[])
