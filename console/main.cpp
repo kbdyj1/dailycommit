@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <iostream>
 
 void testStringView();
 void testKDBindings();
@@ -20,6 +21,7 @@ void test_promise();
 void test_sharedMemory();
 void test_typeTraits();
 void test_functional();
+void test_array();
 
 void testConsole()
 {
@@ -41,7 +43,8 @@ void testConsole()
     //test_promise();
     //test_sharedMemory();
     //test_typeTraits();
-    test_functional();
+    //test_functional();
+    test_array();
 }
 
 int main(int argc, char *argv[])
@@ -49,6 +52,8 @@ int main(int argc, char *argv[])
 	QCoreApplication app(argc, argv);
 	
     testConsole();
+
+    std::cout.flush();
 
 	return app.exec();
 }
