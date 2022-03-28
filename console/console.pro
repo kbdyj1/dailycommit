@@ -15,10 +15,12 @@ SOURCES = main.cpp \
         src/test_concurrent.cpp \
         src/test_cxx17.cpp \
         src/test_cxx2a.cpp \
+        src/test_emplace_back.cpp \
         src/test_forwarding.cpp \
         src/test_function.cpp \
         src/test_iodevice.cpp \
         src/test_json.cpp \
+        src/test_lambda.cpp \
         src/test_locale.cpp \
         src/test_network.cpp \
         src/test_promise.cpp \

@@ -23,6 +23,8 @@ void test_typeTraits();
 void test_functional();
 void test_array();
 void test_forwarding();
+void test_emplace_back();
+void test_lambda();
 
 void testConsole()
 {
@@ -46,7 +48,9 @@ void testConsole()
     //test_typeTraits();
     //test_functional();
     //test_array();
-    test_forwarding();
+    //test_forwarding();
+    //test_emplace_back();
+    test_lambda();
 }
 
 int main(int argc, char *argv[])
