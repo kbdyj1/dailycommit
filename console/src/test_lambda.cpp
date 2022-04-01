@@ -106,6 +106,61 @@ void test4()
     f();
 }
 
+void test5()
+{
+    auto v = std::vector<double>{1.0, 2.0, 3.0};
+
+#if (0)
+    auto func = [v = std::move(v)]{
+        std::cout << "using lambda" << std::endl;
+        std::copy(std::begin(v), std::end(v), std::ostream_iterator<double>(std::cout, " "));
+    };
+#else
+    #define MAKE_MUTABLE
+
+    // using c++ bind
+    auto func = std::bind(
+    #ifdef MAKE_MUTABLE
+        [](std::vector<double>& v) mutable {
+    #else
+        [](const std::vector<double>& v){
+    #endif
+        std::cout << "using std::bind()" << std::endl;
+        std::copy(std::begin(v), std::end(v), std::ostream_iterator<double>(std::cout, " "));
+    },
+    std::move(v));
+#endif
+    func();
+}
+
+template <typename T>
+T normalize(T x) {
+    std::cout << "normalize(" << x << ")" << std::endl;
+    return x;
+}
+void test6()
+{
+    auto f = [](auto&& x) {
+        return normalize(std::forward<decltype(x)>(x));
+    };
+    f(3);
+    f(std::string("Qt6"));
+    f(3.141592);
+}
+
+using Time = std::chrono::steady_clock::time_point;
+enum class Sound { Beep, Silen, Whistle };
+using Duration = std::chrono::steady_clock::duration;
+
+void setAlarm(Time t, Sound s, Duration d)
+{
+}
+
+void test7()
+{
+
+}
+
 } // namespace ================================================================
 
 void test_lambda()
@@ -114,5 +169,7 @@ void test_lambda()
     //test1();
     //test2();
     //test3();
-    test4();
+    //test4();
+    //test5();
+    test6();
 }

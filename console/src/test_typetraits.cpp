@@ -409,7 +409,12 @@ void test11()
     int S::* p = &S::m;
     enum class E { e };
 
+    //error: constexpr if condition evaluates to 6, which cannot be narrowed to type 'bool' [-Wc++11-narrowing]
+    //    if constexpr (sizeof... (Tail)) {
+    //                  ^
+#if (0)
     are_scalars(42, 3.14, E::e, "str", p, nullptr, s);
+#endif
 }
 
 } // namespace ================================================================
