@@ -25,6 +25,7 @@ void test_array();
 void test_forwarding();
 void test_emplace_back();
 void test_lambda();
+void test_concurrency();
 
 void testConsole()
 {
@@ -50,7 +51,8 @@ void testConsole()
     //test_array();
     //test_forwarding();
     //test_emplace_back();
-    test_lambda();
+    //test_lambda();
+    test_concurrency();
 }
 
 int main(int argc, char *argv[])
