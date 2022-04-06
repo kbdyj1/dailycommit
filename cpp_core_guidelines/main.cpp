@@ -15,6 +15,11 @@ void test_i_7();
 void test_i_13();
 void test_i27();
 
+// Function
+void test_f_1();
+void test_f_4();
+void test_f_7();
+
 int main()
 {
     //test5();
@@ -25,7 +30,11 @@ int main()
     //test_i_4();
     //test_i_7();
     //test_i_13();
-    test_i27();
+    //test_i27();
+
+    //test_f_1();
+    //test_f_4();
+    test_f_7();
 
     return 0;
 }
