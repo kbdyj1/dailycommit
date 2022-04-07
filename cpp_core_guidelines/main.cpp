@@ -19,6 +19,8 @@ void test_i27();
 void test_f_1();
 void test_f_4();
 void test_f_7();
+void test_f_17();
+void test_f_20();
 
 int main()
 {
@@ -34,7 +36,9 @@ int main()
 
     //test_f_1();
     //test_f_4();
-    test_f_7();
+    //test_f_7();
+    //test_f_17();
+    test_f_20();
 
     return 0;
 }
