@@ -21,8 +21,10 @@ void test_f_4();
 void test_f_7();
 void test_f_17();
 void test_f_20();
+void test_f_21();
+void test_f_24();
 
-int main()
+void test()
 {
     //test5();
     //test7();
@@ -38,7 +40,18 @@ int main()
     //test_f_4();
     //test_f_7();
     //test_f_17();
-    test_f_20();
+    //test_f_20();
+    //test_f_21();
+    test_f_24();
+}
+
+int main()
+{
+    std::cout << std::boolalpha << std::endl;
+
+    test();
+
+    std::cout << std::endl;
 
     return 0;
 }
