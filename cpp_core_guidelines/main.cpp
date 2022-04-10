@@ -24,6 +24,8 @@ void test_f_20();
 void test_f_21();
 void test_f_24();
 
+void test_f_54();
+
 void test()
 {
     //test5();
@@ -42,7 +44,8 @@ void test()
     //test_f_17();
     //test_f_20();
     //test_f_21();
-    test_f_24();
+    //test_f_24();
+    test_f_54();
 }
 
 int main()
