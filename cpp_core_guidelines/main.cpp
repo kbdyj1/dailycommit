@@ -2,20 +2,39 @@
 
 using namespace std;
 
-// Philosophy
+// Philosophy -----------------------------------------------------------------
+
 void test4();
 void test5();
 void test7();
 void test9();
 
-// Interface
+void test_philosophy()
+{
+    //test5();
+    //test7();
+    test9();
+}
+
+// Interface ------------------------------------------------------------------
+
 void test_i_3();
 void test_i_4();
 void test_i_7();
 void test_i_13();
 void test_i27();
 
-// Function
+void test_interface()
+{
+    //test_i_3();
+    //test_i_4();
+    //test_i_7();
+    //test_i_13();
+    test_i27();
+}
+
+// Function -------------------------------------------------------------------
+
 void test_f_1();
 void test_f_4();
 void test_f_7();
@@ -23,21 +42,10 @@ void test_f_17();
 void test_f_20();
 void test_f_21();
 void test_f_24();
-
 void test_f_54();
 
-void test()
+void test_function()
 {
-    //test5();
-    //test7();
-    //test9();
-
-    //test_i_3();
-    //test_i_4();
-    //test_i_7();
-    //test_i_13();
-    //test_i27();
-
     //test_f_1();
     //test_f_4();
     //test_f_7();
@@ -48,11 +56,27 @@ void test()
     test_f_54();
 }
 
+// Class ----------------------------------------------------------------------
+
+void test_c_7();
+void test_c_9();
+
+void test_class()
+{
+    //test_c_7();
+    test_c_9();
+}
+
+// Main =======================================================================
+
 int main()
 {
     std::cout << std::boolalpha << std::endl;
 
-    test();
+    //test_philosophy();
+    //test_interface();
+    //test_function();
+    test_class();
 
     std::cout << std::endl;
 
