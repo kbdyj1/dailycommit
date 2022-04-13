@@ -63,6 +63,8 @@ void test_c_9();
 void test_c_10();
 void test_c_11();
 void test_c_21();
+void test_c_30();
+void test_c_35();
 
 void test_class()
 {
@@ -70,7 +72,9 @@ void test_class()
     //test_c_9();
     //test_c_10();
     //test_c_11();
-    test_c_21();
+    //test_c_21();
+    //test_c_30();
+    test_c_35();
 }
 
 // Main =======================================================================
