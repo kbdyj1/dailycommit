@@ -65,6 +65,8 @@ void test_c_11();
 void test_c_21();
 void test_c_30();
 void test_c_35();
+void test_c_40();
+void test_c_41();
 
 void test_class()
 {
@@ -74,7 +76,9 @@ void test_class()
     //test_c_11();
     //test_c_21();
     //test_c_30();
-    test_c_35();
+    //test_c_35();
+    //test_c_40();
+    test_c_41();
 }
 
 // Main =======================================================================
