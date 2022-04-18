@@ -72,23 +72,12 @@ void test_c_45();
 void test_c_49();
 void test_c_50();
 void test_c_52();
+void test_c_60();
+void test_c_64();
 
 void test_class()
 {
-    //test_c_7();
-    //test_c_9();
-    //test_c_10();
-    //test_c_11();
-    //test_c_21();
-    //test_c_30();
-    //test_c_35();
-    //test_c_40();
-    //test_c_41();
-    //test_c_43();
-    //test_c_45();
-    //test_c_49();
-    //test_c_50();
-    test_c_52();
+    test_c_64();
 }
 
 // Main =======================================================================
