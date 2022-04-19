@@ -74,10 +74,13 @@ void test_c_50();
 void test_c_52();
 void test_c_60();
 void test_c_64();
+void test_c_67();
+void test_c_80();
+void test_c_82();
 
 void test_class()
 {
-    test_c_64();
+    test_c_82();
 }
 
 // Main =======================================================================
@@ -92,6 +95,7 @@ int main()
     test_class();
 
     std::cout << std::endl;
+    std::flush(std::cout);
 
     return 0;
 }
