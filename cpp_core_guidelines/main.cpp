@@ -78,10 +78,13 @@ void test_c_67();
 void test_c_80();
 void test_c_82();
 void test_c_83();
+void test_c_101();
+void test_c_102();
+void test_c_104();
 
 void test_class()
 {
-    test_c_83();
+    test_c_104();
 }
 
 // Main =======================================================================
