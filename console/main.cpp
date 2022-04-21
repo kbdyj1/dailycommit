@@ -26,33 +26,11 @@ void test_forwarding();
 void test_emplace_back();
 void test_lambda();
 void test_concurrency();
+void test_hash();
 
 void testConsole()
 {
-    //testKDBindings();
-    //testStringView();
-    //testQtContinaer();
-    //testNetwork();
-    //test_cxx20_features();
-    //test_concurrent();
-    //test_cxx17_features();
-    //test_iodevice();
-    //test_sql();
-    //test_xml();
-    //test_json();
-    //test_locale();
-    //test_atomic();
-    //test_qsettings();
-    //test_rreference();
-    //test_promise();
-    //test_sharedMemory();
-    //test_typeTraits();
-    //test_functional();
-    //test_array();
-    //test_forwarding();
-    //test_emplace_back();
-    //test_lambda();
-    test_concurrency();
+    test_hash();
 }
 
 int main(int argc, char *argv[])
