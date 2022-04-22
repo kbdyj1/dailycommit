@@ -27,10 +27,11 @@ void test_emplace_back();
 void test_lambda();
 void test_concurrency();
 void test_hash();
+void test_qt_hash();
 
 void testConsole()
 {
-    test_hash();
+    test_qt_hash();
 }
 
 int main(int argc, char *argv[])

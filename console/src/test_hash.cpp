@@ -1,6 +1,9 @@
 #include <iostream>
 #include <functional>
 #include <iomanip>
+#include <QHash>
+#include <QDebug>
+#include <QDate>
 
 namespace { //=================================================================
 
@@ -45,6 +48,77 @@ struct std::hash<S>
 };
 #endif
 
+// QHash's key and value data types must be assignable data types.
+
+void test_qt()
+{
+    auto hash = QHash<QString, int>{};
+
+    hash["one"] = 1;
+    hash["two"] = 2;
+    hash["three"] = 3;
+    hash["four"] = 4;
+    hash["five"] = 5;
+
+    for (auto iter = hash.constBegin(); iter != hash.constEnd(); ++iter) {
+        qDebug() << "hash[" << iter.key() << "] : " << iter.value();
+    }
+}
+
+// 1. assignable
+// 2. operator==
+// 3. qHash
+
+class A
+{
+    QString name;
+    QDate date;
+
+public:
+    A() = default;
+    A(const QString& s, const QDate& d = QDate{}) : name(s), date(d)
+    {}
+    A(const A&) = default;
+    A(A&&) = default;
+    A& operator=(const A&) = default;
+    A& operator=(A&&) = default;
+   ~A() = default;
+
+    QString s() const
+    {
+        return name;
+    }
+
+    bool operator==(const A& other) const
+    {
+        return name == other.name && date == other.date;
+    }
+    uint hash(uint seed) const
+    {
+        return qHash(name, seed) ^ date.day();
+    }
+};
+
+uint qHash(const A& key, uint seed)
+{
+    return key.hash(seed);
+}
+
+void test_custom_class()
+{
+    auto hash = QHash<A, int>{};
+
+    hash[A("one")] = 1;
+    hash[A("two")] = 2;
+    hash[A("three")] = 3;
+    hash[A("four")] = 4;
+    hash[A("five")] = 5;
+
+    for (auto iter = hash.constBegin(); iter != hash.constEnd(); iter++) {
+        qDebug() << "hash[" << iter.key().s() << "] : " << iter.value();
+    }
+}
+
 } // namespace ================================================================
 
 void test_hash()
@@ -56,4 +130,14 @@ void test_hash()
     S s{"Hello, ", "Qt6"};
     std::cout << "hash(" << std::quoted(s.firstName) << ", " << std::quoted(s.secondName) << ") : "
               << Hash{}(s) << std::endl;
+}
+
+void test_qt_hash()
+{
+    qDebug() << "nbuiltin data ------------------------";
+    test_qt();
+
+    qDebug() << "\n";
+    qDebug() << "custom class -------------------------";
+    test_custom_class();
 }
