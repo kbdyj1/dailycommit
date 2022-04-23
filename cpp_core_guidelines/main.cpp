@@ -81,10 +81,11 @@ void test_c_83();
 void test_c_101();
 void test_c_102();
 void test_c_104();
+void test_c_127();
 
 void test_class()
 {
-    test_c_104();
+    test_c_127();
 }
 
 // Main =======================================================================
