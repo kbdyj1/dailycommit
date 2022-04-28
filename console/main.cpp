@@ -28,10 +28,12 @@ void test_lambda();
 void test_concurrency();
 void test_hash();
 void test_qt_hash();
+void test_crtp();
+void test_sfinae();
 
 void testConsole()
 {
-    test_qt_hash();
+    test_sfinae();
 }
 
 int main(int argc, char *argv[])

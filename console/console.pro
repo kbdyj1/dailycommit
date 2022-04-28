@@ -14,6 +14,7 @@ SOURCES = main.cpp \
         src/test_atomic.cpp \
         src/test_concurrency.cpp \
         src/test_concurrent.cpp \
+        src/test_crtp.cpp \
         src/test_cxx17.cpp \
         src/test_cxx2a.cpp \
         src/test_emplace_back.cpp \
@@ -29,6 +30,7 @@ SOURCES = main.cpp \
         src/test_qsettings.cpp \
         src/test_qtcontainer.cpp \
         src/test_rreference.cpp \
+        src/test_sfinae.cpp \
         src/test_sharedmemory.cpp \
         src/test_sql.cpp \
         src/test_stringview.cpp \
