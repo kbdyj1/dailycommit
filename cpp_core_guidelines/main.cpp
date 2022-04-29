@@ -88,10 +88,13 @@ void test_c_138();
 void test_c_140();
 void test_c_146();
 void test_c_147();
+void test_c_152();
+void test_c_164();
+void test_c_165();
 
 void test_class()
 {
-    test_c_146();
+    test_c_165();
 }
 
 // Main =======================================================================
