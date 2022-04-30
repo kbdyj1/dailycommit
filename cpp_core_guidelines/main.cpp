@@ -91,10 +91,14 @@ void test_c_147();
 void test_c_152();
 void test_c_164();
 void test_c_165();
+void test_c_166();
+void test_c_180();
+void test_c_181();
+void test_c_183();
 
 void test_class()
 {
-    test_c_165();
+    test_c_183();
 }
 
 // Main =======================================================================
