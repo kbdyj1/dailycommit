@@ -101,6 +101,17 @@ void test_class()
     test_c_183();
 }
 
+// Resource -------------------------------------------------------------------
+
+void test_r_1();
+void test_r_3();
+void test_r_4();
+
+void test_resource()
+{
+    test_r_4();
+}
+
 // Main =======================================================================
 
 int main()
@@ -110,7 +121,8 @@ int main()
     //test_philosophy();
     //test_interface();
     //test_function();
-    test_class();
+    //test_class();
+    test_resource();
 
     std::cout << std::endl;
     std::flush(std::cout);

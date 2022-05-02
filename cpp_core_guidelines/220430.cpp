@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <variant>
+#include <cassert>
 
 namespace { //=================================================================
 
