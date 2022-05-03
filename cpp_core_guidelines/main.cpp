@@ -106,10 +106,12 @@ void test_class()
 void test_r_1();
 void test_r_3();
 void test_r_4();
+void test_r_10();
+void test_r_14();
 
 void test_resource()
 {
-    test_r_4();
+    test_r_14();
 }
 
 // Main =======================================================================
