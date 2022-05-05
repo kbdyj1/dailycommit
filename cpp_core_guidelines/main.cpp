@@ -109,10 +109,12 @@ void test_r_4();
 void test_r_10();
 void test_r_14();
 void test_r_24();
+void test_r_32();
+void test_r_34();
 
 void test_resource()
 {
-    test_r_24();
+    test_r_34();
 }
 
 // Main =======================================================================
