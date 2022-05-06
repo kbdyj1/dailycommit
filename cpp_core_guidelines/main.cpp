@@ -111,10 +111,15 @@ void test_r_14();
 void test_r_24();
 void test_r_32();
 void test_r_34();
+void test_weak_ptr();
+void test_r_35();
+void test_r_36();
+void test_r_37();
 
 void test_resource()
 {
-    test_r_34();
+    test_r_37();
+    //test_weak_ptr();
 }
 
 // Main =======================================================================

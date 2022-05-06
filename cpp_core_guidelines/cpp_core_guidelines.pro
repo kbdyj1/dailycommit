@@ -38,4 +38,5 @@ SOURCES += \
         220503.cpp \
         220504.cpp \
         220505.cpp \
+        220506.cpp \
         main.cpp
