@@ -1,5 +1,7 @@
 #include <iostream>
 #include <memory>
+#include <map>
+#include <vector>
 
 namespace { //=================================================================
 
@@ -37,7 +39,11 @@ void retainFoo(const std::shared_ptr<Foo>& s)
 
 // R.37 Do not pass a pointer or reference obtained from an aliased smart pointer
 
+#if (0)
 std::shared_ptr<Foo> gFoo = std::make_shared<Foo>(10, 20);
+#else
+std::shared_ptr<Foo> gFoo;
+#endif
 
 void g()
 {
@@ -54,6 +60,30 @@ void f(Foo& foo)
     g();
     useFoo(foo);
 }
+
+// ES.1 Preper the standard library to other libraries and to "handcrafted code"
+
+// ES.2 Preper suitable abstraction to direct use of language features
+
+// ES.3 Don't repeat yourself, avoid redundant code
+
+// ES.5 Keep scopes small
+
+// ES.6 Declare names in for-statement initializers and conditions to limit scope
+
+// ES.7 Keep common and local names short, and keep uncommon and non-local names longer
+
+template <typename T>
+void print(std::ostream& os, const std::vector<T>& v)
+{
+    for (auto iter = std::begin(v); iter != std::end(v); iter++) {
+        os << *iter << std::endl;
+    }
+}
+
+// ES.8 Avoid similar-looking names
+
+// ES.9 Avoid ALL CAPS names
 
 } // namespace ================================================================
 
@@ -102,4 +132,21 @@ void test_r_37()
     std::cout << "before f(foo)" << std::endl;
     f(foo);
     std::cout << "after f(foo)" << std::endl;
+}
+
+void test_es_6()
+{
+    std::map<int, std::string> m;
+
+    auto key = 6;
+    auto value = std::string{"Qt"};
+    if (auto result = m.insert({key, value}); result.second) {
+        std::cout << "m.insert({key, value}) return first : " << result.first->first << std::endl;
+    }
+}
+
+void test_es_7()
+{
+    auto v = std::vector<int>{ 1, 2, 3, 4, 5 };
+    print(std::cout, v);
 }

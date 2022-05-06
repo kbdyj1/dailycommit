@@ -122,6 +122,15 @@ void test_resource()
     //test_weak_ptr();
 }
 
+// Expressions and Statements -------------------------------------------------
+void test_es_6();
+void test_es_7();
+
+void test_expressions_and_statements()
+{
+    test_es_7();
+}
+
 // Main =======================================================================
 
 int main()
@@ -132,7 +141,8 @@ int main()
     //test_interface();
     //test_function();
     //test_class();
-    test_resource();
+    //test_resource();
+    test_expressions_and_statements();
 
     std::cout << std::endl;
     std::flush(std::cout);
