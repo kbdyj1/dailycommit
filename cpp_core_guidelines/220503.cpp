@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <span>
+#include <memory>
 
 namespace { //=================================================================
 
