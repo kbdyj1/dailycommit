@@ -125,10 +125,12 @@ void test_resource()
 // Expressions and Statements -------------------------------------------------
 void test_es_6();
 void test_es_7();
+void test_es_11();
+void test_es_23();
 
 void test_expressions_and_statements()
 {
-    test_es_7();
+    test_es_23();
 }
 
 // Main =======================================================================
