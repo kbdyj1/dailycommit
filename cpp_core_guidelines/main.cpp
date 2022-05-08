@@ -127,10 +127,13 @@ void test_es_6();
 void test_es_7();
 void test_es_11();
 void test_es_23();
+void test_es_28();
+void test_es_30();
+void test_es_34();
 
 void test_expressions_and_statements()
 {
-    test_es_23();
+    test_es_34();
 }
 
 // Main =======================================================================
