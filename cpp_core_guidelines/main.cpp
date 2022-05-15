@@ -142,6 +142,16 @@ void test_expressions_and_statements()
     test_es_100();
 }
 
+// Performance ----------------------------------------------------------------
+
+void test_per_7();
+void test_per_11();
+
+void test_performance()
+{
+    test_per_11();
+}
+
 // Main =======================================================================
 
 int main()
@@ -153,7 +163,8 @@ int main()
     //test_function();
     //test_class();
     //test_resource();
-    test_expressions_and_statements();
+    //test_expressions_and_statements();
+    test_performance();
 
     std::cout << std::endl;
     std::flush(std::cout);
