@@ -152,6 +152,14 @@ void test_performance()
     test_per_11();
 }
 
+// Concurrency ----------------------------------------------------------------
+void test_cp_4();
+
+void test_concurrent()
+{
+    test_cp_4();
+}
+
 // Main =======================================================================
 
 int main()
@@ -164,7 +172,8 @@ int main()
     //test_class();
     //test_resource();
     //test_expressions_and_statements();
-    test_performance();
+    //test_performance();
+    test_concurrent();
 
     std::cout << std::endl;
     std::flush(std::cout);
