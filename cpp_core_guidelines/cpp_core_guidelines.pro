@@ -42,4 +42,14 @@ SOURCES += \
         220507.cpp \
         220508.cpp \
         220509.cpp \
+        220510.cpp \
+        220511.cpp \
+        220512.cpp \
+        220513.cpp \
+        220514.cpp \
+        220515.cpp \
+        220516.cpp \
+        220517.cpp \
         main.cpp
+
+LIBS += -lpthread

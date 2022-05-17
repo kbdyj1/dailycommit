@@ -131,10 +131,37 @@ void test_es_28();
 void test_es_30();
 void test_es_34();
 void test_es_42();
+void test_es_47();
+void test_es_50();
+void test_es_56();
+void test_es_71();
+void test_es_100();
 
 void test_expressions_and_statements()
 {
-    test_es_42();
+    test_es_100();
+}
+
+// Performance ----------------------------------------------------------------
+
+void test_per_7();
+void test_per_11();
+
+void test_performance()
+{
+    test_per_11();
+}
+
+// Concurrency ----------------------------------------------------------------
+void test_cp_4();
+void test_cp_20();
+void test_cp_23();
+void test_cp_24();
+void test_cp_25();
+
+void test_concurrent()
+{
+    test_cp_25();
 }
 
 // Main =======================================================================
@@ -148,7 +175,9 @@ int main()
     //test_function();
     //test_class();
     //test_resource();
-    test_expressions_and_statements();
+    //test_expressions_and_statements();
+    //test_performance();
+    test_concurrent();
 
     std::cout << std::endl;
     std::flush(std::cout);
