@@ -158,10 +158,11 @@ void test_cp_20();
 void test_cp_23();
 void test_cp_24();
 void test_cp_25();
+void test_cp_31();
 
 void test_concurrent()
 {
-    test_cp_25();
+    test_cp_31();
 }
 
 // Main =======================================================================
