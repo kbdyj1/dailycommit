@@ -1,8 +1,14 @@
 TEMPLATE = app
-CONFIG += console c++2a
+CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-
+unix:!macx {
+    CONFIG += c++2a
+}
+macx {
+    DEFINES += OS_MAC
+    CONFIG += c++2a
+}
 SOURCES += \
         220329.cpp \
         220330.cpp \
@@ -51,6 +57,7 @@ SOURCES += \
         220516.cpp \
         220517.cpp \
         220518.cpp \
+        220519.cpp \
         main.cpp
 
 LIBS += -lpthread
