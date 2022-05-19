@@ -1,6 +1,9 @@
 #include <iostream>
 #include <future>
+#ifdef OS_MAC
 #include <experimental/coroutine>
+#define TEST_COROUTINE
+#endif
 
 namespace { //=================================================================
 
@@ -13,6 +16,7 @@ namespace { //=================================================================
 class Task
 {
 public:
+#ifdef TEST_COROUTINE
     struct promise_type
     {
         Task get_return_object()
@@ -43,23 +47,29 @@ public:
             co_handler.destroy();
         }
     }
+#endif
 };
 Task foo()
 {
     std::cout << "foo() #1" << std::endl;
+#ifdef TEST_COROUTINE
     co_await std::experimental::suspend_always{};
+#endif
     std::cout << "foo() #2" << std::endl;
 }
 void test_coroutine()
 {
     auto task = foo();
     std::cout << "test_cp_51() #1" << std::endl;
-
+#ifdef TEST_COROUTINE
     task.co_handler.resume();
+#endif
 
     std::cout << "test_cp_51() #2" << std::endl;
 
+#ifdef TEST_COROUTINE
     task.co_handler.resume();
+#endif
 }
 // CP.51 Do not use capturing lambdas that are coroutines
 
