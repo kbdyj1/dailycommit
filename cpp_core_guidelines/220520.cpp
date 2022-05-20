@@ -2,6 +2,7 @@
 #include <fstream>
 #include <future>
 #include <functional>
+#include <unistd.h>
 
 namespace { //=================================================================
 
