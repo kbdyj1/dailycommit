@@ -28,4 +28,5 @@ SOURCES += \
         test_ch4_2_span.cpp \
         test_ch4_3_container.cpp \
         test_ch4_4_math.cpp \
-        test_ch4_7_etc.cpp
+        test_ch4_7_etc.cpp \
+        test_ch5_1_coroutine.cpp

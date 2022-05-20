@@ -16,6 +16,7 @@ void test_ch4_2();
 void test_ch4_3();
 void test_ch4_4();
 void test_ch4_7();
+void test_ch5_1();
 
 #ifdef USE_CXX20_FEATURE_MODULE
 import math;
@@ -45,7 +46,8 @@ int main()
     //test_ch4_2();
     //test_ch4_3();
     //test_ch4_4();
-    test_ch4_7();
+    //test_ch4_7();
+    test_ch5_1();
 
     return 0;
 }

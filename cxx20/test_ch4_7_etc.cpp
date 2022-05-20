@@ -2,7 +2,7 @@
 #include <iostream>
 #include <type_traits>
 #include <cmath>
-#include <source_location>
+//#include <source_location>
 #include <string_view>
 
 namespace { //=================================================================
@@ -17,6 +17,7 @@ auto plusLambda = [](int a, int b) {
 
 void test1()
 {
+#if (0)
     auto a = std::bind_front(plusFunc, 2000);
     std::cout << "a(20) : " << a(20) << std::endl;
 
@@ -33,6 +34,7 @@ void test1()
 
     auto e = [](int i) { return plusLambda(2000, i); };
     std::cout << "e(20) : " << e(20) << std::endl;
+#endif
 }
 
 constexpr double power(double b, int x)

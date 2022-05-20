@@ -60,7 +60,7 @@ void test2()
 
 void test3()
 {
-    auto s0 = std::make_shared<double[]>(1024);
+    //auto s0 = std::make_shared<double[]>(1024);
     //auto s1 = std::make_shared<double[]>(1024, 1.0);
 }
 
