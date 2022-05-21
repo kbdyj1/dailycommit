@@ -161,10 +161,11 @@ void test_cp_25();
 void test_cp_31();
 void test_cp_51();
 void test_cp_61();
+void test_cp_110();
 
 void test_concurrent()
 {
-    test_cp_61();
+    test_cp_110();
 }
 
 // Main =======================================================================
