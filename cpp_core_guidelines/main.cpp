@@ -168,6 +168,14 @@ void test_concurrent()
     test_cp_110();
 }
 
+// Error handling -------------------------------------------------------------
+void test_e_15();
+
+void test_error_handling()
+{
+    test_e_15();
+}
+
 // Main =======================================================================
 
 int main()
@@ -181,7 +189,8 @@ int main()
     //test_resource();
     //test_expressions_and_statements();
     //test_performance();
-    test_concurrent();
+    //test_concurrent();
+    test_error_handling();
 
     std::cout << std::endl;
     std::flush(std::cout);
