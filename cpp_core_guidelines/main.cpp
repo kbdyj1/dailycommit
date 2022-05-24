@@ -171,9 +171,25 @@ void test_concurrent()
 // Error handling -------------------------------------------------------------
 void test_e_15();
 
+
 void test_error_handling()
 {
     test_e_15();
+}
+// Constants and immutability -------------------------------------------------
+void test_con_2();
+
+void test_constants_and_immutability()
+{
+    test_con_2();
+}
+
+// templates and generic ------------------------------------------------------
+void test_t_5();
+
+void test_templates_and_generic()
+{
+    test_t_5();
 }
 
 // Main =======================================================================
@@ -190,7 +206,9 @@ int main()
     //test_expressions_and_statements();
     //test_performance();
     //test_concurrent();
-    test_error_handling();
+    //test_error_handling();
+    //test_constants_and_immutability();
+    test_templates_and_generic();
 
     std::cout << std::endl;
     std::flush(std::cout);
