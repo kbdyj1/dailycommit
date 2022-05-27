@@ -188,10 +188,13 @@ void test_constants_and_immutability()
 void test_t_5();
 void test_t_20();
 void test_t_25();
+void test_t_40();
+void test_t_47();
+void test_t_49();
 
 void test_templates_and_generic()
 {
-    test_t_25();
+    test_t_49();
 }
 
 // Main =======================================================================

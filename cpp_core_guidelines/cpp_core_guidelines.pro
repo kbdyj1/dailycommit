@@ -65,6 +65,7 @@ SOURCES += \
         220524.cpp \
         220525.cpp \
         220526.cpp \
+        220527.cpp \
         main.cpp
 
 LIBS += -lpthread
