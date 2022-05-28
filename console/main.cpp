@@ -36,11 +36,22 @@ void testConsole()
     test_sfinae();
 }
 
+//-----------------------------------------------------------------------------
+//  Meta Programming
+//-----------------------------------------------------------------------------
+void meta_test_binary();
+
+void test_meta_programming()
+{
+    meta_test_binary();
+}
+
 int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv);
 	
-    testConsole();
+    //testConsole();
+    test_meta_programming();
 
     std::cout.flush();
 

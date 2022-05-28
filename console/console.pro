@@ -10,6 +10,7 @@ INCLUDEPATH += ./include \
     ./include/kdbindings
 
 SOURCES = main.cpp \
+        src/meta/test_binary.cpp \
         src/test_array.cpp \
         src/test_atomic.cpp \
         src/test_concurrency.cpp \
