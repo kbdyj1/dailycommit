@@ -11,6 +11,7 @@ INCLUDEPATH += ./include \
 
 SOURCES = main.cpp \
         src/meta/test_binary.cpp \
+        src/meta/test_meta_ch2.cpp \
         src/test_array.cpp \
         src/test_atomic.cpp \
         src/test_concurrency.cpp \

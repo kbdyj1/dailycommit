@@ -2,6 +2,8 @@
 
 namespace { //=================================================================
 
+// loop iteration is not possible at compile time,
+// and if iteration is necessary, recursion must be used
 namespace compiletime
 {
 template <unsigned long N>
@@ -20,9 +22,29 @@ struct binary<0>
 namespace runtime {
 unsigned binary(unsigned long N)
 {
+#if (0)
     N = N ? binary(N/10)*2 + N%10 : 0;
+#else
+    unsigned result = 0;
+    for (unsigned bit = 0x1; N; N/=10, bit <<= 1) {
+        if (N % 10)
+            result += bit;
+    }
+    return result;
+#endif
 }
 } //runtime
+
+/*
+ * expr = (term[expr.val = _1] >> '+' >> expr[expr.val += _1]) |
+ *        (term[expr.val = _1] >> '-' >> expr[expr.val -= _1]) |
+ *        term[expr.val] = _1;
+ * term = (factor[term.val] = _1] >> '*' >> term[term.val *= _1]) |
+ *        (factor[term.val] = _1] >> '/' >> term[term.val /= _1]) |
+ *        factor[term.val] = _1;
+ * factor = integer[factor.val = _1] |
+ *        ('(' >> expr[factor.val = _1] >> ')');
+ */
 
 } //namespace =================================================================
 

@@ -40,10 +40,12 @@ void testConsole()
 //  Meta Programming
 //-----------------------------------------------------------------------------
 void meta_test_binary();
+void test_meta_ch2();
 
 void test_meta_programming()
 {
-    meta_test_binary();
+    //meta_test_binary();
+    test_meta_ch2();
 }
 
 int main(int argc, char *argv[])
