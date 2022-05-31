@@ -191,10 +191,12 @@ void test_t_25();
 void test_t_40();
 void test_t_47();
 void test_t_49();
+void test_t_123();
+void test_t_140();
 
 void test_templates_and_generic()
 {
-    test_t_49();
+    test_t_140();
 }
 
 // Main =======================================================================
