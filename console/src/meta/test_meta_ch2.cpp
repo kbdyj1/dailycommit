@@ -11,10 +11,42 @@ void iterSwap(Iter1 i1, Iter2 i2)
     *i2 = tmp;
 }
 
+template <typename Iter>
+void iterSwap(Iter i0, Iter i1)
+{
+    std::swap(*i0, *i1);
+}
+
 void f(int* i0, int* i1)
 {
     iterSwap(i0, i1);
 }
+
+struct BitProxy
+{
+    BitProxy& operator=(bool x)
+    {
+        if (x)
+            bytes[pos/8] |= (1u << (pos % 8));
+        else
+            bytes[pos/8] &= ~(1u << (pos % 8));
+
+        return *this;
+    }
+    operator bool() const
+    {
+        return bytes[pos/8] & (1u << (pos % 8));
+    }
+    unsigned char* bytes;
+    size_t pos;
+};
+
+struct BitIterator
+{
+    typedef bool value_type;
+    typedef BitProxy reference;
+    BitProxy operator*() const;
+};
 
 } // namespace ================================================================
 

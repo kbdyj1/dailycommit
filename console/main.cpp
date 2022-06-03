@@ -42,12 +42,14 @@ void testConsole()
 void meta_test_binary();
 void test_meta_ch2();
 void test_traits();
+void test_blob();
 
 void test_meta_programming()
 {
     //meta_test_binary();
     //test_meta_ch2();
     test_traits();
+    //test_blob();
 }
 
 int main(int argc, char *argv[])
