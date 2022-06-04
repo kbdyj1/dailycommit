@@ -203,6 +203,14 @@ void test_templates_and_generic()
     test_t_140();
 }
 
+// The standard library -------------------------------------------------------
+void test_sl_con();
+
+void test_standard_library()
+{
+    test_sl_con();
+}
+
 // Main =======================================================================
 
 int main()
@@ -219,7 +227,8 @@ int main()
     //test_concurrent();
     //test_error_handling();
     //test_constants_and_immutability();
-    test_templates_and_generic();
+    //test_templates_and_generic();
+    test_standard_library();
 
     std::cout << std::endl;
     std::flush(std::cout);
