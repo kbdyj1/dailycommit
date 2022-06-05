@@ -205,10 +205,11 @@ void test_templates_and_generic()
 
 // The standard library -------------------------------------------------------
 void test_sl_con();
+void test_sl_str();
 
 void test_standard_library()
 {
-    test_sl_con();
+    test_sl_str();
 }
 
 // Main =======================================================================
