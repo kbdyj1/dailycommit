@@ -6,6 +6,8 @@
 
 using namespace std::literals;
 
+#define USING_CONCEPTS
+
 namespace { //=================================================================
 
 // T.120 Use template metaprogramming only when you really need to
@@ -13,8 +15,7 @@ namespace { //=================================================================
 
 // T.121 Use template metaprogramming primarily to emulate concepts
 
-#define USING_CONCEPTS
-
+#ifndef OS_MAC
 #if defined(USING_CONCEPTS)
 void advance(std::random_access_iterator auto p, int n)
 #else
@@ -38,6 +39,7 @@ advance(Iter p, int n)
     while (n--)
         p++;
 }
+#endif
 
 // T.122 Use templates (usally template aliases) to compute types at compile time
 //  "Traits" techniques are mostly replaced by template aliases to compute types and
@@ -45,7 +47,7 @@ advance(Iter p, int n)
 
 // T.123 Use constexpr functions to compute values at compile time
 
-#define USE_TEMPLATE
+//#define USE_TEMPLATE
 
 #ifndef USE_TEMPLATE
 template <typename T>

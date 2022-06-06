@@ -4,8 +4,14 @@
 
 using namespace std::literals;
 
+
+#ifndef OS_MAC
+#define SUPPORT_CONCEPT
+#endif
+
 namespace { //=================================================================
 
+#ifdef SUPPORT_CONCEPT
 // T.10 Specify concepts for all template arguments
 
 template <typename Iter, typename Value>
@@ -155,6 +161,7 @@ void f()
 }
 
 } //t25
+#endif
 
 } //===========================================================================
 
@@ -169,14 +176,18 @@ void test_t_20()
     std::cout << "s0 + s1 : " << res << std::endl;
 #endif
 
+#ifdef SUPPORT_CONCEPT
     auto x = 2;
     auto y = 3;
     auto z = t20::func(x, y);
 
     std::cout << "x + y : " << z << std::endl;
+#endif
 }
 
 void test_t_25()
 {
+#ifdef SUPPORT_CONCEPT
     t25::f<int>();
+#endif
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <array>
 #include <memory.h>
-#include <ranges>
+//#include <ranges>
 #include <vector>
 
 namespace { //=================================================================

@@ -26,6 +26,7 @@ void print(const T& t)
 // T.41 Requires only essential properties in a template's concepts
 //      keep interfaces simple and stable
 
+#ifndef OS_MAC
 #if (0)
 void sort(std::sortable auto& s) // simple
 #else
@@ -51,6 +52,7 @@ void sort(S& s)
 {
     std::cout << "enter sort(" << s << ")" << std::endl;
 }
+#endif
 
 // T.42 Use template aliases to simplify notation and hide implementation details
 
