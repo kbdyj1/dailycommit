@@ -216,6 +216,8 @@ void test_standard_library()
 
 int main()
 {
+    std::ios_base::sync_with_stdio(false);
+
     std::cout << std::boolalpha << std::endl;
 
     //test_philosophy();
