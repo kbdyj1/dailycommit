@@ -4,13 +4,14 @@
 using namespace std;
 
 void test_ch_5();
+void test_ch_6();
 
 int main()
 {
-    test_ch_5();
+    test_ch_6();
 
     std::cout.flush();
-    usleep(1000);
+    usleep(10);
 
     return 0;
 }

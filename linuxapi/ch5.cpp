@@ -6,20 +6,12 @@
 #include <sys/uio.h>
 #include <sys/stat.h>
 
+#include "utils.h"
+
 namespace { //=================================================================
 
 // file I/O
 //  O_EXCL, O_APPEND -> Atomic
-
-void printOpenFail(const std::string& filename)
-{
-    std::cout << "open fail. " << filename << "\n";
-}
-
-void printOpenSucceeded(const std::string& filename)
-{
-    std::cout << "open succeeded. " << filename << "\n";
-}
 
 void bad_exclusive_open(const std::string& s)
 {
@@ -143,6 +135,23 @@ void test_lfs()
     }
 }
 
+void test_mkstemp()
+{
+    char filename[] = "myXXXXXX";
+    auto fd = mkstemp(filename);
+    if (fd == -1) {
+        printOpenFail(filename);
+    } else {
+        printOpenSucceeded(filename);   //open succeeded. myI6UmQI
+
+        std::string message = "Hello, Qt6 !!!";
+        write(fd, message.c_str(), message.size());
+
+        unlink(filename);
+        close(fd);
+    }
+}
+
 } //===========================================================================
 
 void test_ch_5()
@@ -151,5 +160,6 @@ void test_ch_5()
 
     //test_dup(); // > results.log 2>&1
     //scatter_gather_io();
-    test_lfs();
+    //test_lfs();
+    test_mkstemp();
 }

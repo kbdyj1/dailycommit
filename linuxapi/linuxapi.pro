@@ -5,4 +5,9 @@ CONFIG -= qt
 
 SOURCES += \
         ch5.cpp \
-        main.cpp
+        ch6.cpp \
+        main.cpp \
+        utils.cpp
+
+HEADERS += \
+    utils.h
