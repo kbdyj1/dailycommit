@@ -30,10 +30,11 @@ void test_hash();
 void test_qt_hash();
 void test_crtp();
 void test_sfinae();
+void test_duck_typing();
 
 void testConsole()
 {
-    test_sfinae();
+    test_duck_typing();
 }
 
 //-----------------------------------------------------------------------------
@@ -56,8 +57,8 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv);
 	
-    //testConsole();
-    test_meta_programming();
+    testConsole();
+    //test_meta_programming();
 
     std::cout.flush();
 

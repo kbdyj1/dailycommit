@@ -20,6 +20,7 @@ SOURCES = main.cpp \
         src/test_crtp.cpp \
         src/test_cxx17.cpp \
         src/test_cxx2a.cpp \
+        src/test_duck_typing.cpp \
         src/test_emplace_back.cpp \
         src/test_forwarding.cpp \
         src/test_function.cpp \
