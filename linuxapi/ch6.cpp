@@ -2,6 +2,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <setjmp.h>
 #include "utils.h"
 
 extern char *etext, *edata, *end;
@@ -50,10 +53,63 @@ void test_sigseg()
     *p = '\0';
 }
 
+//-------------------------------------------------------------------
+//  DEFINES += _GNU_SOURCE
+//  <errno.h>
+//
+//  program: /home/user/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi
+//  program(short): linuxapi
+//-------------------------------------------------------------------
+void test_program_name()
+{
+    std::cout << "program: " << program_invocation_name << "\n";
+    std::cout << "program(short): " << program_invocation_short_name << "\n";
+
+    std::cout << "ARG_MAX: " << sysconf(_SC_ARG_MAX) << "\n";   // 2097152
+}
+
+char ch6env[32] = "CH6_NAME=Process";
+//-------------------------------------------------------------------
+//  SHELL=/bin/bash
+//  ...
+//  CH6_NAME=Ch6.Process
+//-------------------------------------------------------------------
+void test_environment()
+{
+    putenv(ch6env);
+
+    strcpy(ch6env, "CH6_NAME=Ch6.Process");
+
+    //clearenv();
+
+    if (environ != nullptr) {
+        for (char** env = environ; *env != nullptr; env++) {
+            std::cout << *env << "\n";
+        }
+    }
+}
+
+jmp_buf jmp;
+void test_set_jump()
+{
+    switch (setjmp(jmp)) {
+    case 0:
+        std::cout << "setjmp(jmp)" << "\n";
+        break;
+    case 2:
+        std::cout << "jumped: 2" << "\n";
+        break;
+    default:
+        std::cout << "jumped: ?" << "\n";
+        break;
+    }
+}
+
 } //===========================================================================
 
 void test_ch_6()
 {
-    test_virtual_memory_page_size();    // VMEM PAGE SIZE: 4096
+    //test_virtual_memory_page_size();    // VMEM PAGE SIZE: 4096
     //test_sigseg();
+    //test_environment();
 }
