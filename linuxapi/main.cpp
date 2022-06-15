@@ -5,13 +5,11 @@ using namespace std;
 
 void test_ch_5();
 void test_ch_6();
+void test_ch_7();
 
 int main()
 {
-    test_ch_6();
-
-    std::cout.flush();
-    usleep(10);
+    test_ch_7();
 
     return 0;
 }
