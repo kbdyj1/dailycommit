@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <memory>
+#include <mcheck.h>
 
 extern char* end;
 
@@ -73,9 +74,51 @@ void test_malloc()
     print_current_break();
 }
 
+char MALLOC_TRACE[] = "MALLOC_TRACE=mcheck.log";
+/*
+= Start
+@ ~/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi:[0x55555555826d] + 0x55555556f3b0 0x10
+@ ~/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi:[0x555555558282] < 0x55555556f3b0
+@ ~/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi:[0x555555558282] > 0x55555556f3b0 0x20
+@ ~/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi:[0x555555558292] - 0x55555556f3b0
+@ /lib/x86_64-linux-gnu/libstdc++.so.6:(_Znwm+0x1c)[0x7ffff7e4bdac] + 0x55555556f3e0 0x48
+@ ~/project/dailycommit/build-linuxapi-Desktop-Debug/linuxapi:[0x555555558533] - 0x55555556f3e0
+= End
+*/
+struct Item {
+    int id;
+    std::string name;
+    std::string phoneNumber;
+};
+
+void test_mtrace()
+{
+    putenv(MALLOC_TRACE);
+
+    mtrace();
+
+    auto* p = malloc(16);
+    auto* np = realloc(p, 32);
+    if (np == nullptr) {
+        std::cout << "realloc(p, 32) fail" << "\n";
+    } else {
+        std::cout << "p: " << p << ", np: " << np << "\n";
+        p = np;
+    }
+
+    auto* sp = alloca(128); // stack allocation
+
+    free(p);
+    {
+        auto ptr = std::unique_ptr<Item>(new Item{20, "John", "010-0000-1111"});
+    }
+    muntrace();
+}
+
 } //===========================================================================
 
 void test_ch_7()
 {
-    test_malloc();
+    //test_malloc();
+    test_mtrace();
 }
