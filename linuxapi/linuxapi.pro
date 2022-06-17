@@ -14,3 +14,5 @@ HEADERS += \
     utils.h
 
 DEFINES += _GNU_SOURCE
+
+LIBS += -lcrypt
