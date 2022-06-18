@@ -3,6 +3,10 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
+macx {
+    DEFINES += OS_MAC
+}
+
 SOURCES += \
         ch5.cpp \
         ch6.cpp \

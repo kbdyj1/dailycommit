@@ -1,9 +1,11 @@
 #include <iostream>
 #include <memory>
-#include <mcheck.h>
 #include <pwd.h>
 #include <grp.h>
+#ifndef OS_MAC
+#include <mcheck.h>
 #include <shadow.h>
+#endif
 
 #define _XOPEN_SOURCE
 #include <unistd.h>
@@ -96,6 +98,7 @@ struct Item {
     std::string phoneNumber;
 };
 
+#ifndef OS_MAC
 void test_mtrace()
 {
     putenv(MALLOC_TRACE);
@@ -119,6 +122,7 @@ void test_mtrace()
     }
     muntrace();
 }
+#endif
 
 //-------------------------------------------------------------------
 //  user & group
@@ -170,6 +174,7 @@ void test_pw_scan()
     endpwent();
 }
 
+#ifndef OS_MAC
 void test_shadow_pw_scan()
 {
     spwd* pw;
@@ -178,6 +183,7 @@ void test_shadow_pw_scan()
     }
     endspent();
 }
+#endif
 
 void test_crypt()
 {
