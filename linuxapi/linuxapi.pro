@@ -11,6 +11,8 @@ SOURCES += \
         ch5.cpp \
         ch6.cpp \
         ch7.cpp \
+        ch8.cpp \
+        ch9.cpp \
         main.cpp \
         utils.cpp
 
