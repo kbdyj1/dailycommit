@@ -8,10 +8,11 @@ void test_ch_6();
 void test_ch_7();
 void test_ch_8();
 void test_ch_9();
+void test_ch_10();
 
 int main()
 {
-    test_ch_9();
+    test_ch_10();
 
     return 0;
 }
