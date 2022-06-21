@@ -50,7 +50,8 @@ resources.files = \
     qml/TestAnimation.qml \
     qml/my_button_impl.js \
     qml/factorial.js \
-    qml/common_button_impl.js
+    qml/common_button_impl.js \
+    qml/RtoL.qml
 
 resources.prefix = /$${TARGET}
 RESOURCES += resources \
@@ -68,6 +69,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+
 
 
 
