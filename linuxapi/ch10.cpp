@@ -1,5 +1,9 @@
 #include <iostream>
+
+#include <unistd.h>
+#define __USE_MISC
 #include <sys/time.h>
+#include <sys/times.h>
 
 namespace { //=================================================================
 
@@ -64,12 +68,56 @@ void test_strftime()
     }
 }
 
+// LC_CTYPE     isalpha(), lower <-> upper
+// LC_COLLATE
+// LC_MONETARY  <locale.h> currency
+// LC_NUMERIC   <locale.h>
+// LC_TIME
+// LC_MESSAGES  message catalog, GNU gettext()
+
+void test_locale()
+{
+#if (0)
+    auto* ret = setlocale(LC_TIME, "");  // use environment variables
+#else
+    const char* locale = "ko_KR.utf8";
+    auto* ret = setlocale(LC_TIME, locale);
+#endif
+    if (ret != nullptr) {
+        std::cout << "setlocale(LC_TIME, \"" << locale << "\"): " << ret << "\n";
+    }
+
+    test_strftime();
+}
+
+void test_adjtime()
+{
+    // __USE_MISC
+
+    timeval tv;
+    auto ret = adjtime(nullptr, &tv);
+    std::cout << "adjtime() tv_sec: " << tv.tv_sec << ", tv_usec: " << tv.tv_usec << "\n";
+}
+
+void test_times()
+{
+    tms t;
+    auto ret = times(&t);
+    std::cout << "user: " << t.tms_utime << ", system: " << t.tms_stime << "\n";
+    std::cout << "sysconf(_SC_CLK_TCK): " << sysconf(_SC_CLK_TCK) << "\n";
+    std::cout << "times() return: " << ret << "\n";
+}
+
 } //===========================================================================
 
 void test_ch_10()
 {
 #if (0)
+    // set timezone for testing.
     putenv("TZ=:Asia/Hong_Kong");
 #endif
-    test_strftime();
+    //test_strftime();
+    //test_locale();
+    //test_adjtime();
+    test_times();
 }
