@@ -9,6 +9,7 @@ macx {
 
 SOURCES += \
         ch10.cpp \
+        ch11.cpp \
         ch5.cpp \
         ch6.cpp \
         ch7.cpp \
