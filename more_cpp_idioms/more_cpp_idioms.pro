@@ -5,4 +5,5 @@ CONFIG -= qt
 
 SOURCES += \
         220606.cpp \
+        VirtualConstructor.cpp \
         main.cpp
