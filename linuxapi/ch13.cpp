@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include <malloc.h>
+#include <stdlib.h>
 
 namespace { //=================================================================
 
@@ -61,10 +63,60 @@ void test_synchronized_io_completion()
     }
 }
 
+void test_posix_advise()
+{
+    // 1. POSIX_FADV_NORMAL     read ahead window size: 128K
+    // 2. POSIX_FADV_SEQUENTIAL read ahead window size: 256K
+    // 3. POSIX_FADV_RANDOM     read ahead -> disabled
+    // 4. POSIX_FADV_WILLNEED
+    // 5. POSIX_FADV_DONTNEED
+    // 6. POSIX_FADV_NOREUSE    not valid
+}
+
+void test_direct_io(const char*filename, size_t len, off_t offset, size_t align)
+{
+    auto fd = open(filename, O_RDONLY | O_DIRECT);
+    if (0 <= fd) {
+        void* buf = (char*)memalign(align*2, len + align) + align;
+
+        if (buf) {
+            std::cout << "memalign(" << align*2 << ", " << len+align << ") + " << align << " : " << buf << "\n";
+
+            if (-1 != lseek(fd, offset, SEEK_SET)) {
+                auto numRead = read(fd, buf, len);
+
+                std::cout << numRead << " bytes <- read(" << fd << ", " << buf << ", " << len << ") : \n" << (char*)buf <<  "\n";
+            } else {
+                std::cerr << "lseek(" << fd << ", " << offset << ", SEEK_SET) : failed.\n";
+            }
+
+            //free(buf);
+        }
+        close(fd);
+    }
+}
+
+void test_io()
+{
+    char buf[32] = "Linux api";
+    printf("\nHello, Qt6");
+    write(STDOUT_FILENO, buf, strlen(buf));
+}
+
 } //===========================================================================
 
 void test_ch_13()
 {
-    test_stdio_streamming_buffering_mode();
-    test_synchronized_io_completion();
+    //test_stdio_streamming_buffering_mode();
+    //test_synchronized_io_completion();
+
+#if (0)
+    size_t len = 512 * 4;
+    off_t offset = 512;
+    size_t align = 512;
+
+    test_direct_io("Makefile", len, offset, align);
+#endif
+
+    test_io();
 }
