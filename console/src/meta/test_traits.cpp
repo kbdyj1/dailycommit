@@ -178,11 +178,11 @@ void test_traits()
 
 void test_blob()
 {
-    auto a = apply_fg(5.0f, std::negate<float>(), log2);
+    auto a = apply_fg(5.0f, std::negate<float>(), log2f);
 
     std::cout << "apply_fg(5.0f, std::negate<float>(), log2) : " << a << std::endl;
 
-    auto b = apply_fg(3.14f, log2, std::negate<float>());
+    auto b = apply_fg(3.14f, log2f, std::negate<float>());
 
     std::cout << "apply_fg(3.14f, log2, std::negate<float>()) : " << b << std::endl;
 }
