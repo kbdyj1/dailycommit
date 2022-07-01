@@ -9,17 +9,16 @@
 
 std::ostream& operator<<(std::ostream& os, timespec t)
 {
+#if (1)
     char buf[32];
     struct tm tm;
     gmtime_r(&t.tv_sec, &tm);
     strftime(buf, 21, "%Y-%m-%dT%H:%M:%S", &tm);
     os << buf;
+#else
+    os << ctime((time_t*)&t);
+#endif
     return os;
-}
-
-void printMode(int mode)
-{
-
 }
 
 void printOpenFail(const std::string& filename)
@@ -58,7 +57,31 @@ std::string modeString(int mode)
 {
     std::string ret;
 
-    ret += ((mode & __S_IFDIR) ? "d" : "-");
+    auto type = mode & S_IFMT;
+
+    switch (type) {
+    case S_IFDIR:
+        ret += "d";
+        break;
+    case S_IFCHR:
+        ret += "c";
+        break;
+    case S_IFBLK:
+        ret += "b";
+        break;
+    case S_IFSOCK:
+        ret += "s";
+        break;
+    case S_IFLNK:
+        ret += "l";
+        break;
+
+    case S_IFREG:
+    default:
+        ret += "-";
+        break;
+    }
+
     ret += ((mode & S_IRUSR) ? "r" : "-");
     ret += ((mode & S_IWUSR) ? "w" : "-");
     ret += ((mode & S_IXUSR) ? "x" : "-");
