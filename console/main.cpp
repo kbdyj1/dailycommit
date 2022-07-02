@@ -34,7 +34,7 @@ void test_duck_typing();
 
 void testConsole()
 {
-    test_duck_typing();
+    test_typeTraits();
 }
 
 //-----------------------------------------------------------------------------

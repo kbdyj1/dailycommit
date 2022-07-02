@@ -417,22 +417,49 @@ void test11()
 #endif
 }
 
+void test_is_void()
+{
+    std::cout << std::is_void<void>::value << "\n";
+    std::cout << std::is_void<int>::value << "\n";
+}
+
+// std::is_pointer is false for std::nullptr_t because it is not a built-in pointer type
+void test_is_nullpointer()
+{
+    std::cout << "std::is_null_pointer<decltype(nullptr)>::value(" << std::is_null_pointer<decltype(nullptr)>::value << "), "
+              << "std::is_null_pointer<int*>::value(" << std::is_null_pointer<int*>::value << ")\n"
+              << "std::is_pointer<decltype(nullptr)>::value(" << std::is_pointer<decltype(nullptr)>::value << "), "
+              << "std::is_pointer<int*>::value(" << std::is_pointer<int*>::value << ")\n";
+}
+
+void f(int*)
+{
+    std::cout << "f(int*)\n";
+}
+void f(double*)
+{
+    std::cout << "f(double*)\n";
+}
+void f(std::nullptr_t)
+{
+    std::cout << "f(nullptr_t)\n";
+}
+
+void test_nullptr_t()
+{
+    int* pi{};
+    double *pd{};
+
+    f(pi);
+    f(pd);
+    f(nullptr);
+}
+
 } // namespace ================================================================
 
 void test_typeTraits()
 {
     std::cout << std::boolalpha << std::endl;
 
-    //test0();
-    //test1();
-    //test2();
-    //test3();
-    //test4();
-    //test5();
-    //test6();
-    //test7();
-    //test8();
-    //test9();
-    //test10();
-    test11();
+    test_nullptr_t();
 }
