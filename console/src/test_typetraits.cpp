@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <typeinfo>
 
+#define SHOW(item) \
+    std::cout << #item << " : " << item << "\n"
+
 namespace detail {
 
 void* voidfy(const volatile void* ptr) noexcept { return const_cast<void*>(ptr); }
@@ -424,6 +427,7 @@ void test_is_void()
 }
 
 // std::is_pointer is false for std::nullptr_t because it is not a built-in pointer type
+// typedef decltype (nullptr) nullptr_t;
 void test_is_nullpointer()
 {
     std::cout << "std::is_null_pointer<decltype(nullptr)>::value(" << std::is_null_pointer<decltype(nullptr)>::value << "), "
@@ -455,11 +459,67 @@ void test_nullptr_t()
     f(nullptr);
 }
 
+// bool
+// char, char8_t, char16_t, char32_t
+// wchar_t,
+// short
+// int
+// long, long long
+//
+// Note : the behavior of a program that adds specializations for is_integral or is_integral_v is undefined
+//
+// template <class T>
+// inline constexpr bool is_integral_v = std::is_integral<T>::value;
+
+namespace isIntegral {
+
+class A{};
+enum E : int {};
+
+template <class T>
+T f(T i)
+{
+    static_assert(std::is_integral<T>::value, "Integral required");
+    return i;
+}
+
+void test_is_integral()
+{
+    SHOW(std::is_integral<A>::value);
+    SHOW(std::is_integral_v<E>);
+    SHOW(std::is_integral_v<float>);
+    SHOW(std::is_integral_v<int>);
+    SHOW(std::is_integral_v<const int>);
+    SHOW(std::is_integral_v<bool>);
+    SHOW(f(123));
+}
+
+} // isIntegral
+
+// float, double, long double
+
+//template <class T>
+//inline constexpr bool is_floating_point_v = std::is_floating_point<T>::value;
+
+//template <class T>
+//struct is_floating_point : std::integral_constant<
+//        bool,
+//        std::is_same_v<float, typename std::remove_cv<T>::type> ||
+//        std::is_same_v<double, typename std::remove_cv<T>::type> ||
+//        std::is_same_v<long double, typename std::remove_cv<T>::type>
+//>
+//{};
+
+void test_is_floating_point()
+{
+
+}
+
 } // namespace ================================================================
 
 void test_typeTraits()
 {
     std::cout << std::boolalpha << std::endl;
 
-    test_nullptr_t();
+    isIntegral::test_is_integral();
 }
