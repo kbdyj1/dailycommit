@@ -13,6 +13,7 @@ void printErrno(int no);
 void catFile(const std::string& filename);
 
 std::string modeString(int mode);
+std::string inodeAttrString(int attr);
 
 #define TAB() \
     std::cout << "\t"

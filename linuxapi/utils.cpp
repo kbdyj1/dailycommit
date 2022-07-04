@@ -6,6 +6,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <linux/fs.h>
 
 std::ostream& operator<<(std::ostream& os, timespec t)
 {
@@ -91,6 +92,32 @@ std::string modeString(int mode)
     ret += ((mode & S_IROTH) ? "r" : "-");
     ret += ((mode & S_IWOTH) ? "w" : "-");
     ret += ((mode & S_IXOTH) ? "x" : "-");
+
+    return ret;
+}
+
+#define WRITE_ATTR_IF_MATCH(str, attr, flag) \
+    if (attr & flag) { \
+        str += flag; \
+        str += "\n"; \
+    }
+
+std::string inodeAttrString(int attr)
+{
+    std::string ret;
+
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_APPEND_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_COMPR_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_DIRSYNC_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_IMMUTABLE_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_JOURNAL_DATA_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_NOATIME_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_NODUMP_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_NOTAIL_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_SECRM_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_SYNC_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_TOPDIR_FL);
+    WRITE_ATTR_IF_MATCH(ret, attr, FS_UNRM_FL);
 
     return ret;
 }

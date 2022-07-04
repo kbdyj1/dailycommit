@@ -1,5 +1,8 @@
 #include <iostream>
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <linux/fs.h>
 #include "utils.h"
 
 namespace { //================================================================= File attribute
@@ -61,10 +64,58 @@ void test_lstat(const char* filename)
     }
 }
 
+// root
+// access(filename, F_OK) : OK
+// access(filename, R_OK) : OK
+// access(filename, W_OK) : OK
+// access(filename, X_OK) : OK
+//
+// local user
+// access(filename, F_OK) : OK
+// access(filename, R_OK) : OK
+// access(filename, W_OK) : --
+// access(filename, X_OK) : OK
+void test_access(const char* filename)
+{
+    auto ret = access(filename, F_OK);
+    std::cout << "access(filename, F_OK) : " << (-1 ==ret ? "--" : "OK") << "\n";
+    ret = access(filename, R_OK);
+    std::cout << "access(filename, R_OK) : " << (-1 ==ret ? "--" : "OK") << "\n";
+    ret = access(filename, W_OK);
+    std::cout << "access(filename, W_OK) : " << (-1 ==ret ? "--" : "OK") << "\n";
+    ret = access(filename, X_OK);
+    std::cout << "access(filename, X_OK) : " << (-1 ==ret ? "--" : "OK") << "\n";
+}
+
+void test_umask()
+{
+    auto u = umask(0);
+    std::cout << "umask : " << modeString(u) << "\n";
+    umask(u);
+}
+
+void test_inode(const char* filename)
+{
+    auto fd = open(filename, O_RDONLY | O_EXCL);
+    if (-1 == fd) {
+        std::cerr << filename << " open failed.";
+    } else {
+        int attr;
+        auto ret = ioctl(fd, FS_IOC_GETFLAGS, &attr);
+        std::cout << "ioctl(fd, FS_IOC_GETFLAGS) : " << attr << "\n";
+        close(fd);
+
+        std::cout << inodeAttrString(attr) << "\n";
+    }
+}
+
 } //===========================================================================
 
 void test_ch_15()
 {
-    test_stat("/bin/grep");
-    test_lstat("/bin/vi");
+//    test_stat("/bin/grep");
+//    test_lstat("/bin/vi");
+    //test_access("/bin/gcc");
+    //test_umask();
+    test_inode("/bin/gdb");
 }
