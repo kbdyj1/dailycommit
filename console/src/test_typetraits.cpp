@@ -471,7 +471,7 @@ void test_nullptr_t()
 // template <class T>
 // inline constexpr bool is_integral_v = std::is_integral<T>::value;
 
-namespace isIntegral {
+namespace isIntegral { //------------------------------------------------------
 
 class A{};
 enum E : int {};
@@ -494,7 +494,7 @@ void test_is_integral()
     SHOW(f(123));
 }
 
-} // isIntegral
+} // isIntegral ---------------------------------------------------------------
 
 // float, double, long double
 
@@ -512,8 +512,93 @@ void test_is_integral()
 
 void test_is_floating_point()
 {
-
+    std::cout << "std::is_floating_point_v<float> : " << std::is_floating_point_v<float> << "\n";
+    std::cout << "std::is_floating_point_v<const float> : " << std::is_floating_point_v<const float> << "\n";
+    std::cout << "std::is_floating_point_v<volatile float> : " << std::is_floating_point_v<volatile float> << "\n";
+    std::cout << "std::is_floating_point_v<float&>: " << std::is_floating_point_v<float&> << "\n";
+    std::cout << "std::is_floating_point_v<double>: " << std::is_floating_point_v<double> << "\n";
+    std::cout << "std::is_floating_point_v<double&>:" << std::is_floating_point_v<double&> << "\n";
+    std::cout << "std::is_floating_point_v<int> : " << std::is_floating_point_v<int> << "\n";
 }
+
+class E
+{};
+void test_is_array()
+{
+    std::cout << "std::is_array_v<E> : " << std::is_array_v<E> << "\n";
+    std::cout << "std::is_array_v<E[]> : " << std::is_array_v<E[]> << "\n";
+    std::cout << "std::is_array_v<E[2]> : " << std::is_array_v<E[2]> << "\n";
+    std::cout << "std::is_array_v<int[]> : " << std::is_array_v<int[]> << "\n";
+    std::cout << "std::is_array_v<std::array<int, 3>> : " << std::is_array_v<std::array<int, 3>> << "\n";
+}
+
+namespace Enum { //------------------------------------------------------------
+
+struct A { enum E{}; };
+enum E{};
+enum class EC : int {};
+
+void test_is_enum()
+{
+    std::cout << "std::is_enum_v<A> : " << std::is_enum_v<A> << "\n";
+    std::cout << "std::is_enum_v<E> : " << std::is_enum_v<E> << "\n";
+    std::cout << "std::is_enum_v<A::E> : " << std::is_enum_v<A::E> << "\n";
+    std::cout << "std::is_enum_v<int> : " << std::is_enum_v<int> << "\n";
+    std::cout << "std::is_enum_v<EC> : " << std::is_enum_v<EC> << "\n";
+}
+
+} // Enum ---------------------------------------------------------------------
+
+namespace Union { //-----------------------------------------------------------
+
+struct A{};
+typedef union {
+    int a;
+    float b;
+} B;
+struct C {
+    B d;
+};
+
+void test_is_union()
+{
+    std::cout << "std::is_union_v<A> : " << std::is_union_v<A> << "\n";
+    std::cout << "std::is_union_v<B> : " << std::is_union_v<B> << "\n";
+    std::cout << "std::is_union_v<C> : " << std::is_union_v<C> << "\n";
+    std::cout << "std::is_union_v<int> : " << std::is_union_v<int> << "\n";
+}
+
+} // Union --------------------------------------------------------------------
+
+namespace Class { //-----------------------------------------------------------
+
+namespace detail {
+template <class T>
+std::integral_constant<bool, !std::is_union_v<T>> test(int T::*);
+
+template <class T>
+std::false_type test(...);
+} // namespace detail
+
+template <class T>
+struct is_class : decltype(detail::test<T>(nullptr))
+{};
+
+struct A{};
+class B{};
+enum class E{};
+union U { class UC{}; };
+
+void test_is_class()
+{
+    std::cout << "is_class<A> : " << is_class<A>::value << "\n";
+    std::cout << "is_class<B> : " << is_class<B>::value << "\n";
+    std::cout << "is_class<E> : " << is_class<E>::value << "\n";
+    std::cout << "is_class<U> : " << is_class<U>::value << "\n";
+    std::cout << "is_class<U::UC> : " << is_class<U::UC>::value << "\n";
+}
+
+} // Class --------------------------------------------------------------------
 
 } // namespace ================================================================
 
@@ -521,5 +606,10 @@ void test_typeTraits()
 {
     std::cout << std::boolalpha << std::endl;
 
-    isIntegral::test_is_integral();
+    //isIntegral::test_is_integral();
+    //test_is_floating_point();
+    //test_is_array();
+    //Enum::test_is_enum();
+    //Union::test_is_union();
+    Class::test_is_class();
 }
