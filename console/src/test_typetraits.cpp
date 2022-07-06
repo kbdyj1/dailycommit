@@ -600,6 +600,23 @@ void test_is_class()
 
 } // Class --------------------------------------------------------------------
 
+namespace Function { //--------------------------------------------------------
+
+struct A {
+    int fun() const&;
+};
+int f();
+
+void test_is_function()
+{
+    std::cout << std::is_function_v<A> << "\n";
+    std::cout << std::is_function_v<int(int)> << "\n";
+    std::cout << std::is_function_v<decltype(f)> << "\n";
+    std::cout << std::is_function_v<int> << "\n";
+}
+
+} // Function -----------------------------------------------------------------
+
 } // namespace ================================================================
 
 void test_typeTraits()
@@ -611,5 +628,6 @@ void test_typeTraits()
     //test_is_array();
     //Enum::test_is_enum();
     //Union::test_is_union();
-    Class::test_is_class();
+    //Class::test_is_class();
+    Function::test_is_function();
 }
