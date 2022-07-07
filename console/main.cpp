@@ -31,10 +31,11 @@ void test_qt_hash();
 void test_crtp();
 void test_sfinae();
 void test_duck_typing();
+void test_implicitSharing();
 
 void testConsole()
 {
-    test_typeTraits();
+    test_implicitSharing();
 }
 
 //-----------------------------------------------------------------------------

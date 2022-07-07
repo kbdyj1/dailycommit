@@ -25,6 +25,7 @@ SOURCES = main.cpp \
         src/test_forwarding.cpp \
         src/test_function.cpp \
         src/test_hash.cpp \
+        src/test_implicitSharing.cpp \
         src/test_iodevice.cpp \
         src/test_json.cpp \
         src/test_lambda.cpp \
