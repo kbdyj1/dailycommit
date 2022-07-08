@@ -32,10 +32,11 @@ void test_crtp();
 void test_sfinae();
 void test_duck_typing();
 void test_implicitSharing();
+void test_qcache();
 
 void testConsole()
 {
-    test_implicitSharing();
+    test_qcache();
 }
 
 //-----------------------------------------------------------------------------
