@@ -33,10 +33,11 @@ void test_sfinae();
 void test_duck_typing();
 void test_implicitSharing();
 void test_qcache();
+void test_regexp();
 
 void testConsole()
 {
-    test_qcache();
+    test_regexp();
 }
 
 //-----------------------------------------------------------------------------

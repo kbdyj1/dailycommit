@@ -35,6 +35,7 @@ SOURCES = main.cpp \
         src/test_qcache.cpp \
         src/test_qsettings.cpp \
         src/test_qtcontainer.cpp \
+        src/test_regexp.cpp \
         src/test_rreference.cpp \
         src/test_sfinae.cpp \
         src/test_sharedmemory.cpp \
