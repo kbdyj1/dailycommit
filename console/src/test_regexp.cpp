@@ -9,6 +9,13 @@ namespace { //=================================================================
 
 // QRegularExpression implements Perl-compatible regular expressions
 
+void print_matched(const QRegularExpressionMatch& match)
+{
+    qDebug() << "match.hasMatch(): " << match.hasMatch();
+    qDebug() << "match.hasPartialMatch(): " << match.hasPartialMatch();
+    qDebug() << match.captured();
+}
+
 void test_regexp_construct()
 {
     auto rx0 = QRegularExpression("a pattern");
@@ -47,9 +54,99 @@ void test_extracting_captured_substrings()
     }
 }
 
+void test_pattern_option()
+{
+    auto rx = QRegularExpression("Qt", QRegularExpression::CaseInsensitiveOption);
+    auto match = rx.match("qt company");
+    if (match.hasMatch()) {
+        qDebug() << match.captured();
+    }
+}
+
+void test_match_use_offset()
+{
+    auto rx = QRegularExpression(R"(\d\d \w+)");
+    auto match = rx.match("12 abc 45 def", 1);
+    if (match.hasMatch()) {
+        qDebug() << match.captured();
+    }
+}
+
+void test_global_matching()
+{
+    auto rx = QRegularExpression(R"(\w+)");
+    auto i = rx.globalMatch("The qt company");
+#if (0)
+    while (i.hasNext()) {
+        qDebug() << "peekNext: " << i.peekNext();
+        auto match = i.next();
+        qDebug() << "match.captured(): " << match.captured();
+    }
+#else
+    for (const auto& match : i) {
+        qDebug() << match.captured();
+    }
+#endif
+}
+
+void test_partial_matching()
+{
+    //#1
+    {
+        auto rx = QRegularExpression(R"(\d\d\d\d)");
+        auto match = rx.match("123 456", 0, QRegularExpression::PartialPreferCompleteMatch);
+        qDebug() << "match.hasMatch(): " << match.hasMatch();
+        qDebug() << "match.hasPartialMatch(): " << match.hasPartialMatch();
+        if (match.hasPartialMatch()) {
+            qDebug() << match.captured();
+            qDebug() << match.captured(1);
+        }
+    }
+    //#2
+    {
+        auto rx = QRegularExpression(R"(abc\w+X|def)");
+        auto match = rx.match("abcdef abc00X", 0, QRegularExpression::PartialPreferCompleteMatch);
+        print_matched(match);
+    }
+}
+
+void test_incremental_multi_segment_matching()
+{
+    //#1
+    {
+        auto rx = QRegularExpression("abc|ab");
+        auto match = rx.match("ab", 0, QRegularExpression::PartialPreferFirstMatch);
+        print_matched(match);
+    }
+    //#2
+    {
+        auto rx = QRegularExpression("abc(def)?");
+        auto match = rx.match("abc", 0, QRegularExpression::PartialPreferFirstMatch);
+        print_matched(match);
+    }
+    //#3
+    {
+        auto rx = QRegularExpression("(abc)*");
+        auto match = rx.match("abc", 0, QRegularExpression::PartialPreferFirstMatch);
+        print_matched(match);
+    }
+}
+
+void test_error_handling()
+{
+    auto rx = QRegularExpression("(unmatched|parenthesis");
+    if (!rx.isValid()) {
+        qDebug().noquote() << rx.errorString();
+        qDebug().noquote() << rx.pattern();
+        auto position = QString(rx.patternErrorOffset(), ' ');
+        position += "^";
+        qDebug().noquote() << position;
+    }
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_extracting_captured_substrings();
+    test_error_handling();
 }
