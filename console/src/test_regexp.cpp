@@ -144,9 +144,58 @@ void test_error_handling()
     }
 }
 
+#define STR \
+    "sales1.xls\n" \
+    "orders3.xls\n" \
+    "sales2.xls\n" \
+    "sales3.xls\n" \
+    "apac1.xls\n" \
+    "europe2.xls\n" \
+    "sam.xls\n" \
+    "na1.xls\n" \
+    "na2.xls\n" \
+    "sa1.xls\n" \
+    "ca1.xls"
+
+void test_dot()
+{
+    auto s = QString(STR);
+    //auto rx = QRegularExpression("[ns]a.\.xls");
+    //auto rx = QRegularExpression("[ns]a[0123456789]\.xls");
+    //auto rx = QRegularExpression("[ns]a[0-9]\.xls");
+    //auto rx = QRegularExpression("[ns]a[^0-9]\.xls");
+    auto rx = QRegularExpression("[ns]a[[:digit:]]\.xls");  // POSIX character class
+    auto match = rx.globalMatch(s);
+    while (match.hasNext()) {
+        auto value = match.next();
+        qDebug() << value.captured();
+    }
+}
+
+void test_email_address()
+{
+    auto s = QString("Hello, Qt!!! .gildong.hong@test.company.com is my e-mail address");
+    auto rx = QRegularExpression(R"(\w+[\w.]*@[\w.]+\.\w+)");
+    auto match = rx.globalMatch(s);
+    while (match.hasNext()) {
+        auto value = match.next();
+        qDebug() << value.captured();
+    }
+}
+
+void test_url()
+{
+    auto s = QString("company url : https://git.company.com");
+    auto rx = QRegularExpression(R"(https?:\/\/[\w.]+\.\w+)");
+    auto match = rx.match(s);
+    if (match.hasMatch()) {
+        qDebug() << match.captured();
+    }
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_error_handling();
+    test_url();
 }
