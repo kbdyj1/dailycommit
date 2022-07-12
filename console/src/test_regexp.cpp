@@ -11,9 +11,17 @@ namespace { //=================================================================
 
 void print_matched(const QRegularExpressionMatch& match)
 {
-    qDebug() << "match.hasMatch(): " << match.hasMatch();
-    qDebug() << "match.hasPartialMatch(): " << match.hasPartialMatch();
-    qDebug() << match.captured();
+//    qDebug() << "match.hasMatch(): " << match.hasMatch();
+//    qDebug() << "match.hasPartialMatch(): " << match.hasPartialMatch();
+    qDebug() << match;
+}
+
+void print_matched_all(QRegularExpressionMatchIterator& iter)
+{
+    while (iter.hasNext()) {
+        auto value = iter.next();
+        qDebug() << value;
+    }
 }
 
 void test_regexp_construct()
@@ -165,22 +173,16 @@ void test_dot()
     //auto rx = QRegularExpression("[ns]a[0-9]\.xls");
     //auto rx = QRegularExpression("[ns]a[^0-9]\.xls");
     auto rx = QRegularExpression("[ns]a[[:digit:]]\.xls");  // POSIX character class
-    auto match = rx.globalMatch(s);
-    while (match.hasNext()) {
-        auto value = match.next();
-        qDebug() << value.captured();
-    }
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
 }
 
 void test_email_address()
 {
     auto s = QString("Hello, Qt!!! .gildong.hong@test.company.com is my e-mail address");
     auto rx = QRegularExpression(R"(\w+[\w.]*@[\w.]+\.\w+)");
-    auto match = rx.globalMatch(s);
-    while (match.hasNext()) {
-        auto value = match.next();
-        qDebug() << value.captured();
-    }
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
 }
 
 void test_url()
@@ -193,9 +195,75 @@ void test_url()
     }
 }
 
+void test_word_boundary()
+{
+    {
+        auto s = QString{"The cat scattered his food all over the room."};
+        //auto rx = QRegularExpression{R"(\bcat\b)"};
+        auto rx = QRegularExpression{R"(cat)"};
+        auto iter = rx.globalMatch(s);
+        print_matched_all(iter);
+    }
+    {
+        auto s = QString{"zero-digit invalid - hypen."};
+        auto rx0 = QRegularExpression{R"(\b-\b)"};
+        auto m0 = rx0.match(s);
+        qDebug() << rx0;
+        print_matched(m0);
+
+        auto rx1 = QRegularExpression{R"(\B-\B)"};
+        auto m1 = rx1.match(s);
+        qDebug() << rx1;
+        print_matched(m1);
+    }
+}
+
+void test_xml()
+{
+    {
+        auto rx = QRegularExpression{R"(<\?xml.*\?>)"};
+        auto s = QString{R"(<?xml version="1.0" encoding="UTF-8 ?>")"};
+        auto match = rx.match(s);
+        if (match.hasMatch()) {
+            print_matched(match);
+        }
+    }
+    {
+        auto rx = QRegularExpression{R"(^\s*<\?xml.*\?>)"};
+        auto s = QString{R"(no xml<?xml version="1.0" encoding="UTF-8 ?>")"};
+        auto match = rx.match(s);
+        if (match.hasMatch()) {
+            print_matched(match);
+        }
+    }
+}
+
+void test_multiline()
+{
+    auto s = QString{
+        "<script>\n"
+        "function spellcheck(form, field){\n"
+        "   // no empty\n"
+        "   if (field.value == '') {\n"
+        "       return false;\n"
+        "   }\n"
+        "   // init\n"
+        "   var windowName='spellWindow'\n"
+        "   var spellCheckUrl='spell.cfm?formname=comment&fieldname='+field.name\n"
+        "   // done\n"
+        "   return true;\n"
+        "}\n"
+        "</script>"
+    };
+    //auto rx = QRegularExpression{R"(^\s*\/\/.*$)"};
+    auto rx = QRegularExpression{R"((?m)^\s*\/\/.*$)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_url();
+    test_multiline();
 }
