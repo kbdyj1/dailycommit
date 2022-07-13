@@ -261,9 +261,77 @@ void test_multiline()
     print_matched_all(iter);
 }
 
+void test_blank()
+{
+    auto s = QString{"Hello, Qt6.&nbsp;multi platform&nbsp;&nbsp; library"};
+    auto rx = QRegularExpression{"(&nbsp;){2,}"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_ipv4_expression()
+{
+    auto s = QString{"192.168.0.1 255.255.255.128"};
+    auto rx = QRegularExpression{R"((\d{1,3}\.){3}\d{1,3})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_valid_ipv4_expression()
+{
+    auto s = QString{"192.168.0.1 255.255.255.128 1.0.256.3 300.1.2.244"};
+    auto rx = QRegularExpression{R"(((\d{1,2}|1\d{2}|2([0-4]\d|5[0-5]))\.){3}(\d{1,2}|1\d{2}|2([0-4]\d|5[0-5])))"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_html_tag()
+{
+    auto s = QString{
+        "<body>\n"
+        "<h1>title</h1>\n"
+        "contents 1\n"
+        "<h2>Qt</h2>\n"
+        "version 6.0\n"
+        "<h2>illigal expression</h3>\n"
+        "<h2>c++21</h2>\n"
+        "new c++ language\n"
+        "</body>"
+    };
+    auto rx = QRegularExpression{R"(<[hH](\d)>.*?</[hH]\1>)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_dereference()
+{
+    auto s = QString{
+        "This is a block of of text,\n"
+        "servral words here are are\n"
+        "repeated, and and they\n"
+        "should not be."
+    };
+    auto rx = QRegularExpression{R"([ ]+(\w+)[ ]+\1)"}; // javascript /1, perl $1
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_date_expression()
+{
+    auto s = QString{
+            "ID: 008\n"
+            "SEX: M\n"
+            "BIRTH: 1975-01-01\n"
+            "STATUS: ACTIVE"
+    };
+    auto rx = QRegularExpression{R"((19|20)\d{2})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_multiline();
+    test_html_tag();
 }
