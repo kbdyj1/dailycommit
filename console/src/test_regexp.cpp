@@ -329,9 +329,20 @@ void test_date_expression()
     print_matched_all(iter);
 }
 
+void test_replace()
+{
+    auto s = QString{"Hello, yuri.cho@bbb.com"};
+    auto rx = QRegularExpression{R"((\w+[\w\.]*@\w+[\w\.]+\w+))"};
+    auto m = rx.match(s);
+    if (m.isValid()) {
+        auto html = QString{R"(<a href="mailto:%1">%1</a>)"}.arg(m.captured());
+        qDebug().noquote() << html;
+    }
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_html_tag();
+    test_replace();
 }
