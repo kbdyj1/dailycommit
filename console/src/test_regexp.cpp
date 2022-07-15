@@ -340,9 +340,59 @@ void test_replace()
     }
 }
 
+void test_lookahead()
+{
+    auto s = QString{
+        "http://www.aaa.com\n"
+        "https://mail.aaa.com\n"
+        "ftp://ftp.aaa.com"
+    };
+#if (1)
+    auto rx = QRegularExpression{".+(?=:)"};
+#else
+    auto rx = QRegularExpression{".+:"};
+#endif
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_lookbehind()
+{
+    auto s = QString{
+        "ABC: $23.45\n"
+        "EFG: $10.00\n"
+        "HIJ: $34.90\n"
+        "KLM: $80.15\n"
+        "Total 4 items"
+    };
+    auto rx = QRegularExpression{R"((?<=\$)[\d.]+)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_look_ahead_and_behind()
+{
+    auto s = QString{"<head><title>Regular expression example</title></head>"};
+    auto rx = QRegularExpression{"(?<=<[Tt][Ii][Tt][Ll][Ee]>).*(?=</[Tt][Ii][Tt][Ll][Ee]>)"};
+    auto m = rx.match(s);
+    print_matched(m);
+}
+
+void test_negative_look()
+{
+    auto s = QString{
+        "I paid $30 for 100 apples,\n"
+        "50 oranges, and 60 pears.\n"
+        "I saved $5 on this order"
+    };
+    auto rx = QRegularExpression{R"(\b(?<!\$)\d+)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_replace();
+    test_negative_look();
 }
