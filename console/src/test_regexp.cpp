@@ -390,9 +390,60 @@ void test_negative_look()
     print_matched_all(iter);
 }
 
+void test_condition()
+{
+    auto s = QString{
+        "123-456-7890\n"
+        "(123)456-7890\n"
+        "(123)-456-7890\n"
+        "(123-456-7890\n"
+        "1234567890\n"
+        "123 456 7890\n"
+    };
+#if (0)
+    auto rx = QRegularExpression{R"(\(?\d{3}\)?-?\d{3}-\d{4})"};
+#else
+    auto rx = QRegularExpression{R"((\()?\d{3}(?(1)\)|-)\d{3}-\d{4})"};
+#endif
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_dereference_condition()
+{
+    auto s = QString{
+        R"("
+        "<!-- Nav bar -->\n"
+        "<div>\n"
+        "<a href="/home"><img src="/images/home.gif"></a>\n"
+        "<img src="/images/spacer.gif">\n"
+        "<a href="/search"><img src="/images/search.gif"></a>\n"
+        "<img src="/images/spacer.gif">\n"
+        "<a href="/help"><img src="/images/help.gif"></a>\n"
+        "</div>
+        ")"
+    };
+    auto rx = QRegularExpression{R"((<[Aa]\s+[^>]+>\s*)?<[Ii][Mm][Gg]\s+[^>]+>(?(1)\s*<\/[Aa]>))"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_ahead_behind_condition()
+{
+    auto s = QString{
+        "11111\n"
+        "22222\n"
+        "33333-\n"
+        "44444-4444"
+    };
+    auto rx = QRegularExpression{R"(\d{5}(?(?=-)-\d{4}))"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_negative_look();
+    test_ahead_behind_condition();
 }
