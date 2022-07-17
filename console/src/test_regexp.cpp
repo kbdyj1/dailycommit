@@ -441,9 +441,66 @@ void test_ahead_behind_condition()
     print_matched_all(iter);
 }
 
+void test_na_phone_number()
+{
+    auto s = QString{
+        "A.Aaa : 012-345-6789\n"
+        "B.Bbb : (234) 567-8901\n"
+        "C.Ccc : (456)777-8888\n"
+    };
+    auto rx = QRegularExpression{R"(\(?[2-9]\d\d\)?[ -]?[2-9]\d\d-\d{4})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_na_zip_code()
+{
+    auto s = QString{
+        "999 1st Aveneu, Bigtown, NY, 11122\n"
+        "123 High Street, Any City, MI 40000-1234"
+    };
+    auto rx = QRegularExpression{R"(\d{5}(-\d{4})?)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_ca_postal_code()
+{
+    auto s = QString{
+        "123 4th Street, Toronto, Ontario, M1A 1A2\n"
+        "567 8th, MOntreal, Quebec, H9Z 9Z9"
+    };
+    auto rx = QRegularExpression{R"([ABCEGHJKLMNPRSTVXY]\d[A-Z] \d[A-Z]\d)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_uk_postal_code()
+{
+    auto s = QString{
+        "171 Kyverdale Road, London N16 6PS\n"
+        "33 Main Street, Portsmouth, P01 3AX\n"
+        "17 High Street, London NW11 8AB"
+    };
+    auto rx = QRegularExpression{R"([A-Z]{1,2}\d[A-Z\d]? \d[ABDEFGHJLNPQRSTUWXYZ]{2})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_us_social_code()
+{
+    auto s = QString{
+        "Hungmin.Son: 123-45-6789\n"
+        "HarryCane: 275-00-8444"
+    };
+    auto rx = QRegularExpression{R"(\d{3}-\d{2}-\d{4})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_ahead_behind_condition();
+    test_us_social_code();
 }
