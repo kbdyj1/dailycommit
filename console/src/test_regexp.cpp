@@ -498,9 +498,122 @@ void test_us_social_code()
     print_matched_all(iter);
 }
 
+void test_perfect_url()
+{
+    auto s = QString{
+        "http://www.forta.com/blog\n"
+        "https://www.forta.com:80/blog/index.html\n"
+        "http://www.forta.com\n"
+        "http://ben:password@www.forta.com\n"
+        "http://localhost/index.php?ab=1&c=2\n"
+        "https://localhost:8080/"
+    };
+#if (0)
+    auto rx = QRegularExpression{R"(https?:\/\/[-\w.]+(:\d+)?(\/([\w\/_.]*)?)?)"};
+#else
+    auto rx = QRegularExpression{R"(https?:\/\/(\w+:\w+@)?[-\w.]+(:\d+)?(\/[\w\/_.]*(\?\S+)?)?)"};
+#endif
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_email()
+{
+    auto s = QString{R"(my e-mail is heungmin.son@tottenham.com)"};
+    auto rx = QRegularExpression{R"((\w+.)*\w+@(\w+\.)+[A-Za-z]+)"};
+    auto m = rx.match(s);
+    print_matched(m);
+}
+
+void test_html_comment()
+{
+    auto s = QString{R"("
+        "<!-- Start of page --->\n"
+        "<html>\n"
+        "<!-- Start of head -->\n"
+        "<head>\n"
+        "<title>Hello, Qt 6</title><!-- Page title -->\n"
+        "</head>\n"
+        "<!-- Body -->\n"
+        "<body>"
+    ")"};
+    auto rx = QRegularExpression{R"(<!-{2,}.*?-{2,}>)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_javascript_comment()
+{
+    auto s = QString{R"("
+        "<scrpt language="JavaScript">\n"
+        "//turn off fields used only by replace\n"
+        "function replaces(){\n"
+        "   document.getElementById('RegExPlace').disabled=true;\n"
+        "   document.getElementById('replaceheader').disabled=true;\n"
+        "}\n"
+        "// Turn on fields\n"
+        "function showReplaceFields(){\n"
+        "   document.getElementById('RegExPlace').disabled=false;\n"
+        "   document.getElementById('replaceheader').disabled=false;\n"
+        "}\n"
+    ")"};
+    auto rx = QRegularExpression{R"(\/\/.*)"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_credit_card()
+{
+    auto s = QString{
+        "MasterCard: 5212345678901234\n"
+        "Visa 1: 4123456789012\n"
+        "Visa 2: 4123456789012345\n"
+        "Amex: 371234567890123\n"
+        "Discover: 601112345678901234\n"
+        "Diners Club: 38812345678901\n"
+        "Diners Club: 30109876543219"
+    };
+    qDebug() << "*** Master Card ***";
+    auto masterCard = QRegularExpression{R"(5[1-5]\d{14})"};
+    auto iter = masterCard.globalMatch(s);
+    print_matched_all(iter);
+
+    qDebug() << "\n*** Visa Card ***";
+    auto visaCard = QRegularExpression{R"(4\d{12}(\d{3})?)"};
+    iter = visaCard.globalMatch(s);
+    print_matched_all(iter);
+
+    qDebug() << "\n*** Amex Card ***";
+    auto amexCard = QRegularExpression{R"(3[4|7]\d{13})"};
+    iter = amexCard.globalMatch(s);
+    print_matched_all(iter);
+
+    qDebug() << "\n*** Discover Card ***";
+    auto discoverCard = QRegularExpression{R"(6011\d{14})"};
+    iter = discoverCard.globalMatch(s);
+    print_matched_all(iter);
+
+    qDebug() << "\n*** Diners Card ***";
+    auto dinersCard = QRegularExpression{R"(((30[0-5]|36\d|38\d)\d{11}))"};
+    iter = dinersCard.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_resident_registration_number()
+{
+    auto s = QString{
+        "450815-1001234\n"
+        "909999-2345678\n"
+        "325-120"
+    };
+    auto rx = QRegularExpression{R"(\d{2}(0\d|1[0-2])(0\d|[12]\d|3[01])-[1-4]\d{6})"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_us_social_code();
+    test_resident_registration_number();
 }
