@@ -34,10 +34,11 @@ void test_duck_typing();
 void test_implicitSharing();
 void test_qcache();
 void test_regexp();
+void test_law_of_demeter();
 
 void testConsole()
 {
-    test_regexp();
+    test_law_of_demeter();
 }
 
 //-----------------------------------------------------------------------------

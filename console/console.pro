@@ -10,6 +10,7 @@ INCLUDEPATH += ./include \
     ./include/kdbindings
 
 SOURCES = main.cpp \
+        src/law_of_demeter.cpp \
         src/meta/test_binary.cpp \
         src/meta/test_meta_ch2.cpp \
         src/meta/test_traits.cpp \
