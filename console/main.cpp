@@ -38,7 +38,7 @@ void test_law_of_demeter();
 
 void testConsole()
 {
-    test_law_of_demeter();
+    test_regexp();
 }
 
 //-----------------------------------------------------------------------------

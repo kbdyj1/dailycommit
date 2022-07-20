@@ -611,9 +611,47 @@ void test_resident_registration_number()
     print_matched_all(iter);
 }
 
+void test_iso_8691_date_format()
+{
+    auto s = QString{"08/14/1979"};
+    auto rx = QRegularExpression{R"(([01]\d)/([012]\d|3[01])/(\d{4}))"};
+    auto m = rx.match(s);
+    if (m.hasMatch()) {
+        auto yyyy = m.captured(3);
+        auto mm = m.captured(1);
+        auto dd = m.captured(2);
+
+        qDebug().noquote().nospace() << "original: " << s << "\n"
+                                     << "ISO-8691: " << yyyy << "-" << mm << "-" << dd << "\n";
+    }
+}
+
+void test_replace_function()
+{
+    auto s = QString{R"("
+        "def get_id(account):\n"
+        "   return account['id']\n"
+        "\n"
+        "def get_useridle_time():\n"
+        "   conf = load_conf('default.conf')\n"
+        "   return conf['idle_time']"
+    ")"};
+    auto rx = QRegularExpression{"([_'])(id)(['(])"};
+    auto iter = rx.globalMatch(s);
+    print_matched_all(iter);
+}
+
+void test_uni_code()
+{
+    auto s = QString{"Copyright © 2022 The Qt Company"};
+    auto rx = QRegularExpression{"\u00a9"};
+    auto m = rx.match(s);
+    print_matched(m);
+}
+
 } // namespace ================================================================
 
 void test_regexp()
 {
-    test_resident_registration_number();
+    test_uni_code();
 }
