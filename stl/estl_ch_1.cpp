@@ -3,6 +3,9 @@
 #include <list>
 #include <set>
 #include <map>
+#include <algorithm>
+
+#include "estl_util.h"
 
 // 1. vector, string, deque
 // 2. list (balanced tree)
@@ -65,9 +68,96 @@ void test_container_feature()
     }
 }
 
+namespace item3 {
+
+class A {
+    int value;
+public:
+    A(int value = 0) : value(value)
+    {
+        std::cout << "A(" << value << ")\n";
+    }
+    A(const A& rhs) : value(rhs.value)
+    {
+        std::cout << "A(A) : value(" << value << ")\n";
+    }
+    A& operator=(const A&rhs)
+    {
+        if (this != &rhs) {
+            value = rhs.value;
+            std::cout << "A::operator=(" << rhs.value << ")\n";
+        }
+        return *this;
+    }
+    int getValue() const {
+        return value;
+    }
+};
+
+void test()
+{
+    std::vector<A> va;
+    va.reserve(8);
+    for (auto i=1; i<=6; i++) {
+        va.push_back(A(i));
+    }
+
+    for (auto iter=va.begin(); iter!=va.end(); iter++) {
+        if (iter->getValue() == 2) {
+            iter = va.erase(iter);
+        }
+    }
+
+    //A aa[4];
+}
+
+} // item3 ----------------------------------------------------------
+
+namespace item4 {
+
+void test()
+{
+    std::list<int> l0 = { 1, 2, 3, 4, 5 };
+    std::list<int> l1 = { 6, 7, 8, 9, 10};
+
+    print_elements(l0, "l0 : ");
+    print_elements(l1, "l1 : ");
+
+    std::cout << "l0.splice()\n";
+    l0.splice(l0.end(), l1, std::find(l1.begin(), l1.end(), 6), std::find(l1.rbegin(), l1.rend(), 10).base());
+
+    print_elements(l0, "l0 : ");
+    print_elements(l1, "l1 : ");
+
+    if (l1.size() == 0) {
+        std::cout << "l1.size() == 0\n";
+    }
+    if (l1.empty()) {
+        std::cout << "l1.empty() == true\n";
+    }
+}
+
+} // item4 ----------------------------------------------------------
+
+namespace item5 {
+
+void test()
+{
+    std::vector<int> v0 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<int> v1;
+
+    //v1.assign(v0.begin() + v0.size()/2, v0.end());
+    //std::copy(v0.begin() + v0.size()/2, v0.end(), std::back_inserter(v1));
+    v1.insert(v1.end(), v0.begin() + v0.size()/2, v0.end());
+
+    print_elements(v1, "v1 : ");
+}
+
+} // item5 ----------------------------------------------------------
+
 } // namespace ================================================================
 
 void test_estl_ch_1()
 {
-    test_container_feature();
+    item5::test();
 }
