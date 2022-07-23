@@ -153,11 +153,26 @@ void test()
     print_elements(v1, "v1 : ");
 }
 
+void test_insert()
+{
+    std::vector<int> v0 = { 1, 2, 3, 4, 5 };
+    std::vector<int> v1 = { 6, 7, 8, 9, 10};
+    v1.insert(v1.begin()+v1.size()/2, v0.begin(), v0.end());
+
+    print_elements(v1, "v1 : ");
+
+    std::set<int> s0 = { 2, 4, 1, 3, 5 };
+    std::set<int> s1 = { 8, 7, 9, 10, 6};
+    s1.insert(s0.begin(), s0.end());
+
+    print_elements(s1, "s1 : ");
+}
+
 } // item5 ----------------------------------------------------------
 
 } // namespace ================================================================
 
 void test_estl_ch_1()
 {
-    item5::test();
+    item5::test_insert();
 }
