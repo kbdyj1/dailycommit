@@ -4,6 +4,9 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <fstream>
+#include <iterator>
+#include <memory>
 
 #include "estl_util.h"
 
@@ -22,6 +25,34 @@ void print_all(const C& c, const std::string& desc)
     }
     std::cout << "\n";
 }
+
+class A {
+    int value;
+public:
+    A(int value = 0) : value(value)
+    {
+        std::cout << "A(" << value << ")\n";
+    }
+    A(const A& rhs) : value(rhs.value)
+    {
+        std::cout << "A(A) : value(" << value << ")\n";
+    }
+    A& operator=(const A&rhs)
+    {
+        if (this != &rhs) {
+            value = rhs.value;
+            std::cout << "A::operator=(" << rhs.value << ")\n";
+        }
+        return *this;
+    }
+    ~A()
+    {
+        std::cout << "~A(" << value << ")\n";
+    }
+    int getValue() const {
+        return value;
+    }
+};
 
 void test_container_feature()
 {
@@ -70,29 +101,7 @@ void test_container_feature()
 
 namespace item3 {
 
-class A {
-    int value;
-public:
-    A(int value = 0) : value(value)
-    {
-        std::cout << "A(" << value << ")\n";
-    }
-    A(const A& rhs) : value(rhs.value)
-    {
-        std::cout << "A(A) : value(" << value << ")\n";
-    }
-    A& operator=(const A&rhs)
-    {
-        if (this != &rhs) {
-            value = rhs.value;
-            std::cout << "A::operator=(" << rhs.value << ")\n";
-        }
-        return *this;
-    }
-    int getValue() const {
-        return value;
-    }
-};
+
 
 void test()
 {
@@ -168,11 +177,132 @@ void test_insert()
     print_elements(s1, "s1 : ");
 }
 
+void test_erase()
+{
+    std::vector<int> v0 = { 1, 2, 3, 4, 5 };
+    v0.erase(v0.begin()+v0.size()/2, v0.end());
+
+    print_elements(v0, "v0 : ");
+    {
+        std::set<int> s0 = { 2, 4, 1, 3, 5 };
+        auto iter = s0.find(3);
+        iter = s0.erase(iter, s0.end());
+
+        print_elements(s0, "s0 : ");
+    }
+    {
+        std::map<int, std::string> m = {{0, "zero"}, {1, "one"}, {2, "two"}, {3, "three"}, {4, "four"}};
+        auto iter = m.find(3);
+        m.erase(iter, m.end());
+
+        for (iter = m.begin(); iter != m.end(); iter++) {
+            std::cout << "{" << iter->first << ", " << iter->second << "} ";
+        }
+        std::cout << "\n";
+    }
+}
+
 } // item5 ----------------------------------------------------------
+
+namespace item6 {
+
+void make_test_file()
+{
+    auto os = std::ofstream("data.bin");
+    if (os.is_open()) {
+        int value;
+        for (auto i=0; i<5; i++) {
+            value = i + '0';
+            os.write((const char*)&value, sizeof(int));
+        }
+        os.close();
+    }
+}
+
+void test_istream_iterator()
+{
+    auto is = std::ifstream("data.bin");
+    if (is.is_open()) {
+#if (0)
+        std::list<int> data(std::istream_iterator<int>(is), std::istream_iterator<int>());
+#else
+        auto begin = std::istream_iterator<int>(is);
+        auto end = std::istream_iterator<int>();
+        std::list<int> data(begin, end);
+#endif
+        is.close();
+        std::cout << "data.size() : " << data.size() << "\n";
+        for (auto iter = data.begin(); iter != data.end(); iter++) {
+            std::cout << *iter << " ";
+        }
+    }
+}
+
+void test()
+{
+    //make_test_file();
+    test_istream_iterator();
+}
+
+} // item6 ----------------------------------------------------------
+
+namespace item7 {
+
+#if (0)
+template <typename T>
+struct Deleter : public std::unary_function<const T*, void>
+{
+    void operator()(const T* p) const {
+        delete p;
+    }
+};
+#else
+struct Deleter
+{
+    template <typename T>
+    void operator()(const T* p) const {
+        delete p;
+    }
+};
+#endif
+
+void test_pointer_cotainer()
+{
+    std::vector<A*> v;
+    for (auto i=0; i<4; i++) {
+        v.push_back(new A(i));
+    }
+
+    // clean up
+#if (0)
+    std::for_each(v.begin(), v.end(), [](A* a){
+        delete a;
+    });
+#else
+    std::for_each(v.begin(), v.end(), Deleter());
+#endif
+}
+
+void test_shared_ptr_container()
+{
+    auto v = std::vector<std::shared_ptr<A>>();
+    for (auto i=0; i<4; i++) {
+        v.push_back(std::shared_ptr<A>(new A(i)));
+    }
+}
+
+void test()
+{
+    test_shared_ptr_container();
+}
+
+} // item6 ----------------------------------------------------------
 
 } // namespace ================================================================
 
 void test_estl_ch_1()
 {
-    item5::test_insert();
+    //item5::test_erase();
+    //item6::test();
+    item7::test();
 }
