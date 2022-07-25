@@ -296,7 +296,52 @@ void test()
     test_shared_ptr_container();
 }
 
-} // item6 ----------------------------------------------------------
+} // item7 ----------------------------------------------------------
+
+namespace item8 { // Do not use auto_ptr's container
+
+bool compare(const std::auto_ptr<A>& l, const std::auto_ptr<A>& r)
+{
+    return l->getValue() < r->getValue();
+}
+
+void test_auto_ptr()
+{
+    std::auto_ptr<A> pa0(new A);
+    std::auto_ptr<A> pa1(pa0);
+
+    std::cout << "pa0: " << pa0.get() << ", pa1: " << pa1.get() << "\n";
+
+    std::cout << "\npa0 = pa1\n";
+
+    pa0 = pa1;
+    std::cout << "pa0: " << pa0.get() << ", pa1: " << pa1.get() << "\n";
+}
+
+void print_auto_ptr_container(const std::vector<std::auto_ptr<A>>& v)
+{
+    std::for_each(v.begin(), v.end(), [](const std::auto_ptr<A>& item) {
+        std::cout << item->getValue() << " ";
+    });
+    std::cout << "\n";
+}
+
+void test_auto_ptr_container()
+{
+    std::vector<std::auto_ptr<A>> v;
+    int data[] = { 8, 3, 2, 4 };
+    int value;
+    for (auto i=0; i<4; i++) {
+        value = data[i];
+        v.push_back(std::auto_ptr<A>(new A(value)));
+    }
+    print_auto_ptr_container(v);
+
+    std::sort(v.begin(), v.end(), compare);
+    print_auto_ptr_container(v);
+}
+
+} // item8 ----------------------------------------------------------
 
 } // namespace ================================================================
 
@@ -304,5 +349,6 @@ void test_estl_ch_1()
 {
     //item5::test_erase();
     //item6::test();
-    item7::test();
+    //item7::test();
+    item8::test_auto_ptr_container();
 }
