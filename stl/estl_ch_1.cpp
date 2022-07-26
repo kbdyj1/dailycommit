@@ -300,6 +300,9 @@ void test()
 
 namespace item8 { // Do not use auto_ptr's container
 
+//#define SUPPORT_AUTO_PTR
+
+#ifdef SUPPORT_AUTO_PTR
 bool compare(const std::auto_ptr<A>& l, const std::auto_ptr<A>& r)
 {
     return l->getValue() < r->getValue();
@@ -341,7 +344,100 @@ void test_auto_ptr_container()
     print_auto_ptr_container(v);
 }
 
+#else
+void test_auto_ptr_container() {}
+#endif
+
 } // item8 ----------------------------------------------------------
+
+namespace item9 {
+
+bool badValue(int value)
+{
+    return value == 100;
+}
+
+// vector, deque, string
+void test_sequential_container_remove()
+{
+    int data[] = { 1, 100, 3, 5, 7, 9, 100, 2, 4, 6, 8, 100, 10 };
+    std::vector<int> v(data, data+std::size(data));
+
+    print_elements(v, "before erase: ");
+
+    //v.erase(std::remove(v.begin(), v.end(), 100), v.end());
+    v.erase(std::remove_if(v.begin(), v.end(), badValue), v.end());
+
+    print_elements(v, "after erase: ");
+}
+
+void test_list_container_remove()
+{
+    int data[] = { 1, 100, 3, 5, 7, 9, 100, 2, 4, 6, 8, 100, 10 };
+    std::list<int> l(data, data+std::size(data));
+
+    print_elements(l, "before remove: ");
+#if (0)
+    l.erase(std::remove(l.begin(), l.end(), 100), l.end());
+#else
+    //l.remove(100);
+    l.remove_if(badValue);
+#endif
+    print_elements(l, "after remove: ");
+}
+
+template <typename T>
+void print_associate_container(const std::multiset<T>& s)
+{
+    std::for_each(s.begin(), s.end(), [](int value){
+        std::cout << value << " ";
+    });
+    std::cout << "\n";
+}
+
+void test_associate_container_erase()
+{
+    int data[] = { 1, 100, 3, 5, 7, 9, 100, 2, 4, 6, 8, 100, 10 };
+    std::multiset<int> s(data, data+std::size(data));
+    print_associate_container<int>(s);
+    std::cout << "before erase: ";
+    s.erase(100);
+
+    std::cout << "after erase: ";
+    print_associate_container<int>(s);
+}
+
+void test_associate_container_remove_if()
+{
+    int data[] = { 1, 100, 3, 5, 7, 9, 100, 2, 4, 6, 8, 100, 10 };
+    std::multiset<int> s(data, data+std::size(data));
+    print_associate_container<int>(s);
+    std::cout << "before erase: ";
+#if (0)
+    std::multiset<int> goodValues;
+
+    std::remove_copy_if(s.begin(), s.end(), std::inserter(goodValues, goodValues.end()), badValue);
+    s.swap(goodValues);
+#else
+    for (auto iter = s.begin(); iter != s.end(); ) {
+        if (badValue(*iter)) {
+            iter = s.erase(iter);
+            //s.erase(iter++);
+        } else {
+            iter++;
+        }
+    }
+#endif
+
+    std::cout << "after erase: ";
+    print_associate_container<int>(s);
+}
+
+} // item9 ----------------------------------------------------------
+
+namespace item10 {
+
+} // item9 ----------------------------------------------------------
 
 } // namespace ================================================================
 
@@ -350,5 +446,6 @@ void test_estl_ch_1()
     //item5::test_erase();
     //item6::test();
     //item7::test();
-    item8::test_auto_ptr_container();
+    //item8::test_auto_ptr_container();
+    item9::test_associate_container_remove_if();
 }
