@@ -101,8 +101,6 @@ void test_container_feature()
 
 namespace item3 {
 
-
-
 void test()
 {
     std::vector<A> va;
@@ -435,9 +433,76 @@ void test_associate_container_remove_if()
 
 } // item9 ----------------------------------------------------------
 
-namespace item10 {
+namespace item11 {
 
-} // item9 ----------------------------------------------------------
+class Heap1 {
+public:
+    static void* alloc(size_t bytes, const void* memoryBlockToBeNear) {
+        (void)memoryBlockToBeNear;
+
+        std::cout << "malloc(" << bytes << ")\n";
+
+        return malloc(bytes);
+    }
+    static void dealloc(void* p) {
+        std::cout << "free(" << p << ")\n";
+
+        free(p);
+    }
+};
+
+template <typename T, typename Heap>
+class SpecialHeapAllocator {
+public:
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+    typedef T* pointer;
+    typedef const T* const_pointer;
+    typedef T& reference;
+    typedef const T& const_reference;
+    typedef T value_type;
+
+    template <typename U>
+    struct rebind {
+        typedef std::allocator<U> other;
+    };
+
+    pointer allocate(size_t objects, const void* localityHint = 0) {
+        return static_cast<pointer>(Heap::alloc(objects * sizeof(T), localityHint));
+    }
+    void deallocate(void* p, size_t objects) {
+        (void)objects;
+
+        Heap::dealloc(p);
+    }
+};
+
+void test_string()
+{
+    std::vector<std::string, SpecialHeapAllocator<std::string, Heap1>> v;
+
+    v.push_back("Hello, Qt 6");
+    v.push_back("Effective STL chapter 1.");
+}
+
+void test_class()
+{
+    std::vector<A, SpecialHeapAllocator<A, Heap1>> v;
+
+    v.push_back(A(0));
+    v.push_back(A(1));
+}
+
+void test_list()
+{
+    std::list<A, SpecialHeapAllocator<A, Heap1>> l;
+
+    l.push_back(A(0));
+    l.push_front(A(1));
+    l.push_back(A(2));
+}
+
+} // item11 ----------------------------------------------------------
 
 } // namespace ================================================================
 
@@ -447,5 +512,6 @@ void test_estl_ch_1()
     //item6::test();
     //item7::test();
     //item8::test_auto_ptr_container();
-    item9::test_associate_container_remove_if();
+    //item9::test_associate_container_remove_if();
+    item11::test_list();
 }
