@@ -7,8 +7,10 @@
 #include <fstream>
 #include <iterator>
 #include <memory>
+#include <mutex>
 
 #include "estl_util.h"
+#include "a.h"
 
 // 1. vector, string, deque
 // 2. list (balanced tree)
@@ -25,34 +27,6 @@ void print_all(const C& c, const std::string& desc)
     }
     std::cout << "\n";
 }
-
-class A {
-    int value;
-public:
-    A(int value = 0) : value(value)
-    {
-        std::cout << "A(" << value << ")\n";
-    }
-    A(const A& rhs) : value(rhs.value)
-    {
-        std::cout << "A(A) : value(" << value << ")\n";
-    }
-    A& operator=(const A&rhs)
-    {
-        if (this != &rhs) {
-            value = rhs.value;
-            std::cout << "A::operator=(" << rhs.value << ")\n";
-        }
-        return *this;
-    }
-    ~A()
-    {
-        std::cout << "~A(" << value << ")\n";
-    }
-    int getValue() const {
-        return value;
-    }
-};
 
 void test_container_feature()
 {
@@ -504,14 +478,35 @@ void test_list()
 
 } // item11 ----------------------------------------------------------
 
+namespace item12 {
+
+void test()
+{
+    auto v = std::vector<int>{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    {
+        auto m = std::mutex();
+        std::lock_guard<std::mutex> lock(m);
+
+        auto iter = std::find(v.begin(), v.end(), 5);
+        if (iter != v.end()) {
+            *iter = 0;
+        }
+
+        print_elements(v, "v: ");
+    }
+}
+
+} // item12 ----------------------------------------------------------
+
 } // namespace ================================================================
 
-void test_estl_ch_1()
+void test_ch_1()
 {
     //item5::test_erase();
     //item6::test();
     //item7::test();
     //item8::test_auto_ptr_container();
     //item9::test_associate_container_remove_if();
-    item11::test_list();
+    //item11::test_list();
+    item12::test();
 }

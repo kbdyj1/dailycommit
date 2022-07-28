@@ -1,10 +1,11 @@
 #include <iostream>
 
-void test_estl_ch_1();
+void test_ch_1();
+void test_ch_2();
 
 int main()
 {
-    test_estl_ch_1();
+    test_ch_2();
 
     return 0;
 }
