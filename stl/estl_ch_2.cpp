@@ -29,11 +29,63 @@ void test()
     std::cout << "end v.resize(1)\n";
 }
 
-} // item13 ---------------------------------------------------------
+} // item14 ---------------------------------------------------------
+
+namespace item15 {
+
+struct Bar {};
+
+// www.cantrip.org/emptyopt.html
+
+// a class with an empty sequence of members and base class objects is an empty class.
+// Complete objects and member subobjects of an empty class type shall have nonzero size.
+struct Foo {
+    Bar b;
+    int* p;
+};
+
+// a base class subobject of an empty class type may have zero size
+struct Baz : Bar {
+    int* p;
+};
+
+void test()
+{
+    auto s = std::string{};
+
+    std::cout << "sizeof(std::string): " << sizeof(std::string) << "\n";
+
+    std::cout << "sizeof(Foo): " << sizeof(Foo) << "\n";
+    std::cout << "sizeof(Baz): " << sizeof(Baz) << "\n";
+}
+
+} // item15 ---------------------------------------------------------
+
+namespace item16 {
+
+void legacy_api(int* ptr, size_t len)
+{
+}
+void legacy_api(const char* ptr)
+{
+}
+
+void test()
+{
+    auto v = std::vector<int>{};
+    if (!v.empty()) {
+        legacy_api(&v[0], v.size());
+    }
+
+    auto s = std::string{"Hello, Qt 6"};
+    legacy_api(s.c_str());
+}
+
+} // item16 ---------------------------------------------------------
 
 } // namespace ================================================================
 
 void test_ch_2()
 {
-    item14::test();
+    item15::test();
 }
