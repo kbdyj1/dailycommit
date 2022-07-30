@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <deque>
 #include "a.h"
 
 namespace { //=================================================================
@@ -83,9 +84,67 @@ void test()
 
 } // item16 ---------------------------------------------------------
 
+namespace item17 {
+
+void test()
+{
+    std::vector<int> v;
+    for (auto i=0; i<1024; i++) {
+        v.push_back(i);
+    }
+    v.erase(std::remove_if(v.begin(), v.end(), [](int i){
+        return i % 10 != 0;
+    }), v.end());
+    std::cout << "#1 size: " << v.size() << ", capacity: " << v.capacity() << "\n";
+
+#if (0)
+    std::vector<int>(v).swap(v);
+#else
+    v.shrink_to_fit(); // c++11
+#endif
+    std::cout << "#2 size: " << v.size() << ", capacity: " << v.capacity() << "\n";
+}
+
+void test_string()
+{
+    auto s = std::string{"Debugging of /Users/administrator/project/dailycommit/build-stl-Desktop_arm_darwin_generic_mach_o_32bit-Debug/stl has finished."};
+    std::cout << "#1 size: " << s.size() << ", capacity: " << s.capacity() << "\n";
+    s.erase(std::remove_if(s.begin(), s.end(), [](char c){
+        return c == ' ';
+    }), s.end());
+#if (1)
+    //std::string(s).swap(s);
+#else
+    s.shrink_to_fit();
+#endif
+    std::cout << "s: " << s << "\n";
+    std::cout << "#2 size: " << s.size() << ", capacity: " << s.capacity() << "\n";
+}
+
+} // item17 ---------------------------------------------------------
+
+namespace item18 {
+
+void test()
+{
+#if (0)
+    std::vector<bool> v{ true, true, false, true };
+#else
+    std::deque<bool> v{ true, true, false, true };
+#endif
+    for (auto iter=v.begin(); iter!=v.end(); iter++) {
+        std::cout << *iter << "\n";
+    }
+    std::bitset<4> o(0xA);
+    std::cout << "std::bitset<4>(0xA): " << o.to_string() << "\n";
+}
+
+} // item18 ---------------------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_2()
 {
-    item15::test();
+    //item17::test_string();
+    item18::test();
 }
