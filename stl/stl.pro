@@ -6,6 +6,7 @@ CONFIG -= qt
 SOURCES += \
         estl_ch_1.cpp \
         estl_ch_2.cpp \
+        estl_ch_3.cpp \
         main.cpp
 
 HEADERS += \
