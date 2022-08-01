@@ -1,5 +1,7 @@
 #include <set>
 #include <iostream>
+#include <algorithm>
+#include <iterator>
 
 namespace { //=================================================================
 
@@ -69,9 +71,55 @@ void test()
 
 } // item19 -----------------------------------------------
 
+namespace item20 {
+
+struct StrPtrComp : public std::binary_function<const std::string*, const std::string*, bool>
+{
+    bool operator()(const std::string* p0, const std::string* p1) const {
+        return *p0 < *p1;
+    }
+};
+
+void printStrPtr(const std::string* p)
+{
+    std::cout << *p << "\n";
+}
+
+struct Dereference {
+    template <typename T>
+    const T& operator()(const T* ptr) const {
+        return *ptr;
+    }
+};
+struct DereferenceLess {
+    template <typename T>
+    bool operator()(T p0, T p1) const {
+        return *p0 < *p1;
+    }
+};
+
+void test()
+{
+    std::set<std::string*, DereferenceLess> ps;
+    ps.insert(new std::string{"ddd"});
+    ps.insert(new std::string{"ccc"});
+    ps.insert(new std::string{"aaa"});
+    ps.insert(new std::string{"bbb"});
+
+    std::transform(ps.begin(), ps.end(), std::ostream_iterator<std::string>(std::cout, "\n"), Dereference());
+}
+
+} // item20 -----------------------------------------------
+
+namespace item21 {
+
+
+
+} // item21 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_3()
 {
-    item19::test();
+    item20::test();
 }

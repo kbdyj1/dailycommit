@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <deque>
+#include <algorithm>
+#include <bitset>
 #include "a.h"
 
 namespace { //=================================================================
