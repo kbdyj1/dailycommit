@@ -113,13 +113,60 @@ void test()
 
 namespace item21 {
 
+// The associative container comparison function should return false for the same value.
 
+void test()
+{
+    std::set<int, std::less_equal<int>> s;
+    s.insert(10);
+    s.insert(10);
+    std::cout << "s.size(): " << s.size() << "\n";
+}
 
 } // item21 -----------------------------------------------
+
+namespace item22 {
+
+struct Employee {
+    int id;
+    std::string name;
+    std::string title;
+};
+
+struct IdCmpLess : public std::binary_function<const Employee&, const Employee&, bool>
+{
+    bool operator()(const Employee& e0, const Employee& e1) const {
+        return e0.id < e1.id;
+    }
+};
+
+void test()
+{
+    std::set<Employee, IdCmpLess> s;
+
+    s.insert({2, "ccc", "worker"});
+    s.insert({1, "bbb", "manager"});
+    s.insert({3, "aaa", "vip"});
+
+    for (auto iter=s.begin(); iter!=s.end(); iter++) {
+        std::cout << "id: " << iter->id << ", name: " << iter->name << ", title: " << iter->title << "\n";
+    }
+
+    auto key = 3;
+    auto iter = std::find_if(s.begin(), s.end(), [key](const Employee& e) {
+        return key == e.id;
+    });
+    if (iter != s.end()) {
+        const_cast<Employee&>(*iter).title = "programmer";
+        std::cout << "id: " << iter->id << ", name: " << iter->name << ", title: " << iter->title << "\n";
+    }
+}
+
+} // item22 -----------------------------------------------
 
 } // namespace ================================================================
 
 void test_ch_3()
 {
-    item20::test();
+    item22::test();
 }
