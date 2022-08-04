@@ -1,4 +1,7 @@
 #include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
 #include <iostream>
 #include <algorithm>
 #include <iterator>
@@ -320,9 +323,188 @@ void test()
 
 } // item23 -----------------------------------------------
 
+//#define ENABLE_WIDGET_PRINT
+
+namespace item24 {
+
+class Widget {
+    double value = 0.0;
+    static int createCnt;
+    static int destroyCnt;
+    static int assignCnt;
+public:
+    Widget()
+    {
+#ifdef ENABLE_WIDGET_PRINT
+        std::cout << "Widget()\n";
+#endif
+        createCnt++;
+    }
+    Widget(double d) : value(d)
+    {
+#ifdef ENABLE_WIDGET_PRINT
+        std::cout << "Widget(" << value << ")\n";
+#endif
+        createCnt++;
+    }
+    Widget& operator=(double rValue) {
+        value = rValue;
+#ifdef ENABLE_WIDGET_PRINT
+        std::cout << "Widget::operator=(" << rValue << ")\n";
+#endif
+        assignCnt++;
+        return *this;
+    }
+    ~Widget() {
+#ifdef ENABLE_WIDGET_PRINT
+        std::cout << "~Widget()\n";
+#endif
+        destroyCnt++;
+    }
+
+    static void report()
+    {
+        std::cout << "Widget created: " << createCnt << ", assigned: " << assignCnt << ", destroyed: " << destroyCnt << "\n";
+    }
+    static void resetReport()
+    {
+        createCnt = 0;
+        assignCnt = 0;
+        destroyCnt = 0;
+    }
+};
+int Widget::createCnt = 0;
+int Widget::assignCnt = 0;
+int Widget::destroyCnt = 0;
+
+typedef std::map<int, Widget> IntWidgetMap;
+
+std::map<int, Widget> m;
+
+void test_insert()
+{
+    m.insert(IntWidgetMap::value_type(1, 11.0));
+    m.insert(IntWidgetMap::value_type(2, 12.0));
+    m.insert(IntWidgetMap::value_type(3, 13.0));
+    m.insert(IntWidgetMap::value_type(4, 14.0));
+    m.insert(IntWidgetMap::value_type(5, 15.0));
+}
+
+void test_assign()
+{
+#if (0)
+    m[1] = 11.0;
+    m[2] = 12.0;
+    m[3] = 13.0;
+    m[4] = 14.0;
+    m[5] = 15.0;
+#else
+    m.insert_or_assign(1, 11.0);
+    m.insert_or_assign(2, 12.0);
+    m.insert_or_assign(3, 13.0);
+    m.insert_or_assign(4, 14.0);
+    m.insert_or_assign(5, 15.0);
+#endif
+}
+
+void test_update_insert()
+{
+    m.insert(IntWidgetMap::value_type(5, 25.0));
+}
+
+void test_update_assign()
+{
+    m[5] = 25.0;
+}
+
+void test_insert_or_assign()
+{
+    m.insert_or_assign(5, 25.0);
+}
+
+void test()
+{
+#if (0)
+    test_insert();  // Widget created: 5, assigned: 0, destroyed: 5 [] = ?
+                    // Widget created: 5, assigned: 0, destroyed: 0 (insert_or_assign)
+#else
+    test_assign();  // Widget created: 5, assigned: 5, destroyed: 0
+#endif
+
+    Widget::report();
+    Widget::resetReport();
+
+//    test_update_assign();     // Widget created: 0, assigned: 1, destroyed: 0
+    test_update_insert();       // Widget created: 1, assigned: 0, destroyed: 1
+//    test_insert_or_assign();  // Widget created: 0, assigned: 1, destroyed: 0
+
+    Widget::report();
+}
+
+} // item24 -----------------------------------------------
+
+namespace item25 {
+
+void test_unordered_set()
+{
+    std::unordered_set<std::string> us{
+        "hello", "qt6", "microsoft", "google", "apple", "oracle", "facebook"
+    };
+    for (auto iter=us.begin(); iter!=us.end(); iter++) {
+        std::cout << *iter << " ";
+    }
+    std::cout << "\n";
+
+    auto bucketCount = us.bucket_count();
+    std::cout << "bucket count: " << bucketCount << "\n";
+
+    auto maxBucketCount = us.max_bucket_count();
+    std::cout << "max bucket count: " << maxBucketCount << "\n";
+
+    for (size_t i=0; i<bucketCount; i++) {
+        std::cout << "[" << i << "]: " << us.bucket_size(i) << "\n";
+    }
+
+    auto iter = us.find("qt6");
+    if (iter != us.end()) {
+        std::cout << "found: " << *iter << "\n";
+    }
+}
+
+void test_unordered_map()
+{
+    std::unordered_map<std::string, std::string> um = {
+        {"red", "#ff0000"},
+        {"green", "#00ff00"},
+        {"blue", "#0000ff"},
+    };
+    auto print = [](const auto& key, const auto& value) {
+        std::cout << "key: " << key << ", value: " << value << "\n";
+    };
+    for (const auto& [key, value] : um) {
+        print(key, value);
+    }
+
+    std::cout << "-------------------------------------------------------------\n";
+
+    um.insert_or_assign("black", "#000000");
+    um.insert_or_assign("white", "#ffffff");
+    for (const auto& [key, value] : um) {
+        print(key, value);
+    }
+}
+
+void test()
+{
+    //test_unordered_set();
+    test_unordered_map();
+}
+
+} // item25 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_3()
 {
-    item23::test();
+    item25::test();
 }
