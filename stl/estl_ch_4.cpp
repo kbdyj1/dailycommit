@@ -122,9 +122,114 @@ void test()
 
 } // item29 -----------------------------------------------
 
+namespace item30 {
+
+int f(int x) {
+    return x * 2;
+}
+
+void test_front_back_inserter()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5 };
+    std::deque<int> result;
+
+    // back_inserter call push_back
+#if (0)
+    std::transform(v.begin(), v.end(), std::back_inserter(result), f);
+#else
+    std::transform(v.rbegin(), v.rend(), std::front_inserter(result), f);
+#endif
+
+    std::copy(result.begin(), result.end(), std::ostream_iterator<int>(std::cout, " "));
+}
+
+void test_inserter()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5 };
+    std::vector<int> result{ 10, 11, 12, 13, 14, 15 };
+
+    result.reserve(result.size() + v.size());
+
+    std::transform(v.begin(), v.end(), std::inserter(result, result.begin()+result.size()/2), f);
+
+    std::copy(result.begin(), result.end(), std::ostream_iterator<int>(std::cout, " "));
+}
+
+void test()
+{
+    //test_front_back_inserter();
+    test_inserter();
+}
+
+} // item30 -----------------------------------------------
+
+namespace item31 {
+
+bool cmp(int l, int r) {
+    return l < r;
+}
+
+void test_partial_sort()
+{
+    std::vector<int> v { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    std::partial_sort(v.begin(), v.begin()+4, v.end(), cmp);
+
+    // 1 2 3 4 9 7 5 6 8 10
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+}
+
+void test_nth_element()
+{
+    std::vector<int> v { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    std::nth_element(v.begin(), v.begin()+5, v.end(), cmp);
+
+    // 3 1 2 5 4 6 7 9 8 10
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+}
+
+void test_nth_element_2()
+{
+    std::vector<int> v { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    typedef std::vector<int>::iterator IntIter;
+
+    IntIter b(v.begin());
+    IntIter e(v.end());
+    IntIter c = b + v.size()/2;
+
+    std::nth_element(b, c, e, cmp);
+
+    std::copy(b, e, std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\ncenter value: " << *c << "\n";
+}
+
+bool x3(int i)
+{
+    return i && (i % 3 == 0);
+}
+
+void test_partition()
+{
+    std::vector<int> v { 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    auto e = std::partition(v.begin(), v.end(), x3);
+
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+    std::copy(v.begin(), e, std::ostream_iterator<int>(std::cout, " "));
+}
+
+void test()
+{
+    //test_partial_sort();
+    //test_nth_element();
+    //test_nth_element_2();
+    test_partition();
+}
+
+} // item31 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_4()
 {
-    item29::test();
+    item31::test();
 }
