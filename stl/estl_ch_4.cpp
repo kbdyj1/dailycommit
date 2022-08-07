@@ -5,10 +5,12 @@
 //=============================================================================
 #include <iostream>
 #include <vector>
+#include <list>
 #include <deque>
 #include <algorithm>
 #include <iterator>
 #include <fstream>
+#include <memory>
 
 namespace { //=================================================================
 
@@ -227,9 +229,223 @@ void test()
 
 } // item31 -----------------------------------------------
 
+namespace item32 {
+
+void test_remove()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+    std::cout << "before size: " << v.size() << "\n";
+    auto e = std::remove(v.begin(), v.end(), 4);
+    std::cout << "after size: " << v.size() << "\n";
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+    v.erase(e, v.end());
+    std::cout << "after erase size: " << v.size() << "\n";
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test_list_remove()
+{
+    std::list<int> l{ 1, 2, 99, 3, 99, 4, 5 };
+    std::cout << "before remove: " << l.size() << "\n";
+    l.remove(99);
+    std::cout << "after remove: " << l.size() << "\n";
+}
+
+void test_unique()
+{
+    std::vector<int> l{ 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+
+    l.erase(std::unique(l.begin(), l.end()), l.end());
+    std::cout << "l.size(): " << l.size() << "\n";
+    std::copy(l.begin(), l.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+
+    std::sort(l.begin(), l.end());
+    l.erase(std::unique(l.begin(), l.end()), l.end());
+    std::copy(l.begin(), l.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test()
+{
+    //test_remove();
+    //test_list_remove();
+    test_unique();
+}
+
+} // item32 -----------------------------------------------
+
+namespace item33 {
+
+class W {
+    int quality = 0;
+public:
+    W() : quality(0)
+    {}
+    W(int q) : quality(q)
+    {}
+    ~W()
+    {
+        std::cout << "~W(" << quality << ")\n";
+    }
+
+    bool isCertified() const {
+        return 90 <= quality;
+    }
+    void print() const {
+        std::cout << "W(" << quality << ") ";
+    }
+};
+
+void test_pointer_container()
+{
+    std::vector<W*> v;
+    v.push_back(new W(80));
+    v.push_back(new W(90));
+    v.push_back(new W(95));
+    v.push_back(new W(85));
+    v.push_back(new W(100));
+
+    std::for_each(v.begin(), v.end(), [](W*& w){
+        if (!w->isCertified()) {
+            delete w;
+            w = nullptr;
+        }
+    });
+    auto e = std::remove(v.begin(), v.end(), static_cast<W*>(0));
+    v.erase(e, v.end());
+
+    std::for_each(v.begin(), v.end(), [](const W* w){
+        w->print();
+    });
+    std::cout << "\n";
+    std::cout << "\n********** clean up vector **********\n";
+    std::for_each(v.begin(), v.end(), [](W*& w){
+        delete w;
+        w = nullptr;
+    });
+}
+
+void test_sharedptr_container()
+{
+    std::vector<std::shared_ptr<W>> v;
+    v.push_back(std::shared_ptr<W>(new W(80)));
+    v.push_back(std::shared_ptr<W>(new W(90)));
+    v.push_back(std::shared_ptr<W>(new W(95)));
+    v.push_back(std::shared_ptr<W>(new W(85)));
+    v.push_back(std::shared_ptr<W>(new W(100)));
+
+    auto e = std::remove_if(v.begin(), v.end(), [](std::shared_ptr<W> w){
+        return !w->isCertified();
+    });
+    v.erase(e, v.end());
+
+    std::cout << "********** end of test_sharedptr_container() **********\n";
+}
+
+void test()
+{
+    //test_pointer_container();
+    test_sharedptr_container();
+}
+
+} // item33 -----------------------------------------------
+
+namespace item34 {
+
+void test_binary_search()
+{
+    std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::sort(v.begin(), v.end(), std::greater<int>());
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+
+#if (0)
+    // std::binary_search(5): false
+    auto res = std::binary_search(v.begin(), v.end(), 5);
+#else
+    // std::binary_search(5): true
+    auto res = std::binary_search(v.begin(), v.end(), 5, std::greater<int>());
+#endif
+    std::cout << "std::binary_search(5): " << (res ? "true" : "false") << "\n";
+}
+void test_set()
+{
+#if (1)
+    std::vector<int> v0{ 1, 2, 3, 4, 5 };
+    std::vector<int> v1{ 3, 4, 5, 6, 7 };
+#else
+    std::vector<int> v0{ 1, 2, 5, 5, 5, 9 };
+    std::vector<int> v1{ 2, 5, 7 };
+#endif
+    std::vector<int> v2;
+
+    //std::set_union(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_intersection(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_symmetric_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    std::merge(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+
+    std::copy(v2.begin(), v2.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test_inplace_merge()
+{
+    std::vector<int> v{ 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    std::inplace_merge(v.begin(), v.begin()+5, v.end());
+
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+template <class Os, class Co>
+Os& operator<<(Os& os, const Co& c) {
+    os << "{ ";
+    for (auto i : c) {
+        os << i << ' ';
+    }
+    return os << "}\t";
+}
+
+void test_includes()
+{
+    const auto
+            v0 = { 'a', 'b', 'c', 'f', 'h', 'x' },
+            v1 = { 'a', 'b', 'c' },
+            v2 = { 'a', 'c' },
+            v3 = { 'a', 'a', 'b' },
+            v4 = { 'g' },
+            v5 = { 'a', 'c', 'g' },
+            v6 = { 'A', 'B', 'C' };
+    auto nocaseLess = [](char a, char b) {
+        return std::tolower(a) < std::tolower(b);
+    };
+
+    std::cout << v0 << "\nincludes:\n" << std::boolalpha
+              << v1 << ": " << std::includes(v0.begin(), v0.end(), v1.begin(), v1.end()) << "\n"
+              << v2 << ": " << std::includes(v0.begin(), v0.end(), v2.begin(), v2.end()) << "\n"
+              << v3 << ": " << std::includes(v0.begin(), v0.end(), v3.begin(), v3.end()) << "\n"
+              << v4 << ": " << std::includes(v0.begin(), v0.end(), v4.begin(), v4.end()) << "\n"
+              << v5 << ": " << std::includes(v0.begin(), v0.end(), v5.begin(), v5.end()) << "\n"
+              << v6 << ": " << std::includes(v0.begin(), v0.end(), v6.begin(), v6.end(), nocaseLess) << " (case-insensitive)\n";
+}
+
+void test()
+{
+    //test_binary_search();
+    //test_set();
+    //test_inplace_merge();
+    test_includes();
+}
+
+} // item34 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_4()
 {
-    item31::test();
+    item34::test();
 }
