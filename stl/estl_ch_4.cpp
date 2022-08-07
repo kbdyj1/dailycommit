@@ -5,6 +5,7 @@
 //=============================================================================
 #include <iostream>
 #include <vector>
+#include <list>
 #include <deque>
 #include <algorithm>
 #include <iterator>
@@ -227,9 +228,133 @@ void test()
 
 } // item31 -----------------------------------------------
 
+namespace item32 {
+
+void test_remove()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+    std::cout << "before size: " << v.size() << "\n";
+    auto e = std::remove(v.begin(), v.end(), 4);
+    std::cout << "after size: " << v.size() << "\n";
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+    v.erase(e, v.end());
+    std::cout << "after erase size: " << v.size() << "\n";
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test_list_remove()
+{
+    std::list<int> l{ 1, 2, 99, 3, 99, 4, 5 };
+    std::cout << "before remove: " << l.size() << "\n";
+    l.remove(99);
+    std::cout << "after remove: " << l.size() << "\n";
+}
+
+void test_unique()
+{
+    std::vector<int> l{ 1, 2, 3, 4, 5, 4, 3, 2, 1 };
+
+    l.erase(std::unique(l.begin(), l.end()), l.end());
+    std::cout << "l.size(): " << l.size() << "\n";
+    std::copy(l.begin(), l.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+
+    std::sort(l.begin(), l.end());
+    l.erase(std::unique(l.begin(), l.end()), l.end());
+    std::copy(l.begin(), l.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test()
+{
+    //test_remove();
+    //test_list_remove();
+    test_unique();
+}
+
+} // item32 -----------------------------------------------
+
+namespace item33 {
+
+class W {
+    int quality = 0;
+public:
+    W() : quality(0)
+    {}
+    W(int q) : quality(q)
+    {}
+    ~W()
+    {
+        std::cout << "~W(" << quality << ")\n";
+    }
+
+    bool isCertified() const {
+        return 90 <= quality;
+    }
+    void print() const {
+        std::cout << "W(" << quality << ") ";
+    }
+};
+
+void test_pointer_container()
+{
+    std::vector<W*> v;
+    v.push_back(new W(80));
+    v.push_back(new W(90));
+    v.push_back(new W(95));
+    v.push_back(new W(85));
+    v.push_back(new W(100));
+
+    std::for_each(v.begin(), v.end(), [](W*& w){
+        if (!w->isCertified()) {
+            delete w;
+            w = nullptr;
+        }
+    });
+    auto e = std::remove(v.begin(), v.end(), static_cast<W*>(0));
+    v.erase(e, v.end());
+
+    std::for_each(v.begin(), v.end(), [](const W* w){
+        w->print();
+    });
+    std::cout << "\n";
+    std::cout << "\n********** clean up vector **********\n";
+    std::for_each(v.begin(), v.end(), [](W*& w){
+        delete w;
+        w = nullptr;
+    });
+}
+
+void test_sharedptr_container()
+{
+    std::vector<std::shared_ptr<W>> v;
+    v.push_back(std::shared_ptr<W>(new W(80)));
+    v.push_back(std::shared_ptr<W>(new W(90)));
+    v.push_back(std::shared_ptr<W>(new W(95)));
+    v.push_back(std::shared_ptr<W>(new W(85)));
+    v.push_back(std::shared_ptr<W>(new W(100)));
+
+    auto e = std::remove_if(v.begin(), v.end(), [](std::shared_ptr<W> w){
+        return !w->isCertified();
+    });
+    v.erase(e, v.end());
+
+    std::cout << "********** end of test_sharedptr_container() **********\n";
+}
+
+void test()
+{
+    //test_pointer_container();
+    test_sharedptr_container();
+}
+
+} // item33 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_4()
 {
-    item31::test();
+    item33::test();
 }
