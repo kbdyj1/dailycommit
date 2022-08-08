@@ -11,6 +11,7 @@
 #include <iterator>
 #include <fstream>
 #include <memory>
+#include <numeric>
 
 namespace { //=================================================================
 
@@ -443,9 +444,152 @@ void test()
 
 } // item34 -----------------------------------------------
 
+namespace item35 {
+
+int nocaseCharCmp(char c0, char c1)
+{
+    int l0 = std::tolower(c0);
+    int l1 = std::tolower(c1);
+
+    if (l0 < l1)
+        return -1;
+    else if (l0 > l1)
+        return 1;
+    else
+        return 0;
+}
+
+int nocaseStringCmpImpl(const std::string& s0, const std::string& s1)
+{
+    auto p = std::mismatch(s0.begin(), s0.end(), s1.begin(), std::not2(std::ptr_fun(nocaseCharCmp)));
+    if (p.first == s0.end()) {
+        if (p.second == s1.end())
+            return 0;
+        else
+            return -1;
+    }
+    return nocaseCharCmp(*p.first, *p.second);
+}
+
+int nocaseStrCmp(const std::string& s0, const std::string& s1)
+{
+    if (s0.size() < s1.size())
+        return nocaseStringCmpImpl(s0, s1);
+    else
+        return -nocaseStringCmpImpl(s1, s0);
+}
+
+bool nocaseCharLess(char c0, char c1)
+{
+    int l0 = std::tolower(c0);
+    int l1 = std::tolower(c1);
+
+    return l0 < l1;
+}
+
+bool nocaseStrCmp2(const std::string& s0, const std::string& s1)
+{
+    return std::lexicographical_compare(s0.begin(), s0.end(), s1.begin(), s1.end(), nocaseCharLess);
+}
+
+void test_nocase_string_cmp(const std::string& s0, const std::string& s1)
+{
+    std::cout << "nocaseStrCmp(" << s0 << ", " << s1 << "): " << nocaseStrCmp(s0, s1) << "\n";
+}
+void test_nocase_string_cmp2(const std::string& s0, const std::string& s1)
+{
+    std::cout << "nocaseStrCmp2(" << s0 << ", " << s1 << "): "
+              << (nocaseStrCmp2(s0, s1) ? "<" : ">=")
+              << "\n";
+}
+
+void test()
+{
+    auto s0 = std::string{"Hello, Qt6.0"};
+    auto s1 = std::string{"hello, qt6.0"};
+    auto s2 = std::string{"hello, qt6"};
+    auto s3 = std::string{"hEllo, qt6.2"};
+    auto s4 = std::string{"fello, qT6.0"};
+    auto s5 = std::string{"hello, Rt6.2.1"};
+
+    void (*func)(const std::string& s0, const std::string& s1);
+
+#if (0)
+    func = test_nocase_string_cmp;
+#else
+    func = test_nocase_string_cmp2;
+#endif
+
+    func(s0, s1);
+    func(s0, s2);
+    func(s0, s3);
+    func(s0, s4);
+    func(s0, s5);
+}
+
+} // item35 -----------------------------------------------
+
+namespace item36 {
+
+template <typename InputIterator, typename OutputIterator, typename Predicate>
+OutputIterator copy_if(InputIterator begin, InputIterator end, OutputIterator outBegin, Predicate func)
+{
+    while (begin != end) {
+        if (func(*begin))
+            *outBegin++ = *begin;
+        ++begin;
+    }
+    return outBegin;
+}
+
+void test()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+#if (0)
+    std::copy_if(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "), [](int value){
+        return value % 3 == 0;
+    });
+#else
+    item36::copy_if(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "), [](int value){
+            return value % 3 == 0;
+    });
+#endif
+}
+
+} // item36 -----------------------------------------------
+
+namespace item37 {
+
+int x2(int ret, int value)
+{
+    return ret + value * 2;
+}
+
+void test()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    std::cout << "std::count(5): " << std::count(v.begin(), v.end(), 5) << "\n";
+    std::cout << std::count_if(v.begin(), v.end(), [](int value){
+        return value % 3 == 0;
+    })
+    << "\n";
+    auto iter = std::min_element(v.begin(), v.end());
+    std::cout << "min_element: " << *iter << "\n";
+    iter = std::max_element(v.begin(), v.end());
+    std::cout << "max_element: " << *iter << "\n";
+
+    auto res = std::accumulate(v.begin(), v.end(), 0);
+    std::cout << "accumulate: " << res << "\n";
+
+    res = std::accumulate(v.begin(), v.end(), 0, x2);
+    std::cout << "accumulate(x2): " << res << "\n";
+}
+
+} // item36 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_4()
 {
-    item34::test();
+    item37::test();
 }
