@@ -565,7 +565,51 @@ int x2(int ret, int value)
     return ret + value * 2;
 }
 
-void test()
+struct Point {
+    float x;
+    float y;
+
+    Point() : x(0.0), y(0.0)
+    {}
+    Point(const Point& rhs) : x(rhs.x), y(rhs.y)
+    {}
+    Point(float x, float y) : x(x), y(y)
+    {}
+
+    Point& operator+=(const Point& rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+    Point& operator=(const Point& rhs) {
+        x = rhs.x;
+        y = rhs.y;
+        return *this;
+    }
+};
+
+class PointAverage {
+    int count;
+    float x;
+    float y;
+public:
+    PointAverage() : count(0), x(0.0), y(0.0)
+    {}
+    const Point operator()(const Point& base, const Point& value) {
+        ++count;
+        x += value.x;
+        y += value.y;
+        return Point(x/count, y/count);
+    }
+};
+
+void setupVector(std::vector<Point>& v)
+{
+    std::vector<Point> pts{{1, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}};
+    v.swap(pts);
+}
+
+void test_accumulate()
 {
     std::vector<int> v{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     std::cout << "std::count(5): " << std::count(v.begin(), v.end(), 5) << "\n";
@@ -583,9 +627,46 @@ void test()
 
     res = std::accumulate(v.begin(), v.end(), 0, x2);
     std::cout << "accumulate(x2): " << res << "\n";
+
+    std::vector<Point> pts;
+    setupVector(pts);
+
+    auto result = std::accumulate(pts.begin(), pts.end(), Point(0, 0), PointAverage());
+    std::cout << "accumulate -> average point(" << result.x << ", " << result.y << ")\n";
 }
 
-} // item36 -----------------------------------------------
+class PointAverage2 : public std::unary_function<Point, void>{
+    int count = 0;
+    float x = 0.0;
+    float y = 0.0;
+public:
+    void operator()(const Point& p) {
+        x += p.x;
+        y += p.y;
+        ++count;
+    }
+    Point result() const {
+        return Point(x/count, y/count);
+    }
+};
+
+void test_for_each()
+{
+    std::vector<Point> pts;
+    setupVector(pts);
+
+    auto res = std::for_each(pts.begin(), pts.end(), PointAverage2());
+    auto point = res.result();
+    std::cout << "for_each -> average point(" << point.x << ", " << point.y << ")\n";
+}
+
+void test()
+{
+    //test_accumulate();
+    test_for_each();
+}
+
+} // item37 -----------------------------------------------
 
 } // namespace ================================================================
 
