@@ -2,6 +2,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <set>
 #include <memory>
 #include <iterator>
 
@@ -250,9 +251,108 @@ void test()
 
 } // item41 -----------------------------------------------
 
+namespace item42 {
+
+class Bullet {
+    size_t mWeight;
+    size_t mSpeed;
+public:
+    Bullet(size_t weight, size_t speed) : mWeight(weight), mSpeed(speed)
+    {}
+    size_t weight() const {
+        return mWeight;
+    }
+    size_t speed() const {
+        return mSpeed;
+    }
+    friend bool operator<(const Bullet& l, const Bullet& r) {
+        return l.weight() < r.weight();
+    }
+    friend std::ostream& operator<<(std::ostream& os, const Bullet& bullet)
+    {
+        os << "Bullet(" << bullet.weight() << ", " << bullet.speed() << ")";
+        return os;
+    }
+};
+
+//#define INHERIT_BINARY_FUNCTION
+
+#if (0)
+//error: declaration of ‘struct std::less<{anonymous}::item42::Bullet>’ in namespace ‘{anonymous}::item42’ which does not enclose ‘std’
+template <>
+struct std::less<Bullet> : public std::binary_function<Bullet, Bullet, bool>
+#else
+struct BulletSpeedCmp
+    #ifdef INHERIT_BINARY_FUNCTION
+        : public std::binary_function<Bullet, Bullet, bool>
+    #endif
+#endif
+{
+    bool operator()(const Bullet& l, const Bullet& r) const {
+        return l.speed() < r.speed();
+    }
+
+#ifndef INHERIT_BINARY_FUNCTION
+    typedef Bullet first_argument_type;
+    typedef Bullet second_argument_type;
+    typedef bool result_type;
+#endif
+};
+
+//#define INHERIT_UNARY_FUNCTION
+
+struct BulletValid
+#ifdef INHERIT_UNARY_FUNCTION
+    : public std::unary_function<Bullet, bool>
+#endif
+{
+    bool operator()(const Bullet& bullet) const {
+        return 10 <= bullet.speed();
+    }
+
+#ifndef INHERIT_UNARY_FUNCTION
+    typedef Bullet argument_type;
+    typedef bool result_type;
+#endif
+};
+
+#if (1)
+typedef std::set<Bullet> BulletSet;
+#else
+typedef std::set<Bullet, BulletSpeedCmp> BulletSet;
+#endif
+
+void setupBulletSet(BulletSet& bs)
+{
+    BulletSet s{
+        {1, 10},
+        {2, 5},
+        {3, 8},
+        {4, 15},
+        {5, 6}
+    };
+    bs.swap(s);
+}
+
+void test()
+{
+    BulletSet bs;
+    setupBulletSet(bs);
+
+    std::copy(bs.begin(), bs.end(), std::ostream_iterator<Bullet>(std::cout, ""));
+    std::cout << "\n";
+
+    auto iter = std::find_if(bs.begin(), bs.end(), std::not1(BulletValid()));
+    if (iter != bs.end()) {
+        std::cout << *iter << "\n";
+    }
+}
+
+} // item42 -----------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_5()
 {
-    item41::test();
+    item42::test();
 }
