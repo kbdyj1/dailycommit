@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <iterator>
 #include <fstream>
+#include <memory>
+#include <numeric>
+#include <functional>
 
 namespace { //=================================================================
 
@@ -352,9 +355,323 @@ void test()
 
 } // item33 -----------------------------------------------
 
+namespace item34 {
+
+void test_binary_search()
+{
+    std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::sort(v.begin(), v.end(), std::greater<int>());
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+
+#if (0)
+    // std::binary_search(5): false
+    auto res = std::binary_search(v.begin(), v.end(), 5);
+#else
+    // std::binary_search(5): true
+    auto res = std::binary_search(v.begin(), v.end(), 5, std::greater<int>());
+#endif
+    std::cout << "std::binary_search(5): " << (res ? "true" : "false") << "\n";
+}
+void test_set()
+{
+#if (1)
+    std::vector<int> v0{ 1, 2, 3, 4, 5 };
+    std::vector<int> v1{ 3, 4, 5, 6, 7 };
+#else
+    std::vector<int> v0{ 1, 2, 5, 5, 5, 9 };
+    std::vector<int> v1{ 2, 5, 7 };
+#endif
+    std::vector<int> v2;
+
+    //std::set_union(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_intersection(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    //std::set_symmetric_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    std::merge(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+
+    std::copy(v2.begin(), v2.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+void test_inplace_merge()
+{
+    std::vector<int> v{ 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+    std::inplace_merge(v.begin(), v.begin()+5, v.end());
+
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
+}
+
+template <class Os, class Co>
+Os& operator<<(Os& os, const Co& c) {
+    os << "{ ";
+    for (auto i : c) {
+        os << i << ' ';
+    }
+    return os << "}\t";
+}
+
+void test_includes()
+{
+    const auto
+            v0 = { 'a', 'b', 'c', 'f', 'h', 'x' },
+            v1 = { 'a', 'b', 'c' },
+            v2 = { 'a', 'c' },
+            v3 = { 'a', 'a', 'b' },
+            v4 = { 'g' },
+            v5 = { 'a', 'c', 'g' },
+            v6 = { 'A', 'B', 'C' };
+    auto nocaseLess = [](char a, char b) {
+        return std::tolower(a) < std::tolower(b);
+    };
+
+    std::cout << v0 << "\nincludes:\n" << std::boolalpha
+              << v1 << ": " << std::includes(v0.begin(), v0.end(), v1.begin(), v1.end()) << "\n"
+              << v2 << ": " << std::includes(v0.begin(), v0.end(), v2.begin(), v2.end()) << "\n"
+              << v3 << ": " << std::includes(v0.begin(), v0.end(), v3.begin(), v3.end()) << "\n"
+              << v4 << ": " << std::includes(v0.begin(), v0.end(), v4.begin(), v4.end()) << "\n"
+              << v5 << ": " << std::includes(v0.begin(), v0.end(), v5.begin(), v5.end()) << "\n"
+              << v6 << ": " << std::includes(v0.begin(), v0.end(), v6.begin(), v6.end(), nocaseLess) << " (case-insensitive)\n";
+}
+
+void test()
+{
+    //test_binary_search();
+    //test_set();
+    //test_inplace_merge();
+    test_includes();
+}
+
+} // item34 -----------------------------------------------
+
+namespace item35 {
+
+int nocaseCharCmp(char c0, char c1)
+{
+    int l0 = std::tolower(c0);
+    int l1 = std::tolower(c1);
+
+    if (l0 < l1)
+        return -1;
+    else if (l0 > l1)
+        return 1;
+    else
+        return 0;
+}
+
+int nocaseStringCmpImpl(const std::string& s0, const std::string& s1)
+{
+    auto p = std::mismatch(s0.begin(), s0.end(), s1.begin(), std::not2(std::function(nocaseCharCmp)));
+    if (p.first == s0.end()) {
+        if (p.second == s1.end())
+            return 0;
+        else
+            return -1;
+    }
+    return nocaseCharCmp(*p.first, *p.second);
+}
+
+int nocaseStrCmp(const std::string& s0, const std::string& s1)
+{
+    if (s0.size() < s1.size())
+        return nocaseStringCmpImpl(s0, s1);
+    else
+        return -nocaseStringCmpImpl(s1, s0);
+}
+
+bool nocaseCharLess(char c0, char c1)
+{
+    int l0 = std::tolower(c0);
+    int l1 = std::tolower(c1);
+
+    return l0 < l1;
+}
+
+bool nocaseStrCmp2(const std::string& s0, const std::string& s1)
+{
+    return std::lexicographical_compare(s0.begin(), s0.end(), s1.begin(), s1.end(), nocaseCharLess);
+}
+
+void test_nocase_string_cmp(const std::string& s0, const std::string& s1)
+{
+    std::cout << "nocaseStrCmp(" << s0 << ", " << s1 << "): " << nocaseStrCmp(s0, s1) << "\n";
+}
+void test_nocase_string_cmp2(const std::string& s0, const std::string& s1)
+{
+    std::cout << "nocaseStrCmp2(" << s0 << ", " << s1 << "): "
+              << (nocaseStrCmp2(s0, s1) ? "<" : ">=")
+              << "\n";
+}
+
+void test()
+{
+    auto s0 = std::string{"Hello, Qt6.0"};
+    auto s1 = std::string{"hello, qt6.0"};
+    auto s2 = std::string{"hello, qt6"};
+    auto s3 = std::string{"hEllo, qt6.2"};
+    auto s4 = std::string{"fello, qT6.0"};
+    auto s5 = std::string{"hello, Rt6.2.1"};
+
+    void (*func)(const std::string& s0, const std::string& s1);
+
+#if (0)
+    func = test_nocase_string_cmp;
+#else
+    func = test_nocase_string_cmp2;
+#endif
+
+    func(s0, s1);
+    func(s0, s2);
+    func(s0, s3);
+    func(s0, s4);
+    func(s0, s5);
+}
+
+} // item35 -----------------------------------------------
+
+namespace item36 {
+
+template <typename InputIterator, typename OutputIterator, typename Predicate>
+OutputIterator copy_if(InputIterator begin, InputIterator end, OutputIterator outBegin, Predicate func)
+{
+    while (begin != end) {
+        if (func(*begin))
+            *outBegin++ = *begin;
+        ++begin;
+    }
+    return outBegin;
+}
+
+void test()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+#if (0)
+    std::copy_if(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "), [](int value){
+        return value % 3 == 0;
+    });
+#else
+    item36::copy_if(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "), [](int value){
+            return value % 3 == 0;
+    });
+#endif
+}
+
+} // item36 -----------------------------------------------
+
+namespace item37 {
+
+int x2(int ret, int value)
+{
+    return ret + value * 2;
+}
+
+struct Point {
+    float x;
+    float y;
+
+    Point() : x(0.0), y(0.0)
+    {}
+    Point(const Point& rhs) : x(rhs.x), y(rhs.y)
+    {}
+    Point(float x, float y) : x(x), y(y)
+    {}
+
+    Point& operator+=(const Point& rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+    Point& operator=(const Point& rhs) {
+        x = rhs.x;
+        y = rhs.y;
+        return *this;
+    }
+};
+
+class PointAverage {
+    int count;
+    float x;
+    float y;
+public:
+    PointAverage() : count(0), x(0.0), y(0.0)
+    {}
+    const Point operator()(const Point& base, const Point& value) {
+        ++count;
+        x += value.x;
+        y += value.y;
+        return Point(x/count, y/count);
+    }
+};
+
+void setupVector(std::vector<Point>& v)
+{
+    std::vector<Point> pts{{1, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}};
+    v.swap(pts);
+}
+
+void test_accumulate()
+{
+    std::vector<int> v{ 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    std::cout << "std::count(5): " << std::count(v.begin(), v.end(), 5) << "\n";
+    std::cout << std::count_if(v.begin(), v.end(), [](int value){
+        return value % 3 == 0;
+    })
+    << "\n";
+    auto iter = std::min_element(v.begin(), v.end());
+    std::cout << "min_element: " << *iter << "\n";
+    iter = std::max_element(v.begin(), v.end());
+    std::cout << "max_element: " << *iter << "\n";
+
+    auto res = std::accumulate(v.begin(), v.end(), 0);
+    std::cout << "accumulate: " << res << "\n";
+
+    res = std::accumulate(v.begin(), v.end(), 0, x2);
+    std::cout << "accumulate(x2): " << res << "\n";
+
+    std::vector<Point> pts;
+    setupVector(pts);
+
+    auto result = std::accumulate(pts.begin(), pts.end(), Point(0, 0), PointAverage());
+    std::cout << "accumulate -> average point(" << result.x << ", " << result.y << ")\n";
+}
+
+class PointAverage2 : public std::unary_function<Point, void>{
+    int count = 0;
+    float x = 0.0;
+    float y = 0.0;
+public:
+    void operator()(const Point& p) {
+        x += p.x;
+        y += p.y;
+        ++count;
+    }
+    Point result() const {
+        return Point(x/count, y/count);
+    }
+};
+
+void test_for_each()
+{
+    std::vector<Point> pts;
+    setupVector(pts);
+
+    auto res = std::for_each(pts.begin(), pts.end(), PointAverage2());
+    auto point = res.result();
+    std::cout << "for_each -> average point(" << point.x << ", " << point.y << ")\n";
+}
+
+void test()
+{
+    //test_accumulate();
+    test_for_each();
+}
+
+} // item37 -----------------------------------------------
+
 } // namespace ================================================================
 
 void test_ch_4()
 {
-    item33::test();
+    item37::test();
 }
