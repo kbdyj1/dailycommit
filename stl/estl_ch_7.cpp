@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <iterator>
 
@@ -60,9 +61,37 @@ void test()
 
 } // item43 -----------------------------------------------
 
+namespace item44 {
+
+void test()
+{
+    std::set<int> s{
+        1, 2, 3, 4, 5, 6, 7, 8, 9
+    };
+    auto iter = s.find(5);
+    if (iter != s.end()) {
+        std::cout << "s.find(5): " << *iter << "\n";
+    }
+    iter = std::find(s.begin(), s.end(), 5);
+    if (iter != s.end()) {
+        std::cout << "std::find(5): " << *iter << "\n";
+    }
+}
+
+} // item44 -----------------------------------------------
+
+namespace item45 {
+
+void test()
+{
+
+}
+
+} // item45 -----------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_7()
 {
-    item43::test();
+    item44::test();
 }
