@@ -4,6 +4,7 @@
 #include <vector>
 #include <atomic>
 #include <map>
+#include <string.h>
 
 namespace { //=================================================================
 
@@ -407,7 +408,166 @@ void test()
     std::cout << "\n";
 }
 
+} // user_type_range_loop -------------------------------------------
+
+namespace avoid_implicit_conversion {
+
+class Handle {
+    int handle = 0;
+public:
+    explicit Handle(int h) : handle(h)
+    {}
+    explicit operator bool() const {
+        return handle != 0;
+    }
+};
+
+//#define USE_INITIALIZE_LIST
+
+struct F {
+    F() {
+        std::cout << "F()\n";
+    }
+    F(const int a) {
+        std::cout << "F(" << a << ")\n";
+    }
+    F(const int a, const double b) {
+        std::cout << "F(" << a << ", " << b << ")\n";
+    }
+#ifdef USE_INITIALIZE_LIST
+    F(const std::initializer_list<int>& l) {
+        std::cout << "F(std::initialize_list<int>&)\n";
+    }
+#endif
+    operator bool() const {
+        return true;
+    }
+};
+
+void bar(const F f)
+{}
+
+void test_implicit_conversion()
+{
+    F f0;
+    F f1{};
+    F f2(1);
+    F f3 = 1;
+    F f4{1};
+    F f5 = {1};
+    F f6(1, 2.2);
+#if !defined(USE_INITIALIZE_LIST)
+    F f7{2, 4.4};
+    F f8 = { 3, 6.6 };
+#endif
+
+    std::cout << "\n********** bar() **********\n";
+    bar({});
+    bar(1);
+#if !defined(USE_INITIALIZE_LIST)
+    bar({1, 2.4});
+#endif
+
+    bool flag = f1;
+    std::cout << std::boolalpha;
+    std::cout << "flag = f1: " << flag << "\n";
+
+    if (f2) {
+        std::cout << "if(f2){}\n";
+    }
+
+    std::cout << "f2 + f3: " << f2 + f3 << "\n";
 }
+
+#if (1)
+#   define EXPLICIT    explicit
+#   define USE_EXPLICIT
+#else
+#   define EXPLICIT
+#endif
+
+class StringBuffer {
+    size_t mSize;
+    char* mData;
+public:
+    EXPLICIT StringBuffer() : mSize(0), mData(nullptr) {
+        std::cout << "StringBuffer()\n";
+    }
+    EXPLICIT StringBuffer(const size_t size) : mSize(size), mData(new char[size]) {
+        std::cout << "StringBuffer(" << size << ")\n";
+    }
+    EXPLICIT StringBuffer(const char* p) : StringBuffer(strlen(p) + 1) {
+        strncpy(mData, p, mSize-1);
+        mData[mSize-1] = '\0';
+    }
+    size_t size() const {
+        return mSize;
+    }
+    EXPLICIT operator bool() const {
+        return mData != nullptr;
+    }
+    EXPLICIT operator const char* () const {
+        return mData;
+    }
+};
+
+enum ItemSize {
+    MinSize = 8,
+    MaxSize = 256
+};
+
+void test_string_buffer()
+{
+    StringBuffer s0;
+    StringBuffer s1{32};
+
+#if !defined(USE_EXPLICIT)
+    StringBuffer s2 = 'a';
+    StringBuffer s3 = "Hello, Qt6";
+    StringBuffer s4 = MaxSize;
+#else
+    StringBuffer s2 = StringBuffer{'a'};
+    StringBuffer s3 = StringBuffer{"Hello, Qt6"};
+    StringBuffer s4 = StringBuffer(MaxSize);
+#endif
+
+    std::cout << (const char*)s1 << "\n";
+#if !defined(USE_EXPLICIT)
+    std::cout << "s2 + s3: " << s2 + s3 << "\n";
+#else
+    std::cout << "s2 + s3: " << static_cast<bool>(s2) + static_cast<bool>(s3) << "\n";
+#endif
+}
+
+void test()
+{
+    //test_implicit_conversion();
+    test_string_buffer();
+}
+
+} // avoid_implicit_conversion --------------------------------------
+
+const int UnnamedSize = 32;
+
+namespace use_namespace {
+
+template <size_t Size>
+class Test {};
+
+static int StaticSize = 16;
+
+void test()
+{
+#if (0)
+//error: the value of ‘{anonymous}::use_namespace::StaticSize’ is not usable in a constant expression
+//  562 |     Test<StaticSize> t0;
+//      |                    ^
+    Test<StaticSize> t0;
+#endif
+    Test<UnnamedSize> t1;
+}
+
+} // use_namespace --------------------------------------------------
 
 } //namespace =================================================================
 
@@ -420,5 +580,6 @@ void test_ch_01()
     //test_scoped_enum();
 
     //range_loop::test();
-    user_type_range_loop::test();
+    //user_type_range_loop::test();
+    avoid_implicit_conversion::test();
 }
