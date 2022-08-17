@@ -571,6 +571,9 @@ void test()
 
 } //namespace =================================================================
 
+void test_ch_01_lib();
+void test_ch_01_structured_binding();
+
 void test_ch_01()
 {
     //test_auto();
@@ -581,5 +584,7 @@ void test_ch_01()
 
     //range_loop::test();
     //user_type_range_loop::test();
-    avoid_implicit_conversion::test();
+    //avoid_implicit_conversion::test();
+
+    test_ch_01_structured_binding();
 }
