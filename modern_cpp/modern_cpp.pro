@@ -8,6 +8,8 @@ SOURCES += \
         ch_01_lib.cpp \
         ch_01_structured_binding.cpp \
         ch_02.cpp \
+        ch_02_literals.cpp \
+        ch_02_random.cpp \
         main.cpp
 
 DISTFILES +=

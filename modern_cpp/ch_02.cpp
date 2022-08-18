@@ -74,8 +74,13 @@ void test()
 
 } //===========================================================================
 
+void test_random();
+void test_literals();
+
 void test_ch_02()
 {
     //number_string_conversion::test();
-    numeric_limits::test();
+    //numeric_limits::test();
+    //test_random();
+    test_literals();
 }
