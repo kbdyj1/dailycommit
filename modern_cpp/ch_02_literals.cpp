@@ -107,11 +107,103 @@ void test_string_literals()
     std::cout << typeid(s3).name() << "\n"; //IDi
 }
 
+namespace binary {
+
+using Byte1 = unsigned char;
+using Byte2 = unsigned short;
+using Byte4 = unsigned long;
+
+namespace literals {
+
+
+namespace internal {
+
+template <typename Byte, char... bits>
+struct Binary {
+};
+
+template <typename Byte>
+struct Binary<Byte>
+{
+    static constexpr Byte value{0};
+};
+
+template <typename Byte, char... bits>
+struct Binary<Byte, '0', bits...>
+{
+    static constexpr Byte value{ Binary<Byte, bits...>::value };
+};
+
+template <typename Byte, char... bits>
+struct Binary<Byte, '1', bits...>
+{
+    static constexpr Byte value {
+        (1 << sizeof...(bits) | Binary<Byte, bits...>::value)
+    };
+};
+
+} //internal ------------------------------------
+
+template <char... bits>
+constexpr Byte1 operator""_1b()
+{
+    static_assert (sizeof...(bits) <= 8, "bits <= 8");
+    return internal::Binary<Byte1, bits...>::value;
+}
+
+template <char... bits>
+constexpr Byte2 operator""_2b()
+{
+    static_assert(sizeof...(bits) <= 16, "bits <= 16");
+    return internal::Binary<Byte2, bits...>::value;
+}
+
+template <char... bits>
+constexpr Byte4 operator""_4b()
+{
+    static_assert(sizeof...(bits) <= 32, "bits <= 32");
+    return internal::Binary<Byte4, bits...>::value;
+}
+
+
+} //literals ----------------------------------------------
+
+using namespace literals;
+
+void test()
+{
+    std::cout << "01001100: " << static_cast<int>(01001100_1b) << std::endl;
+    std::cout << "1111000011110000: " << 1111000011110000_2b << std::endl;
+    //std::cout << "11110000111100001: " << 11110000111100001_2b << std::endl;
+    std::cout << "11110000111100001: " << 11110000111100001_4b << std::endl;
+}
+
+} //binary ----------------------------------------------------------
+
+namespace raw_literal {
+
+void test()
+{
+    auto filename = R"((c:\users\anoymous\documents\))"s;
+    std::cout << filename << "\n";
+
+    auto sel = R"(SELECT*
+FROM Books
+WHERE Publisher='qt'
+ORDER BY PubDate DESC)";
+
+    std::cout << sel << "\n";
+}
+
+} //raw_literal -----------------------------------------------------
+
 } //namespace =================================================================
 
 void test_literals()
 {
     //test_kb();
     //test_unit_literals();
-    test_string_literals();
+    //test_string_literals();
+    //binary::test();
+    raw_literal::test();
 }

@@ -10,6 +10,7 @@ SOURCES += \
         ch_02.cpp \
         ch_02_literals.cpp \
         ch_02_random.cpp \
+        ch_02_string.cpp \
         main.cpp
 
 DISTFILES +=
