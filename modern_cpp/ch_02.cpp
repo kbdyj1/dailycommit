@@ -76,7 +76,9 @@ void test()
 
 void test_random();
 void test_literals();
+
 void test_ch_02_string();
+void test_ch_02_regexp();
 
 void test_ch_02()
 {
@@ -84,5 +86,6 @@ void test_ch_02()
     //numeric_limits::test();
     //test_random();
     //test_literals();
-    test_ch_02_string();
+    //test_ch_02_string();
+    test_ch_02_regexp();
 }
