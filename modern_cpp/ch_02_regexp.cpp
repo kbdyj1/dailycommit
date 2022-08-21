@@ -115,11 +115,54 @@ server=127.0.0.1
     std::cout << "count: " << count << "\n";
 }
 
+void test_replace()
+{
+    auto s = "abc aa bca ca bbbb"s;
+    auto pattern = R"(([a|b|c]{3}))";
+    auto rx = std::regex{pattern};
+    auto result = std::regex_replace(s, rx, "---"s);
+
+    std::cout << s << " -> " << result << "\n";
+}
+
+void test_replace_swap()
+{
+    auto s = "Hello, Qt6"s;
+    auto pattern = R"((\w+)\s*,\s*(\w+))";
+    auto rx = std::regex{pattern};
+    auto result = std::regex_replace(s, rx, "$2, $1"s);
+
+    std::cout << s << " -> " << result << "\n";
+}
+
+void test_replace_indefinite_article()
+{
+    auto s = "this is a example."s;
+    auto pattern = R"(\ba ([a|e|o|u|i]\w+))"s;
+    auto rx = std::regex{pattern};
+    auto result = std::regex_replace(s, rx, "an $1");
+
+    std::cout << result << "\n";
+}
+
+void test_replace_date()
+{
+    auto s = "today is 1.06.2016!!"s;
+    // dd.mm.yyyy -> yyyy.mm.dd
+
+    auto pattern = R"(\b(\d{1,2}).(\d{2}).(\d{4}))"s;
+    auto rx = std::regex{pattern};
+    auto result = std::regex_replace(s, rx, "$3.$2.$1");
+
+    std::cout << s << " -> " << result << "\n";
+}
+
 } //===========================================================================
 
 void test_ch_02_regexp()
 {
     //test_email();
     //test_smatch();
-    test_search();
+    //test_search();
+    test_replace_date();
 }

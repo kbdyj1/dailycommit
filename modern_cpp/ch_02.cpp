@@ -86,6 +86,6 @@ void test_ch_02()
     //numeric_limits::test();
     //test_random();
     //test_literals();
-    //test_ch_02_string();
-    test_ch_02_regexp();
+    test_ch_02_string();
+    //test_ch_02_regexp();
 }

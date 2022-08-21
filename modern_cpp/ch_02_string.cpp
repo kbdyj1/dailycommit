@@ -45,6 +45,37 @@ void test_remove_if()
     std::cout << s << "\n";
 }
 
+std::string_view getFilename(const std::string_view str)
+{
+    const auto pos0 = str.find_last_of('\\');
+    const auto pos1 = str.find_first_of('.');
+    return str.substr(pos0+1, pos1-pos0-1);
+}
+
+std::string_view trim_string_view(std::string_view str)
+{
+    const auto pos0 = str.find_first_not_of(' ');
+    const auto pos1 = str.find_last_not_of(' ');
+    return str.substr(pos0, pos1-pos0+1);
+}
+
+void test_string_view()
+{
+#if (0)
+    auto file0 = R"(c:\windows\example.doc)"s;
+    auto filename0 = getFilename(file0);
+#else
+    auto file0 = R"(c:\windows\example.doc)";
+    auto filename0 = getFilename(std::string_view{file0, 22});
+#endif
+    std::cout << filename0 << "\n";
+
+    auto str = "   Hello, Qt6  ";
+    auto result = trim_string_view(str);
+
+    std::cout << "trim: " << result << "\n";
+}
+
 } //namespace =================================================================
 
 void test_ch_02_string()
@@ -52,5 +83,6 @@ void test_ch_02_string()
     //test_tolower();
     //test_trim();
     //test_reverse();
-    test_remove_if();
+    //test_remove_if();
+    test_string_view();
 }
