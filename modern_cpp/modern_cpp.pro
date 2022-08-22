@@ -12,6 +12,9 @@ SOURCES += \
         ch_02_random.cpp \
         ch_02_regexp.cpp \
         ch_02_string.cpp \
+        ch_03.cpp \
+        ch_03_lambda.cpp \
+        ch_03_vargs.cpp \
         main.cpp
 
 DISTFILES +=
