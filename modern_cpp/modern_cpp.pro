@@ -13,6 +13,7 @@ SOURCES += \
         ch_02_regexp.cpp \
         ch_02_string.cpp \
         ch_03.cpp \
+        ch_03_highorder.cpp \
         ch_03_lambda.cpp \
         ch_03_vargs.cpp \
         main.cpp
