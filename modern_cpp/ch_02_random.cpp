@@ -4,6 +4,7 @@
 #include <functional>
 #include <map>
 #include <iomanip>
+#include <array>
 
 namespace { //=================================================================
 

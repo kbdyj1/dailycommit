@@ -78,8 +78,8 @@ void test_auto()
     std::cout << typeid(dSum).name() << "\n";
     std::cout << typeid(sSum).name() << ", sSum: " << sSum << "\n";
 
-    auto result = apply(sqrt, 4.0);
-    std::cout << "apply(sqrt, 4.0): " << result << ", " << typeid(result).name() << "\n";
+    auto result = apply(sqrtf, 4.0);
+    std::cout << "apply(sqrtf, 4.0): " << result << ", " << typeid(result).name() << "\n";
 
     auto vec = std::vector<int>{ 1, 2, 3, 4, 5 };
     auto size = int( vec.size() );
@@ -162,7 +162,8 @@ struct alignas(4) F4 {
     char b;
 };
 //error: requested alignment is less than minimum alignment of 8 for type '(anonymous namespace)::F5'
-struct alignas(4) F5 {
+#define ALIGN_SIZE  8
+struct alignas(ALIGN_SIZE) F5 {
     alignas(2) char a;
     alignas(8) int b;
 };
