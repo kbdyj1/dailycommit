@@ -82,6 +82,7 @@ void test_run()
 void test_ch_03_lambda();
 void test_ch_03_vargs();
 void test_ch_03_highorder();
+void test_ch_03_invoke();
 
 void test_ch_03()
 {
@@ -89,5 +90,6 @@ void test_ch_03()
     //test_run();
     //test_ch_03_lambda();
     //test_ch_03_vargs();
-    test_ch_03_highorder();
+    //test_ch_03_highorder();
+    test_ch_03_invoke();
 }

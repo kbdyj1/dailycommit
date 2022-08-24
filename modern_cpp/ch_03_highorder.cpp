@@ -100,10 +100,78 @@ void test_fold()
     }, s, ""s) << "\n";
 }
 
+
+template <typename F, typename G>
+auto compose(F&& f, G&& g)
+{
+    return [=](auto x){ return f(g(x)); };
+}
+
+template <typename F, typename... G>
+auto compose(F&& f, G&&... g)
+{
+    return [=](auto x) { return f(compose(g...)(x)); };
+}
+
+void test_compose()
+{
+    auto n = -3;
+    auto v = compose(
+                [](const int n){ return std::to_string(n); },
+                [](const int n) { return n*n; }
+#if (1)
+                ,
+                [](const int n) { return n+n; },
+                [](const int n) { return std::abs(n); }
+#endif
+    )(n);
+
+    std::cout << "componse(" << n << "): " << v << "\n";
+}
+
+void test_complex_compose()
+{
+    auto vnums = std::vector<int>{ 1, -2, 3, -4, 5 };
+    auto s = compose(
+                [](const std::vector<int>& v) { return foldl(std::plus<>(), v, 0); },
+                [](const std::vector<int>& v) { return mapf([](const int i){ return i+i; }, v); },
+                [](const std::vector<int>& v) { return mapf([](const int i){ return std::abs(i); }, v); })(vnums);
+
+    std::cout << s << "\n";
+}
+
+#if (0) // TODO. fix compile error
+template <typename F, typename G>
+auto operator*(F&&f, G&& g)
+{
+    return compose(std::forward<F>(f), std::forward<G>(g));
+}
+
+template <typename F, typename... G>
+auto operator*(F&& f, G&&... g)
+{
+    return operator*(std::forward<F>(f), g...);
+}
+
+void test_complex_compose_2()
+{
+    auto vnums = std::vector<int>{ 1, -2, 3, -4, 5 };
+    auto s = (
+                [](const std::vector<int>& v) { return foldl(std::plus<>(), v, 0); } *
+                [](const std::vector<int>& v) { return mapf([](const int i){ return i+i; }, v); } *
+                [](const std::vector<int>& v) { return mapf([](const int i){ return std::abs(i); }, v); })(vnums);
+
+    std::cout << s << "\n";
+}
+#endif
+
 } //namespace =================================================================
 
 void test_ch_03_highorder()
 {
     //test_mapf();
-    test_fold();
+    //test_fold();
+    //test_simple_compose();
+    //test_compose();
+    test_complex_compose();
 }
