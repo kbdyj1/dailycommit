@@ -51,11 +51,18 @@ void test_dev_configuration()
 } //namespace =================================================================
 
 void test_ch_04_stringfy();
+void test_ch_04_static_assert();
+void test_ch_04_attribute();
 
 void test_ch_04()
 {
+#if (0) // done
     test_compiler();
     test_architecture();
     test_dev_configuration();
     test_ch_04_stringfy();
+    test_ch_04_static_assert();
+#endif
+
+    test_ch_04_attribute();
 }

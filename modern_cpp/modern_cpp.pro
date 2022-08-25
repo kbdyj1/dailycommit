@@ -18,6 +18,8 @@ SOURCES += \
         ch_03_lambda.cpp \
         ch_03_vargs.cpp \
         ch_04.cpp \
+        ch_04_attribute.cpp \
+        ch_04_static_assert.cpp \
         ch_04_stringfy.cpp \
         main.cpp
 
