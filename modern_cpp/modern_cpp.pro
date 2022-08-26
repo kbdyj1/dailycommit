@@ -21,6 +21,8 @@ SOURCES += \
         ch_04_attribute.cpp \
         ch_04_static_assert.cpp \
         ch_04_stringfy.cpp \
+        ch_05.cpp \
+        ch_05_algorithm.cpp \
         main.cpp
 
 DISTFILES +=
