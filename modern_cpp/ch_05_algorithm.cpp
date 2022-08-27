@@ -1,8 +1,17 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
+#include <random>
 
 namespace { //=================================================================
+
+template <typename C>
+void print(const C& c)
+{
+    std::copy(std::begin(c), std::end(c), std::ostream_iterator<typename C::value_type>(std::cout, " "));
+    std::cout << "\n";
+}
 
 bool isPrime(unsigned long n)
 {
@@ -58,11 +67,137 @@ void test_find()
         return isPrime(a) && isPrime(b);
     });
     std::cout << "adjacent_find( isPrime ) index: " << std::distance(v0.begin(), iter) << "\n";
+
+//    upper_bound(..., 1): 2
+//    upper_bound(..., 2): 3
+//    upper_bound(..., 3): 5
+    for (auto i=1; i<10; i++) {
+        iter = std::upper_bound(v0.begin(), v0.end(), i);
+        if (iter != v0.end()) {
+            std::cout << "upper_bound(..., " << i << "): " << *iter << "\n";
+        }
+    }
+
+//    lower_bound(..., 3): 3
+//    lower_bound(..., 4): 5
+//    lower_bound(..., 5): 5
+    std::cout << "\n";
+    for (auto i=1; i<10; i++) {
+        iter = std::lower_bound(v0.begin(), v0.end(), i);
+        if (iter != v0.end()) {
+            std::cout << "lower_bound(..., " << i << "): " << *iter << "\n";
+        }
+    }
+
+    // first: lower_bound
+    // second: upper_bound
+    auto bounds = std::equal_range(v0.begin(), v0.end(), 1);
+    std::cout << "first: " << std::distance(v0.begin(), bounds.first)
+              << ", second: " << std::distance(v0.begin(), bounds.second) << "\n";
+}
+
+void test_sort()
+{
+    auto v0 = std::vector<int>{ 5, 19, 8, 4, 21, 7, 10, 6, 3, 15 };
+#if (0)
+    std::sort(v0.begin(), v0.end());
+#else
+    std::sort(v0.begin(), v0.end(), std::greater<>());
+#endif
+    print(v0);
+}
+
+struct Task {
+    int prio;
+    std::string name;
+};
+bool operator<(const Task& l, const Task& r)
+{
+    return l.prio < r.prio;
+}
+bool operator>(const Task& l, const Task& r)
+{
+    return l.prio > r.prio;
+}
+std::ostream& operator<<(std::ostream& os, const Task& t)
+{
+    os << "{" << t.prio << ", " << t.name << "}";
+    return os;
+}
+
+void test_stable_sort()
+{
+    auto v = std::vector<Task>{
+        { 3, "three" },
+        { 7, "seven" },
+        { 2, "two" },
+        { 3, "three 2nd"},
+        { 9, "nine"},
+        { 5, "five"},
+        { 3, "three 3rd"}
+    };
+    std::stable_sort(v.begin(), v.end());
+
+    print(v);
+}
+
+void test_partial_sort()
+{
+    auto v0 = std::vector<int>{ 5, 19, 8, 4, 21, 7, 10, 6, 3, 15 };
+    auto v1 = std::vector<int>(v0.size());
+
+    std::partial_sort_copy(v0.begin(), v0.begin()+5, v1.begin(), v1.end());
+
+    print(v1);
+}
+
+void test_nth_element()
+{
+    auto v0 = std::vector<int>{ 5, 19, 8, 4, 21, 7, 10, 6, 3, 15 };
+    std::nth_element(v0.begin(), v0.begin()+5, v0.end());
+
+    print(v0);
+
+    auto sorted = std::is_sorted(v0.begin(), v0.end());
+    std::cout << std::boolalpha << "sorted: " << sorted << "\n";
+
+    auto iter = std::is_sorted_until(v0.begin()+5, v0.end());
+    std::cout << "is_sorted_until(v0.begin()+5, v0.end()): " << std::distance(v0.begin(), iter) << "(" << *iter << ")\n";
+}
+
+void test_initialize()
+{
+    auto v0 = std::vector<int>(5);
+    std::fill(v0.begin(), v0.end(), 6);
+
+    print(v0);
+
+    auto rd = std::random_device{};
+    auto mt = std::mt19937{rd()};
+    auto ud = std::uniform_int_distribution<>{1, 10};
+    auto v1 = std::vector<int>(10);
+
+    std::generate(v1.begin(), v1.end(), [&ud, &mt]{ return ud(mt); });
+
+    print(v1);
+
+    auto v2 = std::vector<int>(10);
+    std::iota(v2.begin(), v2.end(), 10);
+
+    print(v2);
 }
 
 } //namespace =================================================================
 
 void test_ch_05_algorithm()
 {
+#if (0) // done
     test_find();
+    test_sort();
+    test_stable_sort();
+    test_partial_sort();
+    test_nth_element();
+#endif
+
+    test_initialize();
 }
