@@ -4,14 +4,9 @@
 #include <iterator>
 #include <random>
 
-namespace { //=================================================================
+#include "util.h"
 
-template <typename C>
-void print(const C& c)
-{
-    std::copy(std::begin(c), std::end(c), std::ostream_iterator<typename C::value_type>(std::cout, " "));
-    std::cout << "\n";
-}
+namespace { //=================================================================
 
 bool isPrime(unsigned long n)
 {
@@ -187,6 +182,40 @@ void test_initialize()
     print(v2);
 }
 
+void test_set()
+{
+    auto v0 = std::vector<int>{ 1, 1, 2, 3, 5, 8, 13 };
+    auto v1 = std::vector<int>{ 2, 4, 6, 8, 10, 12, 14 };
+
+    auto v2 = std::vector<int>{};
+    std::set_union(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v2));
+    std::cout << "union: ";
+    print(v2);  // 1 1 2 3 4 5 6 8 10 12 13 14
+
+    auto v3 = std::vector<int>{};
+    std::set_intersection(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v3));
+    std::cout << "intersection: ";
+    print(v3);  // 2 8
+
+    auto v4 = std::vector<int>{};
+    std::set_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v4));
+    std::cout << "difference: ";
+    print(v4);  // 1 1 3 5 13
+
+    auto v5 = std::vector<int>{};
+    std::merge(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v5));
+    std::cout << "merge: ";
+    print(v5);  // 1 1 2 2 3 4 5 6 8 8 10 12 13 14
+
+    auto v6 = std::vector<int>{};
+    std::set_symmetric_difference(v0.begin(), v0.end(), v1.begin(), v1.end(), std::back_inserter(v6));
+    std::cout << "set_symmetric_difference: ";
+    print(v6);  // 1 1 3 4 5 6 10 12 13 14
+
+    auto v7 = std::vector<int>{ 1, 3, 13 };
+    std::cout << std::boolalpha << "includes: " << std::includes(v0.begin(), v0.end(), v7.begin(), v7.end()) << "\n";
+}
+
 } //namespace =================================================================
 
 void test_ch_05_algorithm()
@@ -197,7 +226,8 @@ void test_ch_05_algorithm()
     test_stable_sort();
     test_partial_sort();
     test_nth_element();
+    test_initialize();
 #endif
 
-    test_initialize();
+    test_set();
 }

@@ -172,6 +172,7 @@ void test_bool_vector()
 } //namespace =================================================================
 
 void test_ch_05_algorithm();
+void test_ch_05_iterator();
 
 void test_ch_05()
 {
@@ -180,7 +181,8 @@ void test_ch_05()
     test_stack();
     test_bitset();
     test_bool_vector();
+    test_ch_05_algorithm();
 #endif
 
-    test_ch_05_algorithm();
+    test_ch_05_iterator();
 }

@@ -23,6 +23,11 @@ SOURCES += \
         ch_04_stringfy.cpp \
         ch_05.cpp \
         ch_05_algorithm.cpp \
+        ch_05_iterator.cpp \
         main.cpp
 
 DISTFILES +=
+
+HEADERS += \
+    MyArray.h \
+    util.h
