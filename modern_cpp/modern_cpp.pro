@@ -24,6 +24,10 @@ SOURCES += \
         ch_05.cpp \
         ch_05_algorithm.cpp \
         ch_05_iterator.cpp \
+        ch_06.cpp \
+        ch_06_any.cpp \
+        ch_06_chrono.cpp \
+        ch_06_hash.cpp \
         main.cpp
 
 DISTFILES +=
