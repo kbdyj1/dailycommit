@@ -27,7 +27,9 @@ SOURCES += \
         ch_06.cpp \
         ch_06_any.cpp \
         ch_06_chrono.cpp \
+        ch_06_exit_handler.cpp \
         ch_06_hash.cpp \
+        ch_06_type.cpp \
         main.cpp
 
 DISTFILES +=
