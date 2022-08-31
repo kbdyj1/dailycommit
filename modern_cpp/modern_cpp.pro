@@ -30,6 +30,8 @@ SOURCES += \
         ch_06_exit_handler.cpp \
         ch_06_hash.cpp \
         ch_06_type.cpp \
+        ch_07.cpp \
+        ch_07_file.cpp \
         main.cpp
 
 DISTFILES +=
