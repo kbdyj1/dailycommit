@@ -1,6 +1,7 @@
 #include <iostream>
 #include <type_traits>
 #include <string>
+#include <random>
 
 #include "util.h"
 
@@ -56,10 +57,63 @@ struct ConstWrapper {
         typename std::add_const<T>::type>::type const_type;
 };
 
+template <int size>
+using number_type = typename std::conditional<
+    size<=1,
+    std::int8_t,
+    typename std::conditional<
+        size<=2,
+        std::int16_t,
+        typename std::conditional<
+            size<=4,
+            std::int32_t,
+            std::int64_t
+        >::type
+    >::type
+>::type;
+
+template <typename T,
+          typename D = std::conditional_t<
+              std::is_integral<T>::value,
+              std::uniform_int_distribution<T>,
+              std::uniform_real_distribution<T>>,
+          typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+std::vector<T> generateRandom(const T min, const T max, const size_t size)
+{
+    auto v = std::vector<T>(size);
+    auto rd = std::random_device{};
+    auto mt = std::mt19937{ rd() };
+
+    auto dist = D{min, max};
+
+    std::generate(std::begin(v), std::end(v), [&dist, &mt]{
+        return dist(mt);
+    });
+
+    return v;
+}
+
 void test_conditional()
 {
     static_assert(std::is_const<ConstWrapper<int>::const_type>::value);
     static_assert(std::is_const<ConstWrapper<const int>::const_type>::value);
+
+    using long_type = std::conditional<sizeof(void*) <= 4, long, long long>::type;
+
+    auto n = long_type{ 62 };
+    PRINT_FUNC(typeid (n).name());
+
+    static_assert(sizeof(number_type<1>) == 1);
+    static_assert(sizeof(number_type<2>) == 2);
+    static_assert(sizeof(number_type<4>) == 4);
+    static_assert(sizeof(number_type<8>) == 8);
+
+#if (0)
+    auto v0 = generateRandom(1, 10, 10);
+#else
+    auto v0 = generateRandom(1.0, 10.0, 10);
+#endif
+    print(v0);
 }
 
 template <typename T>
@@ -119,13 +173,77 @@ void test()
     PRINT_FUNC(IsPointer<C*>::value);
 }
 
+namespace custom_type_traits {
+
+struct A {
+    std::string serialize() {
+        return "plain"s;
+    }
+};
+
+struct B {
+    std::string serializeWithEncoding() {
+        return "encoded"s;
+    }
+};
+
+template <typename T>
+struct IsSerializeWithEncoding {
+    static const bool value = false;
+};
+
+template <>
+struct IsSerializeWithEncoding<B> {
+    static const bool value = true;
+};
+
+template <bool b>
+struct Serializer {
+    template <typename T>
+    static auto serialize(T& v) {
+        return v.serialize();
+    }
+};
+
+template <>
+struct Serializer<true> {
+    template<typename T>
+    static auto serialize(T& v) {
+        return v.serializeWithEncoding();
+    }
+};
+
+template <typename T>
+auto serialize(T& v) {
+    return Serializer<IsSerializeWithEncoding<T>::value>::serialize(v);
+};
+
+void test()
+{
+    std::cout << std::boolalpha;
+    PRINT_FUNC(IsSerializeWithEncoding<A>::value);
+    PRINT_FUNC(IsSerializeWithEncoding<B>::value);
+    PRINT_FUNC(IsSerializeWithEncoding<int>::value);
+    PRINT_FUNC(IsSerializeWithEncoding<std::string>::value);
+
+    auto a = A{};
+    auto b = B{};
+
+    PRINT_FUNC(serialize(a));
+    PRINT_FUNC(serialize(b));
+}
+
+} //custom_type_traits ----------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_06_type()
 {
 #if (0) // done
     test_constexpr();
+    test();
+    custom_type_traits::test();
 #endif
 
-    test();
+    test_conditional();
 }
