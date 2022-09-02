@@ -32,6 +32,7 @@ SOURCES += \
         ch_06_type.cpp \
         ch_07.cpp \
         ch_07_file.cpp \
+        ch_07_stream.cpp \
         main.cpp
 
 DISTFILES +=
