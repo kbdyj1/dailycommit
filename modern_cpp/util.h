@@ -19,6 +19,7 @@ void print(const C& c)
 #define CONNECT(x, y)   CONNECT2(x, y)
 
 #define PRINT_FUNC(x)   std::cout << STRINGFY(x) << ": " << x << "\n"
+#define PRINT_ATTR(x)    PRINT_FUNC(x)
 
 template <typename Time = std::chrono::milliseconds, typename Clock = std::chrono::high_resolution_clock>
 struct PerfTimer {
