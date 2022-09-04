@@ -157,6 +157,77 @@ void test_file_attribute()
     test_file_attribute(file);
 }
 
+//#define USE_RECULSIVE_ITERATOR
+
+void test_dir(const fs::path& path, bool recursive, int step)
+{
+    if (fs::exists(path) && fs::is_directory(path)) {
+#ifdef USE_RECULSIVE_ITERATOR
+        for (const auto& entry : fs::recursive_directory_iterator(path)) {
+            (void)recursive;
+            (void)step;
+#else
+        for (const auto& entry : fs::directory_iterator(path)) {
+            auto str = std::string(step*4, ' ');
+            std::cout << str;
+#endif
+            auto filename = entry.path().filename();
+            auto status = entry.status();
+
+            if (fs::is_directory(status)) {
+                std::cout << "[+] " << filename << "\n";
+#if !defined(USE_RECULSIVE_ITERATOR)
+                if (recursive) {
+                    test_dir(entry.path(), recursive, step+1);
+                }
+#endif
+            } else if (fs::is_symlink(status)) {
+                std::cout << "[>] " << filename << "\n";
+            } else if (fs::is_regular_file(status)) {
+                std::cout << "    " << filename << "\n";
+            } else {
+                std::cout << "[?] " << filename << "\n";
+            }
+        }
+    }
+}
+
+void test_dir()
+{
+    auto home = homeDir();
+    auto proj = home / "project" / "dailycommit" / "dbus";
+
+    test_dir(proj, true, 0);
+}
+
+std::vector<fs::path> find(const fs::path& dir, std::function<bool(const fs::path&)> filter)
+{
+    auto ret = std::vector<fs::path>{};
+    for (const auto& entry : fs::recursive_directory_iterator(dir, fs::directory_options::follow_directory_symlink)) {
+        if (fs::exists(entry)) {
+            auto path = entry.path();
+            auto status = entry.status();
+
+            if (fs::is_regular_file(status) && filter(path)) {
+                ret.push_back(path);
+            }
+        }
+    }
+    return ret;
+}
+
+void test_find()
+{
+    auto filter = [](const fs::path& path) -> bool {
+        return path.extension() == ".cpp"s;
+    };
+    auto home = homeDir();
+    auto proj = home / "project" / "dailycommit" / "modern_cpp";
+    auto ret = find(proj, filter);
+
+    std::copy(std::begin(ret), std::end(ret), std::ostream_iterator<fs::path>(std::cout, "\n"));
+}
+
 } //namespace =================================================================
 
 void test_ch_07_filesystem()
@@ -166,7 +237,9 @@ void test_ch_07_filesystem()
     test_path();
     test_file_system();
     test_env();
+    test_file_attribute();
+    test_dir();
 #endif
 
-    test_file_attribute();
+    test_find();
 }

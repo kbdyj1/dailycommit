@@ -34,6 +34,8 @@ SOURCES += \
         ch_07_file.cpp \
         ch_07_filesystem.cpp \
         ch_07_stream.cpp \
+        ch_08.cpp \
+        ch_08_thread.cpp \
         main.cpp
 
 DISTFILES +=
@@ -41,3 +43,5 @@ DISTFILES +=
 HEADERS += \
     MyArray.h \
     util.h
+
+LIBS += -lpthread
