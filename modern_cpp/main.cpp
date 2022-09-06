@@ -5,6 +5,11 @@
 //  End:
 //=============================================================================
 
+#include <thread>
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 void test_ch_01();
 void test_ch_02();
 void test_ch_03();
@@ -17,6 +22,8 @@ void test_ch_08();
 int main()
 {
     test_ch_08();
+
+    std::this_thread::sleep_for(10ms);
 
     return 0;
 }

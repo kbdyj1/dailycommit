@@ -26,7 +26,7 @@ struct PerfTimer {
     template <typename F, typename... Args>
     static Time duration(F&& func, Args... args) {
         auto start = Clock::now();
-        std::invoke(std::forward<F>(func), std::forward<Args...>(args...));
+        std::invoke(std::forward<F>(func), std::forward<Args>(args)...);
         auto end = Clock::now();
 
         return std::chrono::duration_cast<Time>(end - start);
