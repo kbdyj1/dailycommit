@@ -41,6 +41,9 @@ SOURCES += \
         ch_08_lock.cpp \
         ch_08_promise.cpp \
         ch_08_thread.cpp \
+        ch_09.cpp \
+        ch_09_const_correctness.cpp \
+        ch_09_exception.cpp \
         main.cpp
 
 DISTFILES +=
