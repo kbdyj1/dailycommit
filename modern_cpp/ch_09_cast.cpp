@@ -7,6 +7,7 @@ namespace { //=================================================================
 using namespace std::string_literals;
 
 class A {
+    int value;
 public:
     virtual void print() {
         std::cout << "A::print()\n";
@@ -16,6 +17,13 @@ class B : public A {
 public:
     void print() override {
         std::cout << "B::print()\n";
+    }
+};
+class C {
+    int value;
+public:
+    virtual void print() {
+        std::cout << "C::print()\n";
     }
 };
 
@@ -34,16 +42,25 @@ void test_static_cast()
     };
     auto value = 1;
     auto op = static_cast<Option>(value);
+#if (0)
+    const auto c = 62;
+    auto* pc = static_cast<int*>(&c);   //error: invalid ‘static_cast’ from type ‘const int*’ to type ‘int*’
+                                        //       39 |     auto* pc = static_cast<int*>(&c);
+                                        //          |                ^~~~~~~~~~~~~~~~~~~~~
+#endif
 }
 
 void test_dynamic_cast()
 {
     auto a = A{};
     auto b = B{};
+    auto c = C{};
 
     try {
         A& ra = dynamic_cast<A&>(b);
         B& rb = dynamic_cast<B&>(a);
+
+        A* pa = dynamic_cast<A*>(&c);
     } catch (const std::bad_cast& e) {
         std::cout << e.what() << std::endl;
     }
@@ -64,7 +81,10 @@ void test_const_cast()
 
 void test_reinterpret_cast()
 {
+    int* pi = new int{62};
+    double* pd = reinterpret_cast<double*>(pi);
 
+    delete pi;
 }
 
 } //namespace =================================================================
@@ -73,8 +93,8 @@ void test_ch_09_cast()
 {
 #if (0) // done
     test_static_cast();
-    test_dynamic_cast();
     test_const_cast();
+    test_dynamic_cast();
 #endif
 
 }

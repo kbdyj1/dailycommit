@@ -45,6 +45,7 @@ SOURCES += \
         ch_09_cast.cpp \
         ch_09_const_correctness.cpp \
         ch_09_exception.cpp \
+        ch_09_resource.cpp \
         main.cpp
 
 DISTFILES +=
