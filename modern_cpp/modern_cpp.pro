@@ -45,7 +45,11 @@ SOURCES += \
         ch_09_cast.cpp \
         ch_09_const_correctness.cpp \
         ch_09_exception.cpp \
+        ch_09_move.cpp \
         ch_09_resource.cpp \
+        ch_10.cpp \
+        ch_10_factory.cpp \
+        ch_10_named_parameter.cpp \
         main.cpp
 
 DISTFILES +=

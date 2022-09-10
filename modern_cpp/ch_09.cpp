@@ -9,6 +9,7 @@ void test_ch_09_exception();
 void test_ch_09_const_correctness();
 void test_ch_09_cast();
 void test_ch_09_resource();
+void test_ch_09_move();
 
 void test_ch_09()
 {
@@ -16,7 +17,8 @@ void test_ch_09()
     test_ch_09_exception();
     test_ch_09_const_correctness();
     test_ch_09_cast();
+    test_ch_09_resource();
 #endif
 
-    test_ch_09_resource();
+    test_ch_09_move();
 }

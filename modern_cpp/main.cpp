@@ -19,10 +19,11 @@ void test_ch_06();
 void test_ch_07();
 void test_ch_08();  // threading & concurrency
 void test_ch_09();  // Robustness & Performance
+void test_ch_10();  // Pattern & idiom
 
 int main()
 {
-    test_ch_09();
+    test_ch_10();
 
     std::this_thread::sleep_for(10ms);
 
