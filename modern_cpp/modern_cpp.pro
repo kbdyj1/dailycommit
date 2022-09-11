@@ -48,8 +48,12 @@ SOURCES += \
         ch_09_move.cpp \
         ch_09_resource.cpp \
         ch_10.cpp \
+        ch_10_crtp.cpp \
         ch_10_factory.cpp \
+        ch_10_friendship.cpp \
         ch_10_named_parameter.cpp \
+        ch_10_non_virtual_interface.cpp \
+        ch_10_singleton.cpp \
         main.cpp
 
 DISTFILES +=
