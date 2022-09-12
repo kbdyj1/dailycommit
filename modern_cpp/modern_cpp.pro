@@ -63,3 +63,8 @@ HEADERS += \
     util.h
 
 LIBS += -lpthread
+
+macx {
+    # path is unavailable: introduced in macOS 10.15
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+}

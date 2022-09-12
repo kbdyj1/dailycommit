@@ -5,6 +5,7 @@
 #include <queue>
 #include <random>
 #include <algorithm>
+#include <array>
 
 namespace { //=================================================================
 

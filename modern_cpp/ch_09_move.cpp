@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include "util.h"
 
 namespace { //=================================================================

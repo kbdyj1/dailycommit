@@ -6,6 +6,7 @@
 #include <numeric>
 #include <assert.h>
 #include <future>
+#include <vector>
 
 #include "util.h"
 

@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <cstdlib>
 #include <string>
+#include <vector>
 
 #include "util.h"
 
