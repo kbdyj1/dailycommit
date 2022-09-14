@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iterator>
 #include <array>
+#include <cstring>
 
 #include "util.h"
 
@@ -86,19 +87,6 @@ void test_cin()
     std::cout << "echo: " << buf << std::endl;
 }
 
-bool test_gets_password()
-{
-    std::cout << "input password: ";
-
-    char password[12];
-
-    gets(password);
-
-    auto result = strcmp(password, "goodpass");
-
-    return result == 0;
-}
-
 } //namespace =================================================================
 
 void test_ch_02()
@@ -108,6 +96,4 @@ void test_ch_02()
     test_char_type();
     test_cin();
 #endif
-
-    test_gets_password();
 }

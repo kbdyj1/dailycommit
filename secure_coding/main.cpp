@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 void test_ch_02();
 
