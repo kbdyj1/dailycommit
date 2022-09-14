@@ -10,6 +10,8 @@
 
 namespace { //=================================================================
 
+using namespace std::string_literals;
+
 template <typename T>
 class Vector {
     T* data;
@@ -105,13 +107,27 @@ const T* end(const Vector<T>& v) {
     return v.size() ? &v[0] + v.size() : nullptr;
 }
 
-} //namespace =================================================================
-
-void test_ch_06()
+void test_vector()
 {
     auto v = Vector<int>{1, 2, 3, 4, 5};
     for (auto i : v) {
         std::cout << i << ",";
     }
     std::cout << "\n";
+}
+
+void test_pair()
+{
+    auto p0 = std::pair<int, std::string>{1, "one"};
+    std::pair p1 = std::make_pair(2, "two");
+    std::pair p2 = {3, "three"s};
+}
+
+} //namespace =================================================================
+
+void test_ch_06()
+{
+#if (0)
+    test_vector();
+#endif
 }
