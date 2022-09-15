@@ -125,9 +125,13 @@ void test_pair()
 
 } //namespace =================================================================
 
+void test_ch_06_lambda();
+
 void test_ch_06()
 {
-#if (0)
+#if (0) // done
     test_vector();
 #endif
+
+    test_ch_06_lambda();
 }

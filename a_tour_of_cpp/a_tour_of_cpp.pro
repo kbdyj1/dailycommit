@@ -8,6 +8,8 @@ SOURCES += \
         ch_02.cpp \
         ch_03.cpp \
         ch_06.cpp \
+        ch_06_lambda.cpp \
+        ch_07.cpp \
         main.cpp
 
 HEADERS += \
