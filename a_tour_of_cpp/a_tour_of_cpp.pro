@@ -11,6 +11,9 @@ SOURCES += \
         ch_06_lambda.cpp \
         ch_07.cpp \
         ch_09.cpp \
+        ch_10.cpp \
+        ch_11.cpp \
+        ch_12.cpp \
         main.cpp
 
 HEADERS += \
