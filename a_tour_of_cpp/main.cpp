@@ -9,6 +9,8 @@ void test_ch_09();
 void test_ch_10(const char*);
 void test_ch_11();
 void test_ch_12();
+void test_ch_13();
+void test_ch_15();
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +21,7 @@ int main(int argc, char* argv[])
     test_ch_10(argv[0]);
 #endif
 
-    test_ch_12();
+    test_ch_15();
 
     return 0;
 }

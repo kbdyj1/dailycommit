@@ -14,7 +14,12 @@ SOURCES += \
         ch_10.cpp \
         ch_11.cpp \
         ch_12.cpp \
+        ch_13.cpp \
+        ch_15.cpp \
         main.cpp
 
 HEADERS += \
+    shape.h \
     util.h
+
+LIBS += -lpthread
