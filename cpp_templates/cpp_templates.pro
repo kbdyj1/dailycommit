@@ -1,9 +1,13 @@
 TEMPLATE = app
-CONFIG += console -std=c++11
+CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
         ch_01.cpp \
         ch_01_max.cpp \
+        ch_02.cpp \
         main.cpp
+
+HEADERS += \
+    stack.hpp
