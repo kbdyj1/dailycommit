@@ -45,6 +45,9 @@ public:
         }
     }
 
+    template <typename T2>
+    Stack& operator=(const Stack<T2>&);
+
     template <typename U>
     friend std::ostream& operator<<(std::ostream&, const Stack<U>&);
 };
