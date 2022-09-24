@@ -7,6 +7,13 @@
 
 #include <vector>
 #include <iostream>
+#include <deque>
+#include <cassert>
+#include <string>
+#include <bitset>
+#include <limits>
+
+using namespace std::string_literals;
 
 namespace { //=================================================================
 
@@ -165,6 +172,144 @@ void test_array_specialization()
     foo(a, a, a, x, x, x, x);
 }
 
+template <typename T, template<typename Elem, typename = std::allocator<Elem>> class C = std::deque>
+class Stack {
+    C<T> container;
+
+public:
+    void push(const T& elem) {
+        container.push_back(elem);
+    }
+    void pop() {
+        assert(!container.empty());
+
+        container.pop();
+    }
+    const T& top() const {
+        assert(!container.empty());
+
+        return container.back();
+    }
+    bool empty() const {
+        return container.empty();
+    }
+
+    void print() {
+        for (auto iter=std::begin(container); iter!=std::end(container); iter++) {
+            std::cout << *iter << " ";
+        }
+    }
+
+    template <typename T2, template <typename Elem2, typename = std::allocator<Elem2>> class C2>
+    Stack& operator=(const Stack<T2, C2>& other);
+
+    template <typename, template<typename, typename> class> friend class Stack;
+};
+
+template <typename T, template<typename, typename> class C>
+template <typename T2, template <typename, typename> class C2>
+Stack<T,C>& Stack<T,C>::operator=(const Stack<T2,C2>& other)
+{
+    container.clear();
+    container.insert(container.begin(), other.container.begin(), other.container.end());
+
+    return *this;
+}
+
+void test_stack()
+{
+    auto iStack = Stack<int>{};
+    iStack.push(10);
+    iStack.push(20);
+
+    auto fStack = Stack<float>{};
+    fStack.push(1.4);
+    fStack.push(3.4);
+
+    iStack = fStack;
+
+    iStack.print();
+}
+
+class BoolString {
+    std::string value;
+
+public:
+    BoolString(const std::string& s) : value(s)
+    {}
+
+    template<typename T = std::string>
+    T get() const {
+        return value;
+    }
+};
+
+template<>
+inline bool BoolString::get<bool>() const {
+    return value == "true" || value == "1" || value == "on";
+}
+
+void test_bool_string()
+{
+    auto s0 = BoolString("Hello"s);
+    std::cout << s0.get() << "\n";
+
+    auto s1 = BoolString("on");
+    std::cout << s1.get() << "\n";
+    std::cout << s1.get<bool>() << "\n";
+}
+
+template <unsigned long N>
+void printBitSet(const std::bitset<N>& bs)
+{
+#if (1)
+    std::cout << bs.template to_string<char, std::char_traits<char>, std::allocator<char>>() << "\n";
+#else
+    std::cout << bs.to_string() << "\n";
+#endif
+}
+
+void test_bitset()
+{
+    auto bitset = std::bitset<4>{0xa};
+
+    printBitSet(bitset);
+}
+
+void test_generic_lambda() //c++14
+{
+    auto func = [](auto v0, auto v1) {
+        return v0 + v1;
+    };
+
+    std::cout << func('a', 10) << "\n";
+    std::cout << func(20u, 34.5) << "\n";
+}
+
+template <typename T>
+constexpr T pi{ 3.1415926535897932385 };
+
+template <typename T>
+class B {
+public:
+    static constexpr int max = 1024;
+};
+
+template <typename T>
+int myMax = B<T>::max;
+
+template <typename T>
+constexpr bool isSigned = std::numeric_limits<T>::is_signed;
+
+void test_variable_template()
+{
+    std::cout << pi<double> << "\n";
+    std::cout << pi<float> << "\n";
+
+    std::cout << isSigned<char> << "\n";
+    std::cout << isSigned<unsigned long> << "\n";
+}
+
 } //namespace =================================================================
 
 void test_ch_05()
@@ -175,7 +320,12 @@ void test_ch_05()
     test_print_container();
     test_builtin_type_initialization();
     test_less();
+    test_array_specialization();
+    test_bool_string();
+    test_bitset();
+    test_generic_lambda();
+    test_variable_template();
 #endif
 
-    test_array_specialization();
+    test_stack();
 }
