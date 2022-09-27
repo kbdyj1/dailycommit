@@ -14,6 +14,10 @@ SOURCES += \
         ch_06_enable_if.cpp \
         ch_06_perfect_forwarding.cpp \
         ch_07.cpp \
+        ch_08.cpp \
+        ch_08_constexpr.cpp \
+        ch_08_meta_programming.cpp \
+        ch_08_sfinae.cpp \
         main.cpp
 
 HEADERS += \
