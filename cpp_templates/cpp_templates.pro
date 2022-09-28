@@ -18,6 +18,10 @@ SOURCES += \
         ch_08_constexpr.cpp \
         ch_08_meta_programming.cpp \
         ch_08_sfinae.cpp \
+        ch_09.cpp \
+        ch_10.cpp \
+        ch_11.cpp \
+        ch_11_function.cpp \
         main.cpp
 
 HEADERS += \
