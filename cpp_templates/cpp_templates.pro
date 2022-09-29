@@ -21,7 +21,10 @@ SOURCES += \
         ch_09.cpp \
         ch_10.cpp \
         ch_11.cpp \
+        ch_11_forward.cpp \
         ch_11_function.cpp \
+        ch_11_util.cpp \
+        ch_12.cpp \
         main.cpp
 
 HEADERS += \
