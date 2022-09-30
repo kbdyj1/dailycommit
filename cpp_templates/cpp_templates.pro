@@ -25,6 +25,7 @@ SOURCES += \
         ch_11_function.cpp \
         ch_11_util.cpp \
         ch_12.cpp \
+        ch_12_template_parameter.cpp \
         main.cpp
 
 HEADERS += \

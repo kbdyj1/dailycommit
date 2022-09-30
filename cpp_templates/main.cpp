@@ -6,6 +6,18 @@
 
 #include <iostream>
 
+template <typename T>
+void external()
+{
+    std::cout << "template<typename T>\nexternal()\n";
+}
+
+template<>
+void external<int>()
+{
+    std::cout << "external<int>()\n";
+}
+
 namespace { //=================================================================
 
 } //namespace =================================================================
