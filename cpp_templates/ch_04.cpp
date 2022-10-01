@@ -10,6 +10,7 @@
 #include <vector>
 #include <tuple>
 #include <unordered_set>
+#include <array>
 
 using namespace std::string_literals;
 
