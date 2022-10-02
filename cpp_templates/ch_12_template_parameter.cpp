@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <map>
+#include <array>
 
 namespace { //=================================================================
 
@@ -250,16 +252,116 @@ void test_non_type_parameter()
     auto g6 = G<long, X{}>{};
 }
 
+template <typename T0, typename T1, template<typename...> class Container>
+class Rel
+{};
+
+template <template <typename...> class TT>
+class AlmostAnyImpl
+{};
+
+void test_template_template_parameter()
+{
+    auto rel = Rel<int, double, std::list>{};
+
+    auto v = AlmostAnyImpl<std::vector>{};
+    auto m = AlmostAnyImpl<std::map>{};
+#if (0)
+    auto a = AlmostAnyImpl<std::array>{};   //error: template template argument has different template parameters than its corresponding template template parameter
+#endif
+}
+
+template <typename T, int I>
+class Mix
+{};
+
+using Int = int;
+
+void test_equality()
+{
+    auto m0 = Mix<Int, 3*3>{};
+    auto m1 = Mix<int, 3+3>{};
+
+    std::cout << "std::is_same_v<Mix<Int, 3*3>, Mix<int, 3+3>>: " << std::is_same_v<Mix<Int, 3*3>, Mix<int, 3+3>> << "\n";
+}
+
+template <typename... Types>
+class Tuple
+{};
+
+template <typename... Types>
+class MyTuple : public Tuple<Types...>
+{};
+
+template <typename... Types>
+class PtrTuple : public Tuple<Types*...>
+{};
+
+void test_parameter_pack()
+{
+    auto t0 = MyTuple<int, float, double>{};
+}
+
+template <typename... Mixins>
+class Point : public Mixins... {
+    double x, y, z;
+
+public:
+    Point() : Mixins()...
+    {}
+    Point(Mixins... mixins) : Mixins(mixins)...
+    {}
+
+    template<typename Visitor>
+    void visit(Visitor visitor) {
+        visitor(static_cast<Mixins&>(*this)...);
+    }
+};
+
+struct Color {
+    unsigned char r, g, b;
+};
+struct Label {
+    std::string name;
+};
+
+void test_mixin()
+{
+    auto p = Point<Color, Label>{};
+
+    p.r = 255;
+    p.g = 255;
+    p.g = 255;
+    p.name = "white";
+
+    auto p1 = Point<Color, Label>{{255, 255, 0}, {"white"}};
+}
+
+template <typename... Ts>
+struct Values {
+    template<Ts... Vs>
+    struct Holder {
+    };
+};
+
+void test_holder()
+{
+    auto v = Values<int, char, int*>::Holder<1, 'a', &count0>{};
+}
+
 } //namespace =================================================================
 
 void test_ch_12_template_parameter()
 {
+    std::cout << std::boolalpha;
+
 #if (0) //done
     test_unnamed_parameter();
     test_reference_parameter();
     test_max();
     test_implicitCast();
+    test_overload_function_template();
 #endif
 
-    test_overload_function_template();
+    test_equality();
 }
