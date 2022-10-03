@@ -243,7 +243,7 @@ void test_non_type_parameter()
 
     auto g2 = G<void(*)(int), gfunc>{};
 
-    auto g3 = G<void(), &gtempfunc<int>>{};
+    auto g3 = G<void(*)(), &gtempfunc<int>>{};
 
     auto g4 = G<bool&, X::flag>{};
 
