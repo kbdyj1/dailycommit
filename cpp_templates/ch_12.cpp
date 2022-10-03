@@ -194,6 +194,8 @@ constexpr T zero = T{};
 const int intZero = int{};  // internal linkage
 
 void test_ch_12_template_parameter();
+void test_ch_12_template_parameter_pack();
+void test_ch_12_friend();
 
 void test_ch_12()
 {
@@ -202,7 +204,9 @@ void test_ch_12()
     test_board();
     test_external_template();
     test_unnamed_structure();
+    test_ch_12_template_parameter();
+    test_ch_12_template_parameter_pack();
 #endif
 
-    test_ch_12_template_parameter();
+    test_ch_12_friend();
 }
