@@ -28,6 +28,10 @@ SOURCES += \
         ch_12_friend.cpp \
         ch_12_template_parameter.cpp \
         ch_12_template_parameter_pack.cpp \
+        ch_13.cpp \
+        ch_13_adl.cpp \
+        ch_13_dependency.cpp \
+        ch_13_hack.cpp \
         main.cpp
 
 HEADERS += \
