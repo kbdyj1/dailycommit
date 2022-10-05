@@ -62,6 +62,7 @@ void test_invert()
 void test_ch_13_adl();
 void test_ch_13_hack();
 void test_ch_13_dependency();
+void test_ch_13_inherit();
 
 void test_ch_13()
 {
@@ -72,7 +73,8 @@ void test_ch_13()
     test_ch_13_adl();
     test_invert();
     test_ch_13_hack();
+    test_ch_13_dependency();
 #endif
 
-    test_ch_13_dependency();
+    test_ch_13_inherit();
 }

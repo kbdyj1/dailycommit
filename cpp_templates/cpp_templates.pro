@@ -32,6 +32,7 @@ SOURCES += \
         ch_13_adl.cpp \
         ch_13_dependency.cpp \
         ch_13_hack.cpp \
+        ch_13_inherit.cpp \
         main.cpp
 
 HEADERS += \
