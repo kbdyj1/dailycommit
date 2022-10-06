@@ -33,6 +33,9 @@ SOURCES += \
         ch_13_dependency.cpp \
         ch_13_hack.cpp \
         ch_13_inherit.cpp \
+        ch_14.cpp \
+        ch_14_instance_model.cpp \
+        ch_14_lazy.cpp \
         main.cpp
 
 HEADERS += \
