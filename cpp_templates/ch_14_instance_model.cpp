@@ -1,4 +1,5 @@
 #include <iostream>
+#include "ch_14_t.hpp"
 
 namespace { //=================================================================
 
@@ -117,11 +118,12 @@ void test()
 
 } //namespace =================================================================
 
-
 void test_ch_14_instance_model()
 {
 #if (0) //done
     _1::test();
-#endif
     _5::test();
+#endif
+
+    externalFunc<int>();
 }

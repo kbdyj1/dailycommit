@@ -36,7 +36,9 @@ SOURCES += \
         ch_14.cpp \
         ch_14_instance_model.cpp \
         ch_14_lazy.cpp \
+        ch_15.cpp \
         main.cpp
 
 HEADERS += \
+    ch_14_t.hpp \
     stack.hpp
