@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <initializer_list>
+#include <array>
 
 namespace { //=================================================================
 
@@ -167,7 +168,117 @@ void test()
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 { // parameter pack
+
+void f()
+{
+    std::cout << "\n";
+}
+
+template <typename T, typename... Pack>
+void f(T t, Pack... pack)
+{
+    std::cout << typeid(t).name();
+    if (0 < sizeof...(pack)) {
+        std::cout << ", ";
+    }
+    f(pack...);
+}
+
+void test()
+{
+    auto n = 0;
+    auto d = 1.0;
+    auto*p = &n;
+
+    f(n, d, p);
+}
+
+template <typename T, typename U>
+class Pair
+{};
+
+template <typename T, typename... Ts>
+void g0(const Pair<T, Ts>&...)
+{
+    std::cout << "g0() ";
+}
+
+template <typename... Ts, typename... Us>
+void g1(const Pair<Ts, Us>&...)
+{
+    std::cout << "g1() ";
+}
+
+void test2()
+{
+    auto p0 = Pair<int, float>{};
+    auto p1 = Pair<int, double>{};
+    auto p2 = Pair<double, double>{};
+
+    g0(p0, p1);
+    g1(p0, p1);
+//    g0(p0, p2);
+    g1(p0, p2);
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+template <typename... Ts>
+class Tuple
+{};
+
+template <typename... Ts>
+bool f0(Tuple<Ts...>, Tuple<Ts...>)
+{
+    return true;
+}
+
+template <typename... Ts, typename... Us>
+bool f1(Tuple<Ts...>, Tuple<Us...>)
+{
+    return true;
+}
+
+void test()
+{
+    auto t0 = Tuple<short, int, long>{};
+    auto t1 = Tuple<unsigned short, unsigned, unsigned long>{};
+
+    f0(t0, t0);
+    f1(t0, t0);
+//    f0(t0, t1);
+    f1(t0, t1);
+}
+
+} //_8 --------------------------------------------------------------
+
+namespace _9 { // literal operator
+
+template <char... cs> int operator"" _B7()
+{
+    auto array = std::array<char, sizeof...(cs)>{cs...};
+
+    for (auto c : array) {
+        std::cout << "'" << c << "'";
+    }
+    std::cout << "\n";
+
+    return 0;
+}
+
+void test_b7()
+{
+    auto a = 120_B7;
+}
+
+} //_9 --------------------------------------------------------------
+
 } //namespace =================================================================
+
+void test_ch_15_rvalue();
 
 void test_ch_15()
 {
@@ -175,7 +286,9 @@ void test_ch_15()
     test_at();
     _3::test();
     _5::test();
+    _6::test();
+    _7::test();
 #endif
 
-    _6::test();
+    test_ch_15_rvalue();
 }

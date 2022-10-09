@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++17
+CONFIG += console c++14
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -37,6 +37,7 @@ SOURCES += \
         ch_14_instance_model.cpp \
         ch_14_lazy.cpp \
         ch_15.cpp \
+        ch_15_rvalue.cpp \
         main.cpp
 
 HEADERS += \
