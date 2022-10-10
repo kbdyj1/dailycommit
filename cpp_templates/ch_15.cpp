@@ -279,6 +279,7 @@ void test_b7()
 } //namespace =================================================================
 
 void test_ch_15_rvalue();
+void test_ch_15_sfinae();
 
 void test_ch_15()
 {
@@ -288,7 +289,8 @@ void test_ch_15()
     _5::test();
     _6::test();
     _7::test();
+    test_ch_15_rvalue();
 #endif
 
-    test_ch_15_rvalue();
+    test_ch_15_sfinae();
 }

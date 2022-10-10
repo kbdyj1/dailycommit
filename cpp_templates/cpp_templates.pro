@@ -38,6 +38,7 @@ SOURCES += \
         ch_14_lazy.cpp \
         ch_15.cpp \
         ch_15_rvalue.cpp \
+        ch_15_sfinae.cpp \
         main.cpp
 
 HEADERS += \
