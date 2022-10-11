@@ -76,5 +76,11 @@ void test()
 
 void test_ch_15_sfinae()
 {
+    const auto N = 10;
+    auto n = 10;
+    auto* p = &n;
+    auto q = N * sizeof *p;
+    auto r = sizeof (int) * q;
 
+    std::cout << "q: " << q << ", r: " << r << "\n";
 }

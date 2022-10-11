@@ -280,6 +280,8 @@ void test_b7()
 
 void test_ch_15_rvalue();
 void test_ch_15_sfinae();
+void test_ch_15_limit();
+void test_ch_15_auto();
 
 void test_ch_15()
 {
@@ -290,7 +292,9 @@ void test_ch_15()
     _6::test();
     _7::test();
     test_ch_15_rvalue();
+    test_ch_15_sfinae();
+    test_ch_15_limit();
 #endif
 
-    test_ch_15_sfinae();
+    test_ch_15_auto();
 }
