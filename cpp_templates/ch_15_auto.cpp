@@ -154,15 +154,109 @@ template <decltype (auto) Val>
 class S
 {};
 
+template <auto N>
+struct A
+{};
+
+template <auto N>
+int f(A<N> p)
+{
+    return N;
+}
+
+template <auto V>
+int g(decltype (V) p)
+{}
+
 void test()
 {
     constexpr int C = 10;
 
     auto s0 = S<C>{};   //S<10>
     auto s1 = S<(V)>{}; //S<(int&)>
+
+    auto x = A<20>{};
+    auto r = f(x);
+
+    std::cout << "f(A<20>): " << r << "\n";
+
+    auto r0 = g<30>(30);
+#if (0)
+    auto r1 = g(30);
+#endif
 }
 
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+//#define USE_INITIALIZE_LIST
+
+template <typename T>
+void deduce(T)
+{}
+
+#if defined(USE_INITIALIZE_LIST)
+template <typename T>
+void deduce(std::initializer_list<T>)
+{}
+#endif
+
+#if (0)
+auto subtleError()
+#else
+auto subtleError() -> std::initializer_list<int>    // can't refer
+#endif
+{
+    return {1, 2, 3};
+}
+
+void test()
+{
+#if defined(USE_INITIALIZE_LIST)
+    deduce({1, 2, 3});
+    deduce({1});
+#else
+    auto arg = {1, 2, 3};
+    deduce(arg);
+#endif
+
+#if (0)
+    auto oops {1, 2, 3};
+#endif
+    auto val {2};
+
+    auto list = subtleError();
+    for (auto i : list) {
+        std::cout << i << " ";
+    }
+    std::cout << "\n";
+
+    char c;
+    auto* cp = &c, d = c;
+#if (0)
+    auto e = c, f = c+1;    //e:char, f:int
+#endif
+}
+
+auto f(int n)
+{
+#if (0)
+    if (1 < n) {
+        return n * f(n-1);
+    } else {
+        return 1;
+    }
+#else
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * f(n-1);
+    }
+#endif
+}
+
+} //_5 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -171,7 +265,8 @@ void test_ch_15_auto()
 #if (0)
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }
