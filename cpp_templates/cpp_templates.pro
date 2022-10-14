@@ -38,9 +38,11 @@ SOURCES += \
         ch_14_lazy.cpp \
         ch_15.cpp \
         ch_15_auto.cpp \
+        ch_15_lambda.cpp \
         ch_15_limit.cpp \
         ch_15_rvalue.cpp \
         ch_15_sfinae.cpp \
+        ch_15_structured_binding.cpp \
         main.cpp
 
 HEADERS += \

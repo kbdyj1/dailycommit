@@ -282,6 +282,8 @@ void test_ch_15_rvalue();
 void test_ch_15_sfinae();
 void test_ch_15_limit();
 void test_ch_15_auto();
+void test_ch_15_structured_binding();
+void test_ch_15_lambda();
 
 void test_ch_15()
 {
@@ -294,7 +296,9 @@ void test_ch_15()
     test_ch_15_rvalue();
     test_ch_15_sfinae();
     test_ch_15_limit();
+    test_ch_15_auto();
+    test_ch_15_structured_binding();
 #endif
 
-    test_ch_15_auto();
+    test_ch_15_lambda();
 }

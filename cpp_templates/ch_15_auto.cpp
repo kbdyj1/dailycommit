@@ -258,6 +258,39 @@ auto f(int n)
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+template <typename T, typename U>
+auto add(T t, U u) -> decltype(t + u)
+{
+    return t + u;
+}
+
+void add(...)
+{
+    std::cout << "add(...)\n";
+}
+
+template <typename T, typename U>
+auto add2(T t, U u) -> decltype (auto)
+{
+    return t + u;
+}
+
+void add2(...)
+{
+    std::cout << "add2(...)\n";
+}
+
+struct X
+{};
+
+using Result = decltype(add(X{}, X{}));
+#if (0)
+using Result2 = decltype(add2(X{}, X{}));
+#endif
+}
+
 } //namespace =================================================================
 
 void test_ch_15_auto()
