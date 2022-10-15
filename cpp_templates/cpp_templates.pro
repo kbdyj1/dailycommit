@@ -38,6 +38,7 @@ SOURCES += \
         ch_14_lazy.cpp \
         ch_15.cpp \
         ch_15_auto.cpp \
+        ch_15_class_template.cpp \
         ch_15_lambda.cpp \
         ch_15_limit.cpp \
         ch_15_rvalue.cpp \

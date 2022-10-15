@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <initializer_list>
 #include <array>
 
@@ -276,6 +277,44 @@ void test_b7()
 
 } //_9 --------------------------------------------------------------
 
+namespace _10 { //alias template
+
+template <typename T, typename Container>
+class Stack
+{};
+
+template <typename T>
+using Deque = Stack<T, std::deque<T>>;
+
+template <typename T, typename Container>
+void f0(Stack<T, Container>)
+{
+    std::cout << "f0() T: " << typeid(T).name() << ", " << typeid(Container).name() << "\n";
+}
+
+template <typename T>
+void f1(Deque<T>)
+{
+    std::cout << "f0() T: " << typeid(T).name() << "\n";
+}
+
+template <typename T>
+void f2(Stack<T, std::deque<T>>)
+{
+    std::cout << "f0() T: " << typeid(T).name() << "\n";
+}
+
+void test()
+{
+    auto container = Deque<int>{};
+
+    f0(container);
+    f1(container);
+    f2(container);
+}
+
+} //_10 -------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_15_rvalue();
@@ -284,6 +323,7 @@ void test_ch_15_limit();
 void test_ch_15_auto();
 void test_ch_15_structured_binding();
 void test_ch_15_lambda();
+void test_ch_15_class_template();
 
 void test_ch_15()
 {
@@ -298,7 +338,9 @@ void test_ch_15()
     test_ch_15_limit();
     test_ch_15_auto();
     test_ch_15_structured_binding();
+    test_ch_15_lambda();
+    _10::test();
 #endif
 
-    test_ch_15_lambda();
+    test_ch_15_class_template();
 }
