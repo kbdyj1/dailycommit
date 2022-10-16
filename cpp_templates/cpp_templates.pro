@@ -44,6 +44,8 @@ SOURCES += \
         ch_15_rvalue.cpp \
         ch_15_sfinae.cpp \
         ch_15_structured_binding.cpp \
+        ch_16.cpp \
+        ch_16_overloading.cpp \
         main.cpp
 
 HEADERS += \
