@@ -46,8 +46,10 @@ SOURCES += \
         ch_15_structured_binding.cpp \
         ch_16.cpp \
         ch_16_overloading.cpp \
+        ch_16_specialization.cpp \
         main.cpp
 
 HEADERS += \
     ch_14_t.hpp \
+    g.hpp \
     stack.hpp

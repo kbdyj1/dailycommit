@@ -87,11 +87,14 @@ void test()
 } //namespace =================================================================
 
 void test_ch_16_overloading();
+void test_ch_16_specialization();
 
 void test_ch_16()
 {
 #if (0) //done
     _1::test();
-#endif
     test_ch_16_overloading();
+#endif
+
+    test_ch_16_specialization();
 }
