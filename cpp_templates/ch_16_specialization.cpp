@@ -228,6 +228,33 @@ public:
     }
 };
 
+template <typename C>
+class List<void* C::*> {
+public:
+    using ElementType = void* C::*;
+
+    void append(ElementType elem)
+    {}
+    inline std::size_t size() const {
+        return 0;
+    }
+};
+
+template <typename T, typename C>
+class List<T* C::*> {
+    List<void* C::*> impl;
+
+public:
+    using ElementType = T* C::*;
+
+    inline void append(ElementType elem) {
+        impl.append((void* C::*)elem);
+    }
+    inline std::size_t size() const {
+        return impl.size();
+    }
+};
+
 template <typename T>
 class List<T*> {
     List<void*> impl;

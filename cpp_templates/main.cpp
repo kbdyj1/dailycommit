@@ -44,13 +44,14 @@ void test_ch_13();
 void test_ch_14();
 void test_ch_15();
 void test_ch_16();
+void test_ch_18();
 
 int main()
 {
 #if (0)
     auto odr = ODR{};
 #endif
-    test_ch_16();
+    test_ch_18();
 
     return 0;
 }
