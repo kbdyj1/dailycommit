@@ -11,7 +11,6 @@
 
 namespace { //=================================================================
 
-
 class BigInt {
 public:
     BigInt(long long)
@@ -138,10 +137,12 @@ void test()
 
 } //namespace =================================================================
 
+void test_ch_19_type_function();
+
 void test_ch_19()
 {
 #if (0) //done
-#endif
     _3::test();
-
+#endif
+    test_ch_19_type_function();
 }

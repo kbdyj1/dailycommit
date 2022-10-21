@@ -49,6 +49,7 @@ SOURCES += \
         ch_16_specialization.cpp \
         ch_18.cpp \
         ch_19.cpp \
+        ch_19_type_function.cpp \
         main.cpp
 
 HEADERS += \
