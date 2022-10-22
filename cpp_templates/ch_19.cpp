@@ -138,11 +138,12 @@ void test()
 } //namespace =================================================================
 
 void test_ch_19_type_function();
+void test_ch_19_sfinae_traits();
 
 void test_ch_19()
 {
 #if (0) //done
     _3::test();
 #endif
-    test_ch_19_type_function();
+    test_ch_19_sfinae_traits();
 }

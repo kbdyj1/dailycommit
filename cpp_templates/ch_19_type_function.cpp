@@ -3,6 +3,7 @@
 #include <list>
 #include <typeinfo>
 #include <type_traits>
+#include <utility>
 
 namespace { //=================================================================
 
@@ -201,9 +202,55 @@ struct IsSame<T, T> : TrueType {
 template <typename T0, typename T1>
 constexpr bool isSame = IsSame<T0, T1>::value;
 
+template <typename T>
+void fImpl(T, TrueType)
+{
+    std::cout << "fImpl(true)\n";
+}
 
+template <typename T>
+void fImpl(T, FalseType)
+{
+    std::cout << "fImpl(false)\n";
+}
+
+template <typename T>
+void f(T t) {
+    fImpl(t, IsSame<T, int>{});
+}
+
+void test()
+{
+    f(4);
+    f(3.0);
+}
 
 } //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+template <typename T>
+class Array
+{};
+
+template <typename T>
+Array<T> operator+(const Array<T>&, const Array<T>&);
+
+template <typename T0, typename T1>
+struct PlusResult {
+#if (0)
+    using Type = decltype(T0() + T1());
+#else
+    //no constructor required (T0, T1)
+    using Type = decltype (std::declval<T0>() + std::declval<T1>());
+#endif
+};
+
+template <typename T0, typename T1>
+Array<typename PlusResult<T0, T1>::Type>
+operator+(const Array<T0>&, const Array<T1>&);
+
+} //_6 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -212,7 +259,8 @@ void test_ch_19_type_function()
 #if (0) //done
     _1::test();
     _2::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }
