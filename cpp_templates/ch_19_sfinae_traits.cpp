@@ -1,8 +1,10 @@
 #include <iostream>
+#include <vector>
 
 namespace { //=================================================================
 
 struct A {
+    A() { std::cout << "A::A()\n"; }
 };
 
 struct B {
@@ -121,18 +123,81 @@ inline constexpr auto isValid = [](auto f){
     };
 };
 
+void func(int i0, int i1, const std::string& s)
+{}
+
+void test()
+{
+    auto validFunc = isValid(func);
+    {
+        auto ret = validFunc(0, 1, "Qt");
+        std::cout << "validFunc(0, 1, 'Qt'): " << ret.value << "\n";
+    }
+    {
+        auto ret = validFunc(1.0, "Qt", 6.0);
+        std::cout << "validFunc(1.0, 'Qt', 6.0): " << ret.value << "\n";
+    }
+}
+
 template <typename T>
 struct TypeT {
     using Type = T;
 };
 
 template <typename T>
-constexpr auto type = TypeT<T>::Type;
+constexpr auto type = TypeT<T>{};
 
 template <typename T>
 T valueT(TypeT<T>);
 
+constexpr auto isDefaultConstructalbe =
+        isValid([](auto x) -> decltype((void)decltype(valueT(x))()){
+        });
+
+void test_default_constructalbe()
+{
+    {
+        auto ret = isDefaultConstructalbe(type<A>);
+        std::cout << "A: " << ret.value << "\n";
+    }
+    {
+        auto ret = isDefaultConstructalbe(type<B>);
+        std::cout << "B: " << ret.value << "\n";
+    }
+    std::cout << typeid(decltype(A())).name() << "\n";
+}
+
+constexpr auto hasFirst = isValid([](auto x) -> decltype((void)valueT(x).first){
+});
+
+void test_has_first()
+{
+    std::cout << "std::pair<int,int> hasFirst()? " << hasFirst(type<std::pair<int,int>>).value << "\n";
+    std::cout << "std::vector<int> hasFirst()? " << hasFirst(type<std::vector<int>>).value << "\n";
+}
+
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+template <typename, typename, typename = std::void_t<>>
+struct HasPlus : std::false_type
+{};
+
+template <typename T0, typename T1>
+struct HasPlus<T0, T1, std::void_t<decltype(std::declval<T0>() + std::declval<T1>())>> : std::true_type
+{};
+
+template <typename T0, typename T1, bool = HasPlus<T0, T1>::value>
+struct PlusResult {
+    using Type = decltype(std::declval<T0>() + std::declval<T1>());
+};
+
+template <typename T0, typename T1>
+struct PlusResult<T0, T1, false>
+{};
+
+} //_5 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -143,7 +208,10 @@ void test_ch_19_sfinae_traits()
 #if (0) //done
     _1::test();
     _2::test();
+    _3::test();
+    _4::test();
+    _4::test_default_constructalbe();
 #endif
 
-    _3::test();
+    _4::test_has_first();
 }
