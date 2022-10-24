@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <type_traits>
+#include <utility>
 
 namespace { //=================================================================
 
@@ -199,6 +201,194 @@ struct PlusResult<T0, T1, false>
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+template <typename From, typename To, bool = std::is_void_v<To> ||
+                                             std::is_array_v<To> ||
+                                             std::is_function_v<To>>
+struct IsConvertibleHelper {
+    using Type = std::integral_constant<bool, std::is_void_v<To> && std::is_void_v<From>>;
+};
+
+template <typename From, typename To>
+struct IsConvertibleHelper<From, To, false> {
+private:
+    static void helper(To);
+
+    template<typename F, typename = decltype(helper(std::declval<F>()))>
+    static std::true_type test(void*);
+
+    template<typename>
+    static std::false_type test(...);
+
+public:
+    using Type = decltype(test<From>(nullptr));
+};
+
+template <typename From, typename To>
+struct IsConvertibleT : IsConvertibleHelper<From, To>::Type
+{};
+
+template <typename From, typename To>
+using IsConvertable = typename IsConvertibleT<From, To>::Type;
+
+template <typename From, typename To>
+constexpr bool isConvertible = IsConvertibleT<From, To>::value;
+
+class Base
+{};
+class Derived : public Base
+{};
+
+void test()
+{
+    std::cout << "IsConvertibleT<Derived, Base>? " << IsConvertibleT<Derived, Base>::value << "\n";
+    std::cout << isConvertible<Derived, Base> << "\n";
+    std::cout << "IsConvertibleT<Base, Derived>? " << IsConvertibleT<Base, Derived>::value << "\n";
+    std::cout << isConvertible<Base, Derived> << "\n";
+    std::cout << isConvertible<const char*, std::string> << "\n";
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+template <typename...>
+using Void = void;
+
+template <typename, typename = Void<>>
+struct HasSizeT : std::false_type
+{};
+
+template <typename T>
+struct HasSizeT<T, Void<typename std::remove_reference_t<T>::size_type>> : std::true_type
+{};
+
+struct C {
+    using size_type = char;
+};
+struct CR {
+    using size_type = char&;
+};
+
+struct size_type
+{};
+struct Sizable : size_type
+{};
+
+#define DEF_HAS_TYPE(Member)                        \
+    template <typename, typename = std::void_t<>>   \
+    struct HasType_##Member                         \
+        : std::false_type                           \
+    {};                                             \
+    template <typename T>                           \
+    struct HasType_##Member<T, std::void_t<typename T::Member>>  \
+        : std::true_type                            \
+    {}
+
+DEF_HAS_TYPE(value_type);
+
+void test()
+{
+    std::cout << "HasSizeT<C>? " << HasSizeT<C>::value << "\n";
+    std::cout << "HasSizeT<C&>? " << HasSizeT<C&>::value << "\n";
+    std::cout << "HasSizeT<CR&>? " << HasSizeT<C&>::value << "\n";
+    std::cout << "HasSizeT<Sizable>? " << HasSizeT<Sizable>::value << "\n";
+
+    auto v = std::vector<int>{};
+    std::cout << HasType_value_type<decltype(v)>::value << "\n";
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+#define DEF_HAS_MEMBER(Member)  \
+    template <typename, typename = std::void_t<>>   \
+    struct HasMember_##Member                       \
+        : std::false_type                           \
+    {};                                             \
+    template <typename T>                           \
+    struct HasMember_##Member<T, std::void_t<decltype(&T::Member)>> \
+        : std::true_type                            \
+    {}
+
+DEF_HAS_MEMBER(internal);
+DEF_HAS_MEMBER(external);
+
+class A
+{
+    int internal;
+
+public:
+    int external;
+};
+
+void test()
+{
+    std::cout << "HasMember_internal<A>? " << HasMember_internal<A>::value << "\n";
+    std::cout << "HasMember_external<A>? " << HasMember_external<A>::value << "\n";
+
+}
+} //_8 --------------------------------------------------------------
+
+namespace _9 {
+
+class A
+{};
+
+template <typename, typename = std::void_t<>>
+struct HasBegin : std::false_type
+{};
+
+template <typename T>
+struct HasBegin<T, std::void_t<decltype (std::declval<T>().begin())>> : std::true_type
+{};
+
+void test()
+{
+    auto v = std::vector<int>{ 1, 2, 3 };
+    std::cout << "HasBegin<decltype(v)>? " << HasBegin<decltype(v)>::value << "\n";
+    std::cout << "HasBegin<A>? " << HasBegin<A>::value << "\n";
+}
+
+} //_9 --------------------------------------------------------------
+
+namespace _10 {
+
+template <typename, typename, typename = std::void_t<>>
+struct HasLess : std::false_type
+{};
+
+template <typename T0, typename T1>
+struct HasLess<T0, T1, std::void_t<decltype(std::declval<T0>() < std::declval<T1>())>> : std::true_type
+{};
+
+void test()
+{
+    std::cout << HasLess<std::string, std::string>::value << "\n";
+    std::cout << HasLess<A, B>::value << "\n";
+}
+
+} //_10--------------------------------------------------------------
+
+namespace _11 {
+
+using namespace _4;
+
+constexpr auto hasFirst = isValid([](auto x) -> decltype((void)valueT(x).first){});
+
+struct C {
+    using size_type = std::size_t;
+};
+
+void test()
+{
+    std::cout << hasFirst(type<std::pair<int,int>>) << "\n";
+}
+
+} //_11--------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_19_sfinae_traits()
@@ -211,7 +401,13 @@ void test_ch_19_sfinae_traits()
     _3::test();
     _4::test();
     _4::test_default_constructalbe();
+    _4::test_has_first();
+    _6::test();
+    _7::test();
+    _8::test();
+    _9::test();
+    _10::test();
 #endif
 
-    _4::test_has_first();
+    _11::test();
 }
