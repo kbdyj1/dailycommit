@@ -389,6 +389,35 @@ void test()
 
 } //_11--------------------------------------------------------------
 
+namespace _12 {
+
+using namespace _4;
+
+constexpr auto hasFirst = isValid([](auto&& x) -> decltype((void)&x.first){
+});
+
+template <typename T>
+using HasFirst = decltype(hasFirst(std::declval<T>()));
+
+constexpr auto hasSizeType = isValid([](auto&& x) -> typename std::decay_t<decltype(x)>::size_type{
+});
+
+template <typename T>
+using HasSizeType = decltype(hasSizeType(std::declval<T>()));
+
+constexpr auto hasLess = isValid([](auto&& x, auto&& y) -> decltype(x < y){
+});
+
+template <typename T0, typename T1>
+using HasLess = decltype(hasLess(std::declval<T0>(), std::declval<T1>()));
+
+void test()
+{
+    std::cout << HasFirst<std::pair<int,int>>::value << "\n";
+}
+
+} //_12--------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_19_sfinae_traits()
