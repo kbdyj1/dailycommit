@@ -140,13 +140,15 @@ void test()
 void test_ch_19_type_function();
 void test_ch_19_sfinae_traits();
 void test_ch_19_etc();
+void test_ch_19_policy();
 
 void test_ch_19()
 {
 #if (0) //done
     _3::test();
     test_ch_19_sfinae_traits();
+    test_ch_19_etc();
 #endif
 
-    test_ch_19_etc();
+    test_ch_19_policy();
 }

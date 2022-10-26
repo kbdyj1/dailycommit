@@ -50,6 +50,7 @@ SOURCES += \
         ch_18.cpp \
         ch_19.cpp \
         ch_19_etc.cpp \
+        ch_19_policy.cpp \
         ch_19_sfinae_traits.cpp \
         ch_19_type_function.cpp \
         main.cpp

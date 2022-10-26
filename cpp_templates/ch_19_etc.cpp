@@ -169,6 +169,10 @@ struct IsRValueRefT<T&&> : std::true_type
     using BaseT = T;
 };
 
+template <typename T>
+struct IsRefT : public IfThenElseT<IsLValueRefT<T>::value, IsLValueRefT<T>, IsRValueRefT<T>>::Type
+{};
+
 void test()
 {
     auto i = 0;
@@ -183,6 +187,72 @@ void test()
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+template <typename T>
+struct IsArrayT : std::false_type
+{};
+
+template <typename T, std::size_t N>
+struct IsArrayT<T[N]> : std::true_type
+{
+    using BaseT = T;
+    static constexpr std::size_t size = N;
+};
+
+template <typename T>
+struct IsArrayT<T[]> : std::true_type
+{
+    using BaseT = T;
+    static constexpr std::size_t size = 0;
+};
+
+template <typename T>
+struct IsPointerToMemberT : std::false_type
+{};
+
+template <typename T, typename C>
+struct IsPointerToMemberT<T C::*> : std::true_type
+{};
+
+class C {
+    int member;
+};
+
+template <typename T>
+struct IsFunctionT : std::false_type
+{};
+
+template <typename R, typename... Params>
+struct IsFunctionT<R (Params...)> : std::true_type {
+};
+
+void test()
+{
+    std::cout << IsPointerToMemberT<int(C::*)>::value << "\n";
+    std::cout << IsPointerToMemberT<int(C::*)()>::value << "\n";
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+template <typename T, typename = std::void_t<>>
+struct IsClassT : std::false_type
+{};
+
+template <typename T>
+struct IsClassT<T, std::void_t<int T::*>> : std::true_type
+{};
+
+void test()
+{
+    auto l = []{};
+    std::cout << "[]{} is class? " << IsClassT<decltype(l)>::value << "\n";
+}
+
+} //_7 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_19_etc()
@@ -193,7 +263,9 @@ void test_ch_19_etc()
     _1::test();
     _2::test();
     _4::test();
+    _5::test();
+    _6::test();
 #endif
 
-    _5::test();
+    _7::test();
 }
