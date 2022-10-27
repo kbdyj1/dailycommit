@@ -46,13 +46,14 @@ void test_ch_15();
 void test_ch_16();
 void test_ch_18();
 void test_ch_19();
+void test_ch_20();
 
 int main()
 {
 #if (0)
     auto odr = ODR{};
 #endif
-    test_ch_19();
+    test_ch_20();
 
     return 0;
 }

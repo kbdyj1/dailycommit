@@ -53,9 +53,13 @@ SOURCES += \
         ch_19_policy.cpp \
         ch_19_sfinae_traits.cpp \
         ch_19_type_function.cpp \
+        ch_20.cpp \
+        ch_20_class.cpp \
+        ch_20_function.cpp \
         main.cpp
 
 HEADERS += \
     ch_14_t.hpp \
     g.hpp \
-    stack.hpp
+    stack.hpp \
+    traits.h
