@@ -1,5 +1,5 @@
-#ifndef TRAITS_H
-#define TRAITS_H
+#ifndef ENABLEIF_HPP
+#define ENABLEIF_HPP
 
 template <bool, typename T=void>
 struct EnableIfT {
@@ -13,4 +13,4 @@ struct EnableIfT<true, T> {
 template <bool Cond, typename T = void>
 using EnableIf = typename EnableIfT<Cond, T>::Type;
 
-#endif // TRAITS_H
+#endif // ENABLEIF_HPP

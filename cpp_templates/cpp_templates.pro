@@ -59,7 +59,9 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
+    EnableIf.hpp \
+    IsContextualBool.hpp \
+    IsConvertible.hpp \
     ch_14_t.hpp \
     g.hpp \
-    stack.hpp \
-    traits.h
+    stack.hpp

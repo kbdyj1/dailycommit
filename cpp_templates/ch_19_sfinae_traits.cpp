@@ -3,6 +3,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "IsConvertible.hpp"
+
 namespace { //=================================================================
 
 struct A {
@@ -203,6 +205,7 @@ struct PlusResult<T0, T1, false>
 
 namespace _6 {
 
+#if (0)
 template <typename From, typename To, bool = std::is_void_v<To> ||
                                              std::is_array_v<To> ||
                                              std::is_function_v<To>>
@@ -234,6 +237,7 @@ using IsConvertable = typename IsConvertibleT<From, To>::Type;
 
 template <typename From, typename To>
 constexpr bool isConvertible = IsConvertibleT<From, To>::value;
+#endif
 
 class Base
 {};
