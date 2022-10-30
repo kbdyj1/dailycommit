@@ -57,6 +57,8 @@ SOURCES += \
         ch_20_class.cpp \
         ch_20_function.cpp \
         ch_21.cpp \
+        ch_21_facade.cpp \
+        ch_21_named_template_arg.cpp \
         main.cpp
 
 HEADERS += \

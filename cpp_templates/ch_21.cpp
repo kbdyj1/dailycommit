@@ -190,6 +190,9 @@ void test()
 
 } //namespace =================================================================
 
+void test_ch_21_facade();
+void test_ch_21_named_template_arg();
+
 void test_ch_21()
 {
     std::cout << std::boolalpha;
@@ -197,7 +200,9 @@ void test_ch_21()
 #if (0) //done
     _1::test();
     _3::test();
+    _5::test();
+    test_ch_21_facade();
 #endif
 
-    _5::test();
+    test_ch_21_named_template_arg();
 }
