@@ -60,6 +60,7 @@ SOURCES += \
         ch_21_facade.cpp \
         ch_21_named_template_arg.cpp \
         ch_22.cpp \
+        ch_23.cpp \
         main.cpp
 
 HEADERS += \
