@@ -121,6 +121,76 @@ void test()
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+template <unsigned N, unsigned D = 1>
+struct Ratio {
+    static constexpr unsigned num = N;
+    static constexpr unsigned den = D;
+    using Type = Ratio<num, den>;
+};
+
+template <typename R0, typename R1>
+struct RatioAddImpl {
+private:
+    static constexpr unsigned den = R0::den * R1::den;
+    static constexpr unsigned num = R0::num * R1::den + R0::den * R1::num;
+
+public:
+    typedef Ratio<num, den> Type;
+};
+
+template <typename R0, typename R1>
+using RatioAdd = typename RatioAddImpl<R0, R1>::Type;
+
+template <typename T, typename U = Ratio<1>>
+class Duration {
+public:
+    using ValueType = T;
+    using UnitType = U;
+
+private:
+    ValueType val;
+
+public:
+    constexpr Duration(ValueType v = 0) : val(v)
+    {}
+    constexpr ValueType value() const {
+        return val;
+    }
+};
+
+template <typename T0, typename U0, typename T1, typename U1>
+auto constexpr operator+(const Duration<T0, U0>& l, const Duration<T1, U1>& r)
+{
+    using VT = Ratio<1, RatioAdd<U0, U1>::den>;
+    auto val = l.value() * VT::den / U0::den * U0::num + r.value() * VT::den / U1::den * U1::num;
+
+    return Duration<decltype(val), VT>(val);
+}
+
+void test()
+{
+    using R0 = Ratio<1, 1000>;
+    using R1 = Ratio<2, 3>;
+    using Result = RatioAdd<R0, R1>;
+
+    auto res = Result{};
+
+    std::cout << "Ratio<" << res.num << ", " << res.den << ">\n";
+
+    int x = 200;
+    int y = 3;
+
+    auto a = Duration<int, Ratio<1,1000>>(x);
+    auto b = Duration<int, Ratio<1,4>>(y);
+    auto c = a + b;
+
+    std::cout << "c: " << c.value() << "\n";
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_23()
@@ -128,7 +198,8 @@ void test_ch_23()
 #if (0) //done
     _1::test();
     _2::test();
+    _3::test();
 #endif
 
-    _3::test();
+    _4::test();
 }
