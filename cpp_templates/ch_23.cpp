@@ -191,6 +191,119 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+template <int N, int LO=1, int HI=N>
+struct Sqrt {
+    static constexpr auto mid = (LO+HI+1)/2;
+    static constexpr auto value = (N<mid*mid) ? Sqrt<N, LO, mid-1>::value : Sqrt<N, mid, HI>::value;
+};
+
+template <int N, int M>
+struct Sqrt<N, M, M> {
+    static constexpr auto value = M;
+};
+
+void test()
+{
+    std::cout << "Sqrt<150>: " << Sqrt<100>::value << "\n";
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+template <typename T, typename U>
+struct Doublify
+{};
+
+template <int N>
+struct Trouble {
+    using LongType = Doublify<typename Trouble<N-1>::LongType, typename Trouble<N-1>::LongType>;
+};
+
+template <>
+struct Trouble<0> {
+    using LongType = double;
+};
+
+void test()
+{
+    Trouble<10>::LongType ouch;
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 { //Erwin Unruh
+
+template <int p, int i>
+struct IsPrime {
+    enum {
+        pri = (p==2) || ((p%i) && IsPrime<(i>2?p:0), i-1>::pri)
+    };
+};
+
+template <>
+struct IsPrime<0,0> {
+    enum {
+        pri = 1
+    };
+};
+
+template <>
+struct IsPrime<0,1> {
+    enum {
+        pri = 1
+    };
+};
+
+template <int i>
+struct D {
+    D(void*);
+};
+
+template <int i>
+struct CondNull {
+    static int const value = i;
+};
+
+template <>
+struct CondNull<0> {
+    static void* value;
+};
+
+void* CondNull<0>::value = 0;
+
+template <int i>
+struct PrintPrime {
+    PrintPrime<i-1> a;
+
+    enum { pri = IsPrime<i,i-1>::pri };
+
+    void f() {
+        D<i> d = CondNull<pri ? 1 : 0>::value;
+        a.f();
+    }
+};
+
+template <>
+struct PrintPrime<1> {
+    enum { pri = 0 };
+    void f() {
+        D<1> d = 0;
+    }
+};
+
+void test()
+{
+#if (0) //error message is a prime number
+    PrintPrime<17> a;
+    a.f();
+#endif
+}
+
+} //_7 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_23()
@@ -199,7 +312,8 @@ void test_ch_23()
     _1::test();
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }

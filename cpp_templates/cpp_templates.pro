@@ -61,6 +61,7 @@ SOURCES += \
         ch_21_named_template_arg.cpp \
         ch_22.cpp \
         ch_23.cpp \
+        ch_24.cpp \
         main.cpp
 
 HEADERS += \
