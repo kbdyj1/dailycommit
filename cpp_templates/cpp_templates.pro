@@ -66,6 +66,7 @@ SOURCES += \
 
 HEADERS += \
     EnableIf.hpp \
+    IfThenElse.hpp \
     IsContextualBool.hpp \
     IsConvertible.hpp \
     ch_14_t.hpp \
