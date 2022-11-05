@@ -5,6 +5,7 @@
 //  22/11/03
 //=============================================================================
 
+#include <iostream>
 #include "IfThenElse.hpp"
 
 namespace { //=================================================================
@@ -218,6 +219,7 @@ class AccumulateT<List, F, I, false> : public AccumulateT<PopFront<List>, F, typ
 template <typename List, template<typename X, typename Y> class F, typename I>
 class AccumulateT<List, F, I, true>
 {
+public:
     using Type = I;
 };
 
@@ -279,9 +281,105 @@ class InsertionSortT<List, Cmp, false>
 
 } //_10 -------------------------------------------------------------
 
+namespace _11 { // compile time value
+
+template <typename T, T Value>
+struct CTValue {
+    static constexpr T value = Value;
+};
+
+template <typename T, T... Values>
+using CTValues = TypeList<CTValue<T, Values>...>;
+
+#if (0)
+using Primes = TypeList<CTValue<int, 2>,
+                        CTValue<int, 3>,
+                        CTValue<int, 5>,
+                        CTValue<int, 7>,
+                        CTValue<int, 11>>;
+#else
+using Primes = CTValues<int, 2, 3, 5, 7, 11>;
+#endif
+
+template <typename T, typename U>
+struct MultiplyT;
+
+template <typename T, T Value0, T Value1>
+struct MultiplyT<CTValue<T, Value0>, CTValue<T, Value1>> {
+public:
+    using Type = CTValue<T, Value0*Value1>;
+};
+
+template <typename T, typename U>
+using Multiply = typename MultiplyT<T, U>::Type;
+
+using namespace _8;
+
+void test()
+{
+    //TODO : result -> 2 ???
+    std::cout << Accumulate<Primes, MultiplyT, CTValue<int, 1>>::value << "\n";
+}
+
+} //_11 -------------------------------------------------------------
+
+namespace _12 {
+
+class Null
+{};
+
+template <typename H, typename T = Null>
+class Cons {
+    using Head = H;
+    using Tail = T;
+};
+
+using Shorts = Cons<short, Cons<unsigned>>;
+
+template <typename List>
+class FrontT {
+public:
+    using Type = typename List::Head;
+};
+
+template <typename List>
+using Front = typename FrontT<List>::Type;
+
+template <typename List, typename Elem>
+class PushFrontT {
+public:
+    using Type = Cons<Elem, List>;
+};
+
+template <typename List, typename Elem>
+using PushFront = typename PushFrontT<List, Elem>::Type;
+
+template <typename List>
+class PopFrontT {
+public:
+    using Type = typename List::Tail;
+};
+
+template <typename List>
+using PopFront = typename PopFrontT<List>::Type;
+
+template <typename List>
+struct IsEmpty {
+    static constexpr bool value = false;
+};
+
+template <>
+struct IsEmpty<Null> {
+    static constexpr bool value = true;
+};
+
+} //_12 -------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_24()
 {
+    std::cout << "\n";
 
+    _11::test();
 }
