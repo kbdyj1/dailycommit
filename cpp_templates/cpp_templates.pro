@@ -62,6 +62,7 @@ SOURCES += \
         ch_22.cpp \
         ch_23.cpp \
         ch_24.cpp \
+        ch_25.cpp \
         main.cpp
 
 HEADERS += \
@@ -69,6 +70,8 @@ HEADERS += \
     IfThenElse.hpp \
     IsContextualBool.hpp \
     IsConvertible.hpp \
+    Tuple.hpp \
+    TypeList.hpp \
     ch_14_t.hpp \
     g.hpp \
     stack.hpp
