@@ -72,6 +72,7 @@ HEADERS += \
     IsConvertible.hpp \
     Tuple.hpp \
     TypeList.hpp \
+    ValueList.hpp \
     ch_14_t.hpp \
     g.hpp \
     stack.hpp

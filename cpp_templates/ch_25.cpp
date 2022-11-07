@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "TypeList.hpp"
+#include "ValueList.hpp"
 #include "Tuple.hpp"
 
 template <>
@@ -154,6 +155,96 @@ void test()
 }
 
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+template <int N>
+struct CopyCounter
+{
+    inline static unsigned copyCnt = 0;
+    CopyCounter()
+    {}
+    CopyCounter(const CopyCounter&)
+    {
+        ++copyCnt;
+    }
+};
+
+Tuple<> reverse(const Tuple<>& t)
+{
+    return t;
+}
+
+template <typename Head, typename... Tail>
+Reverse<Tuple<Head, Tail...>> reverse(const Tuple<Head, Tail...>& t)
+{
+    return pushBack(reverse(t.getTail()), t.getHead());
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+template <unsigned N, typename Result = ValueList<unsigned>>
+struct MakeIndexListT : MakeIndexListT<N-1, PushFront<Result, CTValue<unsigned, N-1>>>
+{
+};
+
+template <typename Result>
+struct MakeIndexListT<0, Result>
+{
+    using Type = Result;
+};
+
+template <unsigned N>
+using MakeIndexList = typename MakeIndexListT<N>::Type;
+
+template <typename... Elements, unsigned... Indices>
+auto reverseImpl(const Tuple<Elements...>& t, ValueList<unsigned, Indices...>&)
+{
+    return makeTuple(get<Indices>(t)...);
+}
+
+template <typename... Elements>
+auto reverse(const Tuple<Elements...>& t)
+{
+    return reverseImpl(t, Reverse<MakeIndexList<sizeof...(Elements)>>());
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+template <typename... Elements, unsigned... Indices>
+auto select(const Tuple<Elements...>& t, ValueList<unsigned, Indices...>)
+{
+    return makeTuple(get<Indices>(t)...);
+}
+
+template <unsigned I, unsigned N, typename IndexList = ValueList<unsigned>>
+class ReplicatedIndexListT;
+
+template <unsigned I, unsigned N, unsigned... Indices>
+class ReplicatedIndexListT<I, N, ValueList<unsigned, Indices...>>
+    : public ReplicatedIndexListT<I, N-1, ValueList<unsigned, Indices..., I>>
+{};
+
+template <unsigned I, unsigned... Indices>
+class ReplicatedIndexListT<I, 0, ValueList<unsigned, Indices...>> {
+public:
+    using Type = ValueList<unsigned, Indices...>;
+};
+
+template <unsigned I, unsigned N>
+using ReplicatedIndexList = typename ReplicatedIndexListT<I, N>::Type;
+
+template <unsigned I, unsigned N, typename... Elements>
+auto splat(const Tuple<Elements...>& t)
+{
+    return select(t, ReplicatedIndexList<I, N>());
+}
+
+} //_7 --------------------------------------------------------------
 
 } //namespace =================================================================
 

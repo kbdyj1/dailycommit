@@ -65,4 +65,29 @@ public:
 template <typename Lists, typename New>
 using PushBack = typename PushBackT<Lists, New>::Type;
 
+template <typename List, bool Empty = IsEmpty<List>::value>
+class ReverseT;
+
+template <typename List>
+using Reverse = typename ReverseT<List>::Type;
+
+template <typename List>
+class ReverseT<List, false> : public PushBackT<Reverse<PopFront<List>>, Front<List>>
+{};
+
+template <typename List>
+class ReverseT<List, true> {
+public:
+    using Type = List;
+};
+
+template <typename List>
+class PopBackT {
+public:
+    using Type = Reverse<PopFront<Reverse<List>>>;
+};
+
+template <typename List>
+using PopBack = typename PopBackT<List>::Type;
+
 #endif // TYPELIST_HPP

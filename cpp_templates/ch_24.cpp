@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "TypeList.hpp"
+#include "ValueList.hpp"
 #include "IfThenElse.hpp"
 
 namespace { //=================================================================
@@ -221,14 +222,6 @@ class InsertionSortT<List, Cmp, false>
 } //_10 -------------------------------------------------------------
 
 namespace _11 { // compile time value
-
-template <typename T, T Value>
-struct CTValue {
-    static constexpr T value = Value;
-};
-
-template <typename T, T... Values>
-using CTValues = TypeList<CTValue<T, Values>...>;
 
 #if (0)
 using Primes = TypeList<CTValue<int, 2>,
