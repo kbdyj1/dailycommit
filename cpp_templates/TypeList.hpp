@@ -1,6 +1,8 @@
 #ifndef TYPELIST_HPP
 #define TYPELIST_HPP
 
+#include "IfThenElse.hpp"
+
 template <typename... Types>
 class TypeList
 {};
@@ -89,5 +91,27 @@ public:
 
 template <typename List>
 using PopBack = typename PopBackT<List>::Type;
+
+template <typename List, bool Empty = IsEmpty<List>::value>
+class LargestTypeT;
+
+template <typename List>
+class LargestTypeT<List, false>
+{
+    using First = Front<List>;
+    using Rest = typename LargestTypeT<PopFront<List>>::Type;
+
+public:
+    using Type = IfThenElse<(sizeof(First) >= sizeof(Rest)), First, Rest>;
+};
+
+template <typename List>
+class LargestTypeT<List, true> {
+public:
+    using Type = char;
+};
+
+template <typename List>
+using LargestType = typename LargestTypeT<List>::Type;
 
 #endif // TYPELIST_HPP

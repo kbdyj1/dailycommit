@@ -31,33 +31,11 @@ using NthElemnt = typename NthElementT<List, N>::Type;
 
 namespace _2 {
 
-template <typename List, bool Empty = IsEmpty<List>::value>
-class LargestTypeT;
-
-template <typename List>
-class LargestTypeT<List, false>
-{
-    using First = Front<List>;
-    using Rest = typename LargestTypeT<PopFront<List>>::Type;
-
-public:
-    using Type = IfThenElse<(sizeof(First) >= sizeof(Rest)), First, Rest>;
-};
-
-template <typename List>
-class LargestTypeT<List, true> {
-public:
-    using Type = char;
-};
-
-template <typename List>
-using LargestType = typename LargestTypeT<List>::Type;
+// move to TypeList.hpp
 
 } //_2 --------------------------------------------------------------
 
 namespace _3 {
-
-
 
 } //_3 --------------------------------------------------------------
 

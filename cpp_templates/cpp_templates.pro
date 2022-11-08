@@ -63,16 +63,21 @@ SOURCES += \
         ch_23.cpp \
         ch_24.cpp \
         ch_25.cpp \
+        ch_26.cpp \
         main.cpp
 
 HEADERS += \
     EnableIf.hpp \
+    FindIndexOf.hpp \
     IfThenElse.hpp \
     IsContextualBool.hpp \
     IsConvertible.hpp \
     Tuple.hpp \
     TypeList.hpp \
     ValueList.hpp \
+    Variant.hpp \
+    VariantChoice.hpp \
+    VariantStorage.hpp \
     ch_14_t.hpp \
     g.hpp \
     stack.hpp
