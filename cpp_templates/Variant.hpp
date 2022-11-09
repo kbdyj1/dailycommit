@@ -2,6 +2,7 @@
 #define VARIANT_HPP
 
 #include <exception>
+#include <cassert>
 #include "VariantStorage.hpp"
 #include "VariantChoice.hpp"
 

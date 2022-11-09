@@ -78,6 +78,7 @@ HEADERS += \
     Variant.hpp \
     VariantChoice.hpp \
     VariantStorage.hpp \
+    VariantVisible.hpp \
     ch_14_t.hpp \
     g.hpp \
     stack.hpp
