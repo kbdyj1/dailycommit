@@ -8,6 +8,7 @@
 #include <iostream>
 #include <utility>
 #include <type_traits>
+#include <algorithm>
 
 namespace { //=================================================================
 
@@ -213,11 +214,41 @@ public:
     }
 };
 
+void test()
+{
+    SortTracer s[] = { 7, 3, 5, 6, 4, 2, 0, 1, 9, 8 };
+    for (auto i=0; i<10; i++) {
+        std::cout << s[i].getValue() << ' ';
+    }
+    std::cout << '\n';
+
+    auto cs = SortTracer::comparisions();
+    auto ls = SortTracer::maxLiveCnt();
+    auto as = SortTracer::assignments();
+    auto cmps = SortTracer::comparisions();
+
+    std::cout << "creations: " << cs << ", live: " << ls << ", assign: " << as << ", cmp: " << cmps << "\n";
+
+    std::sort<>(&s[0], &s[9]+1);
+
+    for (auto i=0; i<10; i++) {
+        std::cout << s[i].getValue() << ' ';
+    }
+    std::cout << '\n';
+
+    cs = SortTracer::comparisions();
+    ls = SortTracer::maxLiveCnt();
+    as = SortTracer::assignments();
+    cmps = SortTracer::comparisions();
+
+    std::cout << "creations: " << cs << ", live: " << ls << ", assign: " << as << ", cmp: " << cmps << "\n";
+}
+
 } //_5 --------------------------------------------------------------
 
 } //namespace =================================================================
 
 void test_ch_28()
 {
-
+    _5::test();
 }

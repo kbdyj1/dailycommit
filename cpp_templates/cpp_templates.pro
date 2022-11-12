@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        appendix.cpp \
         ch_01.cpp \
         ch_01_max.cpp \
         ch_02.cpp \
