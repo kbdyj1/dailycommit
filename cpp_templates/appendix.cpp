@@ -185,6 +185,63 @@ void test()
 
 } //_7 --------------------------------------------------------------
 
+namespace _8 {
+
+void report(int&)
+{
+    std::cout << "report(int&)\n";
+}
+void report(const int&)
+{
+    std::cout << "report(const int&)\n";
+}
+
+struct Value
+{};
+
+void pass(const Value&)
+{
+    std::cout << "pass(const Value&)\n";
+}
+void pass(Value&&)
+{
+    std::cout << "pass(Value&&)\n";
+}
+
+void test()
+{
+    int val = 0;
+    report(val);
+
+    report(40);
+
+    auto v = Value();
+    pass(v);
+    pass(Value());
+    pass(std::move(v));
+}
+
+} //_8 --------------------------------------------------------------
+
+namespace _9 {
+
+template <typename T>
+int f(T)
+{
+    std::cout << "template <typename T>\nint f(T)\n";
+}
+void f(int)
+{
+    std::cout << "void f(int)\n";
+}
+
+void test()
+{
+    return f(10);
+}
+
+} //_9 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_appendix()
@@ -192,7 +249,9 @@ void test_appendix()
 #if (0) //done
     _1::test();
     _3::test();
+    _6::test();
+    _8::test();
 #endif
 
-    _6::test();
+    _9::test();
 }
