@@ -244,6 +244,8 @@ void test()
 
 } //namespace =================================================================
 
+void test_appendix_std();
+
 void test_appendix()
 {
 #if (0) //done
@@ -251,7 +253,8 @@ void test_appendix()
     _3::test();
     _6::test();
     _8::test();
+    _9::test();
 #endif
 
-    _9::test();
+    test_appendix_std();
 }

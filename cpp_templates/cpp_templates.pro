@@ -5,6 +5,7 @@ CONFIG -= qt
 
 SOURCES += \
         appendix.cpp \
+        appendix_std.cpp \
         ch_01.cpp \
         ch_01_max.cpp \
         ch_02.cpp \
