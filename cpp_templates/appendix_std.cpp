@@ -182,6 +182,148 @@ void test()
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+class A {
+public:
+    A()
+    {}
+    virtual ~A() = default;
+};
+
+void test()
+{
+    std::cout << "std::is_default_constructible<A>: " << std::is_default_constructible<A>::value << "\n";
+    std::cout << "std::is_trivially_default_constructible<A>: " << std::is_trivially_default_constructible<A>::value << "\n";
+    std::cout << "std::is_nothrow_default_constructible<A>: " << std::is_nothrow_default_constructible<A>::value << "\n";
+
+    std::cout << "std::is_copy_constructible<A>: " << std::is_copy_constructible<A>::value << "\n";
+    std::cout << "std::is_trivially_copy_constructible<A>: " << std::is_trivially_copy_constructible<A>::value << "\n";
+    std::cout << "std::is_nothrow_copy_constructible<A>: " << std::is_nothrow_copy_constructible<A>::value << "\n";
+
+    std::cout << "std::is_destructible<A>: " << std::is_destructible<A>::value << "\n";
+    std::cout << "std::is_trivially_destructible<A>: " << std::is_trivially_destructible<A>::value << "\n";
+    std::cout << "std::is_nothrow_destructible<A>: " << std::is_nothrow_destructible<A>::value << "\n";
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+void test()
+{
+    auto a = nullptr;
+    auto b = nullptr;
+
+    std::cout << "std::is_same<decltype(a), decltype(b)>: " << std::is_same<decltype(a), decltype(b)>::value << "\n";
+
+    auto la = [](int){};
+    auto lb = [](int){};
+    auto lc = lb;
+
+    std::cout << "std::is_same<decltype(la), decltype(lb)>: " << std::is_same<decltype(la), decltype(lb)>::value << "\n";
+    std::cout << "std::is_same<decltype(lc), decltype(lb)>: " << std::is_same<decltype(lc), decltype(lb)>::value << "\n";
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+class A
+{};
+class B0 : A
+{};
+class B1 : A
+{};
+class C : private B0, private B1
+{};
+
+class D
+{
+public:
+    explicit D(const D&)
+    {}
+};
+
+void test()
+{
+    std::cout << "std::is_base_of<A, B0>: " << std::is_base_of<A, B0>::value << "\n";
+    std::cout << "std::is_base_of<A, C>: " << std::is_base_of<A, C>::value << "\n";
+    std::cout << "std::is_base_of<A&, C&>: " << std::is_base_of<A&, C&>::value << "\n";
+
+    std::cout << "std::is_constructible<D, D>: " << std::is_constructible<D, D>::value << "\n";
+    std::cout << "std::is_convertible<D, D>: " << std::is_convertible<D, D>::value << "\n";
+
+    std::cout << typeid(std::remove_const_t<int const&>).name() << "\n";
+
+    std::cout << typeid(std::add_cv_t<int>).name() << "\n";
+}
+
+} //_8 --------------------------------------------------------------
+
+namespace _9 {
+
+template <typename T>
+struct Number
+{
+    T n;
+};
+
+template <typename T, typename U>
+Number<typename std::common_type<T, U>::type> operator+(const Number<T>& l, const Number<U>& r)
+{
+    return {l.n + r.n};
+}
+
+#if (0)
+using POD = std::aligned_union_t<0, char, std::pair<std::string, std::string>>;
+#else
+using POD = std::aligned_storage_t<5>;
+#endif
+
+void test()
+{
+    Number<int> i0 = {1}, i1 = {2};
+    Number<double> d0 = {2.3}, d1 = {3.4};
+
+    std::cout << "(i0 + i1).n: " << (i0 + i1).n << "\n";
+    std::cout << "(i0 + d1).n: " << (i0 + d1).n << "\n";
+    std::cout << "(d0 + i1).n: " << (d0 + i1).n << "\n";
+    std::cout << "(d0 + d1).n: " << (d0 + d1).n << "\n";
+
+    std::cout << "sizeof(POD): " << sizeof(POD) << '\n';
+    std::cout << "alignment_value: " << std::aligned_union<0, char, std::pair<std::string, std::string>>::alignment_value << '\n';
+}
+
+} //_9 --------------------------------------------------------------
+
+namespace _10 {
+
+struct X {
+    X(int);
+};
+struct Y;
+
+template <typename T>
+struct IsNoPtr : std::negation<std::disjunction<std::is_null_pointer<T>, std::is_member_pointer<T>, std::is_pointer<T>>>
+{};
+
+//c++17 conjunction, disjunction, negation
+
+void test()
+{
+#if (0)
+    static_assert(std::is_constructible<X, int>{} || std::is_constructible<Y, int>{}, "can't construct X{} or Y{}");
+#endif
+
+    static_assert(std::disjunction<std::is_constructible<X, int>, std::is_constructible<Y, int>>{}, "can't construct X{} or Y{}");
+
+    std::cout << "IsNoPtr<int>::value: " << IsNoPtr<int>::value << '\n';
+    std::cout << "IsNoPtr<int*>::value: " << IsNoPtr<int*>::value << '\n';
+}
+
+} //_10 -------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_appendix_std()
@@ -193,7 +335,12 @@ void test_appendix_std()
     _2::test();
     _3::test();
     _4::test();
+    _5::test();
+    _6::test();
+    _7::test();
+    _8::test();
+    _9::test();
 #endif
 
-    _5::test();
+    _10::test();
 }
