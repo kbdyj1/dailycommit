@@ -16,6 +16,7 @@ SOURCES = main.cpp \
         src/meta/test_traits.cpp \
         src/test_array.cpp \
         src/test_atomic.cpp \
+        src/test_cbor.cpp \
         src/test_concurrency.cpp \
         src/test_concurrent.cpp \
         src/test_crtp.cpp \

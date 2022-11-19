@@ -35,10 +35,11 @@ void test_implicitSharing();
 void test_qcache();
 void test_regexp();
 void test_law_of_demeter();
+void test_cbor();
 
 void testConsole()
 {
-    test_regexp();
+    test_cbor();
 }
 
 //-----------------------------------------------------------------------------
