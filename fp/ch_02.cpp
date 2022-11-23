@@ -124,7 +124,13 @@ std::vector<person_t> test_copy(std::vector<person_t>& v)
 {
     auto females = std::vector<person_t>{};
 
+#if (0)
     std::copy_if(v.begin(), v.end(), std::back_inserter(females), is_female);
+#else
+    std::copy_if(v.begin(), v.end(), std::back_inserter(females), [](const person_t& person){
+        return person.female == true;
+    });
+#endif
 
     return females;
 }
