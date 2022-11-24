@@ -7,4 +7,8 @@ SOURCES += \
         ch_01.cpp \
         ch_02.cpp \
         ch_03.cpp \
+        ch_04.cpp \
         main.cpp
+
+DISTFILES += \
+    template.txt

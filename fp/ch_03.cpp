@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 namespace { //=================================================================
 
@@ -118,7 +119,16 @@ void test()
     }
     {
         const auto limit = 10;
+
+#define USE_LAMBDA
+
+#if !defined(USE_LAMBDA) //functor
         auto predicate = OlderThan(limit);
+#else   //lambda
+        auto predicate = [limit = 12](auto&& object){
+            return object.age > limit;
+        };
+#endif
         auto count = std::count_if(cars.begin(), cars.end(), predicate);
         std::cout << "cars OlderThan(" << limit << "): " << count << "\n";
 
@@ -176,15 +186,104 @@ void test()
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+struct response_t {
+    int resCode;
+
+    bool error() const {
+        return resCode != 200 && resCode != 204;
+    }
+};
+
+class ErrorTest {
+    bool error;
+
+public:
+    ErrorTest(bool error = true) : error(error)
+    {}
+    template<typename T>
+    bool operator()(T&& obj) const
+    {
+        return error == (bool)std::forward<T>(obj).error();
+    }
+
+    // error(true) == true
+    // noError(false) == false
+    ErrorTest operator==(bool test) {
+        return ErrorTest(test ? error : !error);
+    }
+    ErrorTest operator!() const {
+        return ErrorTest(!error);
+    }
+};
+
+void test()
+{
+    auto error = ErrorTest(true);
+    auto noError = ErrorTest(false);
+    auto responses = std::vector<response_t>{ {200}, {400}, {204}, {500}, {100}, {200}, {410}};
+
+    auto failed = std::count_if(responses.begin(), responses.end(), error);
+    auto successed = std::count_if(responses.begin(), responses.end(), noError);
+
+    std::cout << "#1 successed: " << successed << ", failed: " << failed << "\n";
+
+    failed = std::count_if(responses.begin(), responses.end(), error == true);
+    successed = std::count_if(responses.begin(), responses.end(), error == false);
+
+    std::cout << "#2 successed: " << successed << ", failed: " << failed << "\n";
+
+    failed = std::count_if(responses.begin(), responses.end(), error);
+    successed = std::count_if(responses.begin(), responses.end(), !error);
+
+    std::cout << "#3 successed: " << successed << ", failed: " << failed << "\n";
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+void test()
+{
+    auto v = std::vector<int>{ 1, 2, 3, 4 };
+#if 201103L < __cplusplus
+    auto result = std::accumulate(v.begin(), v.end(), 1, std::multiplies<>());  //c++14~ std::multiplies<>()
+#else
+    auto result = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
+#endif
+
+    std::cout << "std::accumulate(..., std::multiplies<int>()): " << result << "\n";
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+void test()
+{
+    auto s = std::string{"Qt 6"};
+    std::function<bool(std::string)> empty = &std::string::empty;   // link error in clang
+
+    std::cout << "empty(s): " << empty(s) << "\n";
+}
+
+} //_8 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_ch_03()
 {
+    std::cout << std::boolalpha;
+
 #if (0) //done
     _2::test();
     _3::test();
     _4::test();
+    _5::test();
+    _6::test();
+    _7::test();
 #endif
 
-    _5::test();
+    _8::test();
 }
