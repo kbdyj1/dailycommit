@@ -1,8 +1,36 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
+#include <functional>
+#include <iterator>
 
 namespace { //=================================================================
+
+struct person_t {
+    std::string name;
+    int age;
+
+    void print(std::ostream& os, bool printAge)
+    {
+        if (printAge) {
+            std::cout << "{" << name << ", " << age << "}\n";
+        } else {
+            std::cout << "{" << name << "}\n";
+        }
+    }
+};
+
+std::vector<person_t> people = { { "Minji", 18}, { "Daniel", 17}, { "Hani", 18}, { "Haerin", 16}, { "Hyein", 14} };
+
+void print_person(std::ostream& os, const person_t& person, bool printAge)
+{
+    if (printAge) {
+        std::cout << "[" << person.name << ", " << person.age << "]\n";
+    } else {
+        std::cout << "[" << person.name << "]\n";
+    }
+}
 
 auto vInt = std::vector<int>{ 1, 10, 100, 30, 50, 8, 95, 20, 48, 25 };
 
@@ -39,12 +67,12 @@ void test()
 namespace _2 {
 
 template <typename Function, typename SecondArg>
-class Bind2nd {
+class Bind2ndImpl {
     Function func;
     SecondArg secondArg;
 
 public:
-    Bind2nd(Function func, SecondArg arg) : func(func), secondArg(arg)
+    Bind2ndImpl(Function func, SecondArg arg) : func(func), secondArg(arg)
     {}
 
     template<typename FirstArg>
@@ -53,14 +81,24 @@ public:
     }
 };
 
+template <typename Function, typename SecondArg>
+Bind2ndImpl<Function, SecondArg> bind2nd(Function&& func, SecondArg&& secondArg)
+{
+    return Bind2ndImpl<Function, SecondArg>(std::forward<Function>(func), std::forward<SecondArg>(secondArg));
+}
+
 bool greater_than(int l, int r)
 {
     return l > r;
 }
 
-void test()
+void test_greater_than()
 {
-    Bind2nd greater_than_30(greater_than, 30);
+#if (0)
+    Bind2ndImpl greater_than_30(greater_than, 30);
+#else
+    auto greater_than_30 = bind2nd(greater_than, 30);
+#endif
 
     auto iter = std::partition(vInt.begin(), vInt.end(), greater_than_30);
 
@@ -75,15 +113,143 @@ void test()
     }
 }
 
+void test_deg_to_rad()
+{
+    auto deg_to_rad = bind2nd(std::multiplies<double>(), M_PI/180.0);
+    auto v = std::vector<double>{ 15.0, 45.0, 90.0, 180.0, 270.0, 38.0 };
+    auto result = std::vector<double>(v.size());
+    std::transform(v.begin(), v.end(), result.begin(), deg_to_rad);
+
+    for (auto iter = result.begin(); iter != result.end(); iter++) {
+        std::cout << *iter << " ";
+    }
+    std::cout << "\n";
+}
+
+void test()
+{
+    //test_greater_than();
+
+    test_deg_to_rad();
+}
+
 } //_2 --------------------------------------------------------------
+
+namespace _3 { //std::bind
+
+void test()
+{
+    auto greater_than_40 = std::bind(std::greater<int>(), std::placeholders::_1, 40);
+    auto less_than_40 = std::bind(std::greater<int>(), 40, std::placeholders::_1);
+
+    std::cout << " 50 > 40 : " << greater_than_40(50) << "\n";
+    std::cout << " 50 < 40 : " << less_than_40(50) << "\n";
+
+    auto v = std::vector<int>{ 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+
+    std::sort(v.begin(), v.end(), std::bind(std::greater<int>(), std::placeholders::_2, std::placeholders::_1));
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+}
+
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+void test()
+{
+#if (0)
+    //function call
+    std::for_each(people.begin(),
+                  people.end(),
+                  std::bind(print_person, std::ref(std::cout), std::placeholders::_1, true));
+#else
+    //member function call
+    std::for_each(people.begin(),
+                  people.end(),
+                  std::bind(&person_t::print, std::placeholders::_1, std::ref(std::cout), true));
+#endif
+}
+
+} //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+void test()
+{
+    auto greater_than_40 = [](int value){
+        return std::greater<int>()(value, 40);
+    };
+    auto less_than_40 = [](int value) {
+        return std::greater<int>()(40, value);
+    };
+
+    std::cout << "50 > 40 : " << greater_than_40(50) << "\n";
+    std::cout << "50 < 40 : " << less_than_40(50) << "\n";
+
+    auto v = std::vector<int>{ 1, 3, 5, 7, 9, 2, 4, 6, 8, 10 };
+
+    std::sort(v.begin(), v.end(), [](int l, int r){
+        return std::greater<int>()(r, l);
+    });
+    std::copy(v.begin(), v.end(), std::ostream_iterator<int>(std::cout, " "));
+
+    bool printAge = false;
+    std::for_each(people.begin(), people.end(), [printAge](const person_t& person){
+        print_person(std::cout, person, printAge);
+    });
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 { //curried
+
+bool greater(int l, int r)
+{
+    return l > r;
+}
+
+auto greater_than(int l)
+{
+    return [l](int r) {
+        return l > r;
+    };
+}
+
+auto print_person_curried(const person_t& person)
+{
+    return [&](std::ostream& os) {
+        return [&](bool printAge) {
+            print_person(os, person, printAge);
+        };
+    };
+}
+
+void test()
+{
+    std::cout << "1 > 2 : " << greater(1, 2) << "\n";
+    std::cout << "1 > 2 : " << greater_than(1)(2) << "\n";
+    std::cout << "1 < 2 : " << greater_than(2)(1) << "\n";
+
+    print_person_curried(people.at(0))
+                        (std::cout)
+                        (true);
+}
+
+} //_6 --------------------------------------------------------------
 
 } //===========================================================================
 
 void test_ch_04()
 {
+    std::cout << std::boolalpha;
+
 #if (0) //done
     _1::test();
+    _2::test();
+    _3::test();
+    _4::test();
+    _5::test();
 #endif
 
-    _2::test();
+    _6::test();
 }
