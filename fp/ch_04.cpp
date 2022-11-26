@@ -4,6 +4,8 @@
 #include <cmath>
 #include <functional>
 #include <iterator>
+#include <unordered_map>
+#include <map>
 
 namespace { //=================================================================
 
@@ -237,6 +239,66 @@ void test()
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+constexpr std::size_t constexpr_strlen(const char* s)
+{
+    return std::string::traits_type::length(s);
+}
+
+void test()
+{
+#if (0)
+    char buffer[ constexpr_strlen("Hello, Qt6") ];
+#else
+    char buffer[ strlen("Hello, Qt6") ];
+#endif
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+void to_upper(std::string& str)
+{
+    std::cout << "to_upper(std::string& str)\n";
+}
+
+template <typename Function>
+auto pointer_lift(Function f)
+{
+    return [f](auto* item) {
+        if (item)
+            f(*item);
+    };
+}
+
+template <typename Function>
+auto collection_lift(Function f)
+{
+    return [f](auto& items) {
+        for (auto& item : items) {
+            f(item);
+        }
+    };
+}
+
+template <typename C,
+          typename P1 = typename std::remove_cv<typename C::value_type::first_type>::type,
+          typename P2 = typename C::value_type::second_type>
+std::vector<std::pair<P2, P1>> reverse_pairs(const C& items)
+{
+    std::vector<std::pair<P2, P1>> result(items.size());
+
+    std::transform(std::begin(items), std::end(items), std::begin(items), [](const std::pair<P1, P2>& p) {
+        return std::make_pair(p.second, p.first);
+    });
+
+    return result;
+}
+
+} //_8 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_ch_04()
@@ -249,7 +311,8 @@ void test_ch_04()
     _3::test();
     _4::test();
     _5::test();
+    _6::test();
 #endif
 
-    _6::test();
+    _7::test();
 }
