@@ -6,6 +6,7 @@
 #include <iterator>
 #include <unordered_map>
 #include <map>
+#include <cstring>
 
 namespace { //=================================================================
 
