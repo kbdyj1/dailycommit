@@ -112,6 +112,31 @@ void process_events(const maze_t& maze, const position_t& current)
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+class person_t {
+public:
+    person_t with_name(const std::string& name) const& {
+        person_t result(*this);
+
+        result.name = name;
+
+        return result;
+    }
+    person_t with_name(const std::string& name) && {
+        person_t result(std::move(*this));
+
+        result.name = name;
+
+        return result;
+    }
+
+private:
+    std::string name;
+};
+
+} //_3 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_ch_05()

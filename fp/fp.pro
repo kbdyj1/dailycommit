@@ -9,6 +9,7 @@ SOURCES += \
         ch_03.cpp \
         ch_04.cpp \
         ch_05.cpp \
+        ch_06.cpp \
         main.cpp
 
 DISTFILES += \
