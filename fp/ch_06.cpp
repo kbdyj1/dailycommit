@@ -191,9 +191,159 @@ void test()
 
 namespace _4 {
 
+class null_param
+{};
 
+template <typename Sig, typename F>
+class memoize_helper;
+
+template <typename Result, typename... Args, typename F>
+class memoize_helper<Result(Args...), F> {
+    using function_type = F;
+    using args_tuple_type = std::tuple<std::decay_t<Args>...>;
+
+    function_type f;
+    mutable std::map<args_tuple_type, Result> cache;
+    mutable std::recursive_mutex mutex;
+
+public:
+    template <typename Function>
+    memoize_helper(Function&& f, null_param) : f(f)
+    {}
+
+    memoize_helper(const memoize_helper& other) : f(other.f)
+    {}
+
+    template<typename... InnerArgs>
+    Result operator()(InnerArgs&&... args) const
+    {
+        auto lock = std::unique_lock<std::recursive_mutex>(mutex);
+        const auto args_tuple = std::make_tuple(args...);
+        const auto cached = cache.find(args_tuple);
+        if (cached != cache.end()) {
+            return cached->second;
+        } else {
+            auto&& result = f(*this, std::forward<InnerArgs>(args)...);
+            cache[args_tuple] = result;
+            return result;
+        }
+    }
+};
+
+template <typename Sig, typename F>
+memoize_helper<Sig, std::decay_t<F>>
+make_memorized_r(F&& f)
+{
+    return {std::forward<F>(f), null_param{}};
+}
+
+void test()
+{
+    auto fib_memo = make_memorized_r<unsigned int(unsigned int)>([](auto& fib, unsigned int n){
+        std::cout << "fib(" << n << ")\n";
+        return n == 0 ? 0 :
+               n == 1 ? 1 :
+               fib(n-1) + fib(n-2);
+    });
+
+    auto result = fib_memo(20);
+
+    std::cout << "fib_memo(20): " << result << "\n";
+}
 
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+template <typename... Strings>
+class lazy_string_concat_helper;
+
+template <typename LastString, typename... Strings>
+class lazy_string_concat_helper<LastString, Strings...>
+{
+    const LastString& data;
+    lazy_string_concat_helper<Strings...> tail;
+
+public:
+    lazy_string_concat_helper(const LastString& data, lazy_string_concat_helper<Strings...> tail)
+        : data(data)
+        , tail(tail)
+    {}
+
+    int size() const {
+        return data.size() + tail.size();
+    }
+
+    template<typename Iter>
+    void save(Iter end) const
+    {
+        const auto begin = end - data.size();
+        std::copy(data.cbegin(), data.cend(), begin);
+
+        tail.save(begin);
+    }
+
+    operator std::string() const
+    {
+        std::string result(size(), '\0');
+        save(result.end());
+        return result;
+    }
+
+    lazy_string_concat_helper<std::string, LastString, Strings...>
+    operator+(const std::string& other) const
+    {
+        return lazy_string_concat_helper<std::string, LastString, Strings...>(other, *this);
+    }
+};
+
+template <>
+class lazy_string_concat_helper<>
+{
+public:
+    lazy_string_concat_helper()
+    {}
+
+    int size() const
+    {
+        return 0;
+    }
+
+    template<typename Iter>
+    void save(Iter) const
+    {}
+
+    lazy_string_concat_helper<std::string>
+    operator+(const std::string& other) const
+    {
+        return lazy_string_concat_helper<std::string>(other, *this);
+    }
+};
+
+void test()
+{
+    std::string hello{"Hello, "};
+    std::string qt{"Qt"};
+    std::string version{"6.4"};
+
+    auto lc = lazy_string_concat_helper<>();
+
+    const auto full = lc + hello + qt + version;
+
+    std::cout << (std::string)full << "\n";
+
+    std::string name = "John ";
+    std::string s = "before";
+
+    auto lc2 = lazy_string_concat_helper<>();
+    const auto full2 = lc + name + s;
+
+    s = "after";
+
+    std::cout << (std::string)full2 << "\n";
+}
+
+} //_5 --------------------------------------------------------------
 
 } //===========================================================================
 
@@ -202,6 +352,9 @@ void test_ch_06()
 #if (0) //done
     _1::test();
     _2::test();
+    _3::test();
+    _4::test();
 #endif
-    _2::test();
+
+    _5::test();
 }
