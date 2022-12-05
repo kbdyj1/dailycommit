@@ -156,6 +156,131 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+template <typename T, typename E>
+class Expected
+{
+    union {
+        T mValue;
+        E mError;
+    };
+    bool mValid;
+
+public:
+    Expected(const Expected& other) : mValid(other.mValid)
+    {
+        if (mValid) {
+            new (&mValue) T(other.mValue);
+        } else {
+            new (&mError) E(other.mError);
+        }
+    }
+    Expected(Expected&& other) : mValid(other.mValid)
+    {
+        if (mValid) {
+            new (&mValue) T(std::move(other.mValue));
+        } else {
+            new (&mError) E(std::move(other.mError));
+        }
+    }
+    ~Expected()
+    {
+        if (mValid) {
+            mValue.~T();
+        } else {
+            mError.~E();
+        }
+    }
+    operator bool() const
+    {
+        return mValid;
+    }
+    operator std::optional<T>() const
+    {
+        if (mValid) {
+            return mValue;
+        } else {
+            return std::optional<T>();
+        }
+    }
+
+    T& get()
+    {
+        if (!mValid) {
+            throw std::logic_error("invalid");
+        }
+        return mValue;
+    }
+    E& error()
+    {
+        if (mValid) {
+            throw std::logic_error("there is no error");
+        }
+        return mError;
+    }
+
+    template<typename... Args>
+    static Expected success(Args&&... params)
+    {
+        Expected result;
+
+        result.mValid = true;
+
+        new(&result.mValue) T(std::forward<Args>(params)...);
+
+        return result;
+    }
+
+    template<typename... Args>
+    static Expected error(Args&&... params)
+    {
+        Expected result;
+
+        result.mValid = false;
+
+        new(&result.mError) E(std::forward<Args>(params)...);
+
+        return result;
+    }
+    void swap(Expected& other)
+    {
+        if (mValid) {
+            if (other.mValid) {
+                std::swap(mValue, other.mValue);
+            } else {
+                auto temp = std::move(other.mError);
+                other.mError.~E();
+                new (&other.mValue) T(std::move(mValue));
+
+                mValue.~T();
+                new (&mError) E(std::move(temp));
+                std::swap(mValid, other.mValid);
+            }
+        } else {
+            if (other.mValid) {
+                other.swap(*this);
+            } else {
+                std::swap(mError, other.mError);
+            }
+        }
+    }
+};
+
+template <typename T, typename Variant, typename Exp = Expected<T, std::string>>
+Exp get_if(const Variant& v)
+{
+    T* p = std::get_if<T>(v);
+
+    if (p) {
+        return Exp::success(*p);
+    } else {
+        return Exp::error("Variant doesn't contain the desired type");
+    }
+}
+
+} //_3 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_ch_09()
