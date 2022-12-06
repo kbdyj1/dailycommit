@@ -4,6 +4,9 @@
 #include <memory>
 #include <cassert>
 #include <variant>
+#include <vector>
+#include <iomanip>
+#include <optional>
 
 namespace { //=================================================================
 
@@ -281,6 +284,153 @@ Exp get_if(const Variant& v)
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+class Tennis {
+    enum class Points {
+        Love,
+        Fifteen,
+        Thirty
+    };
+    enum class Player {
+        Player1,
+        Player2
+    };
+
+    struct NormalScoring {
+        Points player1Points;
+        Points player2Points;
+    };
+    struct FortyScoring {
+        Player leadingPlayer;
+        Points otherPlayerPoints;
+    };
+    struct Deuce
+    {};
+    struct Advantage {
+        Player playerWithAdvantage;
+    };
+    std::variant<NormalScoring, FortyScoring, Deuce, Advantage> state;
+
+public:
+    Tennis() : state(NormalScoring{Points::Love, Points::Love})
+    {}
+
+    Points advancePoint(Points points)
+    {
+        switch (points) {
+        case Points::Love:
+            return Points::Fifteen;
+        case Points::Fifteen:
+        case Points::Thirty:
+            return Points::Thirty;
+        }
+    }
+    void score(Player player)
+    {
+        switch (state.index()) {
+        case 0:
+            normalScoring(player);
+            break;
+        case 1:
+            fortyScoring(player);
+            break;
+        case 2:
+            deuce(player);
+            break;
+        case 3:
+            advantage(player);
+            break;
+        }
+    }
+    void normalScoring(Player player)
+    {
+        auto* s = std::get_if<NormalScoring>(&state);
+        if (player == Player::Player1) {
+            if (s->player1Points == Points::Thirty) {
+                FortyScoring forty;
+                forty.leadingPlayer = Player::Player1;
+                forty.otherPlayerPoints = s->player2Points;
+                state = forty;
+            } else {
+                s->player1Points = advancePoint(s->player1Points);
+            }
+        } else {
+            if (s->player2Points == Points::Thirty) {
+                FortyScoring forty;
+                forty.leadingPlayer = Player::Player2;
+                forty.otherPlayerPoints = s->player1Points;
+                state = forty;
+            } else {
+                s->player2Points = advancePoint(s->player2Points);
+            }
+        }
+    }
+    void fortyScoring(Player player)
+    {
+    }
+    void deuce(Player player)
+    {
+    }
+    void advantage(Player player)
+    {
+    }
+};
+
+} //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+using var_t = std::variant<int, long, double, std::string>;
+
+template <typename>
+inline constexpr bool always_false_v = false;
+
+template <typename... Ts>
+struct Overloaded : Ts... { using Ts::operator()...; };
+
+template <typename... Ts>
+Overloaded(Ts...) -> Overloaded<Ts...>;
+
+void test()
+{
+    auto vec = std::vector<var_t>{10, 15L, 1.5, "Hello, Qt6"};
+    for (auto& v : vec) {
+        std::visit([](auto&& arg){
+            std::cout << arg;
+        }, v);
+
+        var_t w = std::visit([](auto&& arg) -> var_t{
+            return arg + arg;
+        }, v);
+
+        std::cout << "After doubling, variant holds ";
+
+        std::visit([](auto&& arg){
+            using T = std::decay_t<decltype(arg)>;
+
+            if constexpr (std::is_same_v<T, int>)
+                std::cout << "int with value " << arg << "\n";
+            else if constexpr (std::is_same_v<T, long>)
+                std::cout << "long with value " << arg << "\n";
+            else if constexpr (std::is_same_v<T, double>)
+                std::cout << "double with value " << arg << "\n";
+            else if constexpr (std::is_same_v<T, std::string>)
+                std::cout << "long with value " << arg << "\n";
+        }, w);
+    };
+
+    for (auto& v : vec) {
+        std::visit(Overloaded{
+                       [](auto arg) { std::cout << arg << ' '; },
+                       [](double arg) { std::cout << std::fixed << arg << ' '; },
+                       [](const std::string& arg) { std::cout << std::quoted(arg) << ' '; }
+        }, v);
+    }
+}
+
+} //_5 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_ch_09()
@@ -289,7 +439,8 @@ void test_ch_09()
 
 #if (0) //done
     _1::test();
+    _2::test();
 #endif
 
-    _2::test();
+    _5::test();
 }
