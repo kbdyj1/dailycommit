@@ -15,10 +15,11 @@ void test_ch_06();
 void test_ch_07();
 void test_ch_08();
 void test_ch_09();
+void test_ch_10();
 
 int main()
 {
-    test_ch_09();
+    test_ch_10();
 
     return 0;
 }
