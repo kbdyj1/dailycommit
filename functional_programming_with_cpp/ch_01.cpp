@@ -47,11 +47,15 @@ bool isOdd(int value)
 
 const Sums sumWithFunctionalLoopsSimplified(const std::vector<int>& in)
 {
+#if (0)
     Sums theSums{
         sum(filter(in, isEven)),
         sum(filter(in, isOdd)),
         sum(in)
     };
+#else
+    auto theSums = Sums{};
+#endif
     return theSums;
 }
 

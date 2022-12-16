@@ -161,6 +161,22 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+auto addWrapped = [](const auto first, const auto second) {
+    return (first + second) % 20;
+};
+
+template <typename T, T one>
+auto incrementWrapped = std::bind(addWrapped, std::placeholders::_1, one);
+
+void test()
+{
+    std::cout << "incrementWrapped<int, 1>(20): " << incrementWrapped<int, 1>(20) << "\n";
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_05()
@@ -169,7 +185,8 @@ void test_ch_05()
     _1::test();
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }
