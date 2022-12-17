@@ -10,6 +10,10 @@ auto all_of_collection = [](const auto& collection, auto pred) {
     return std::all_of(collection.begin(), collection.end(), pred);
 };
 
+auto any_of_collection = [](const auto& collection, auto pred) {
+    return std::any_of(collection.begin(), collection.end(), pred);
+};
+
 template <typename Dest>
 auto transformAll = [](auto const source, auto pred) {
     Dest result;
@@ -25,6 +29,10 @@ auto concatenate = [](auto first, const auto second) {
 };
 auto concatenate3 = [](auto first, const auto second, const auto third) {
     return concatenate(concatenate(first, second), third);
+};
+
+auto accumulateAll = [](auto source, auto pred) {
+    return std::accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), pred);
 };
 
 namespace _1 {
@@ -146,19 +154,56 @@ typedef std::vector<char> Line;
 typedef std::vector<Line> Lines;
 
 auto allRows = [](auto board) {
-    return transformAll<Lines>(std::vector<int>{0,1,2}, row);
+    return transformAll<Lines>(std::vector<int>{0,1,2}, [board](auto index){
+        return row(board, index);
+    });
 };
 auto allColumns = [](auto board) {
-    return transformAll<Lines>(std::vector<int>{0,1,2}, column);
+    return transformAll<Lines>(std::vector<int>{0,1,2}, [board](auto index){
+        return column(board, index);
+    });
 };
 auto allDiagonals = [](auto board) -> Lines {
     return {mainDiagonal(board), subDiagonal(board)};
 };
-auto all = [](auto board) {
-    concatenate3(allRows(board), allColumns(board), allDiagonals);
+auto all = [](const auto board) {
+    return concatenate3(allRows(board), allColumns(board), allDiagonals(board));
 };
 
-void test()
+auto lineFilledWith = [](const auto& collection, const auto tokenToCheck) {
+    return all_of_collection(collection, [tokenToCheck](const auto& token){
+        return token == tokenToCheck;
+    });
+};
+auto lineFilledWithX = std::bind(lineFilledWith, std::placeholders::_1, 'X');
+auto lineFilledWithO = std::bind(lineFilledWith, std::placeholders::_1, 'O');
+
+auto xWins = [](const auto& board) {
+    return any_of_collection(all(board), lineFilledWithX);
+};
+auto oWins = [](const auto& board) {
+    return any_of_collection(all(board), lineFilledWithO);
+};
+
+void test_x_wins()
+{
+    char board[3][3] = {
+#if (0)
+        {'X', '-', 'O' },
+        {'X', 'O', '-' },
+        {'X', '-', 'O' }
+#else
+        {'X', '-', 'O' },
+        {'X', 'X', 'O' },
+        {'O', 'X', 'O' }
+#endif
+    };
+
+    std::cout << "x win? " << xWins(board) << "\n";
+    std::cout << "o win? " << oWins(board) << "\n";
+}
+
+void test_lambda()
 {
     auto printAll = [](const auto& container){
         std::copy(container.begin(), container.end(), std::ostream_iterator<char>(std::cout, " "));
@@ -183,7 +228,64 @@ void test()
     printAll(subDiagonal(board));
 }
 
+auto lineToString = [](const auto& line) {
+    return transformAll<std::string>(line, [](const auto c) -> char {
+        return c;
+    });
+};
+
+auto boardToLineString = [](const auto board) {
+    return transformAll<std::vector<std::string>>(board, lineToString);
+};
+
+auto boardToString = [](const auto board) {
+    return accumulateAll(boardToLineString(board), [](const std::string& l, const std::string& r){
+        return l + r + "\n";
+    });
+};
+
+void test_line_to_string() {
+    auto line = Line{'X', '-', 'O'};
+    std::cout << lineToString(line) << "\n";
+};
+
+void test_board_to_string() {
+    Lines board = {
+        {'X', '-', 'O' },
+        {'X', 'X', 'O' },
+        {'O', 'X', 'O' }
+    };
+    std::cout << "boardToString(board):\n";
+    std::cout << boardToString(board) << "\n";
+}
+
+void test() {
+    test_x_wins();
+    test_line_to_string();
+    test_board_to_string();
+}
+
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+void test() {
+    auto v = std::vector<std::string>{"Hello", "Qt" , "6.0"};
+    auto concatenate = [](const std::string& l, const std::string& r) {
+        return l + r + " ";
+    };
+
+#if (0)
+    auto concatenated = std::accumulate(v.begin(), v.end(), std::string{}, concatenate);
+#else
+
+    auto concatenated = accumulateAll(v, concatenate);
+#endif
+
+    std::cout << "concatenated: " << concatenated << "\n";
+}
+
+} //_5 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -194,6 +296,7 @@ void test_ch_06()
     _2::test();
     _3::test();
 #endif
-
     _4::test();
+
+    //_5::test();
 }
