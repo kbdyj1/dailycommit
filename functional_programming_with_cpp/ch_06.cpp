@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <map>
 #include <iterator>
 #include <numeric>
 
@@ -33,6 +34,11 @@ auto concatenate3 = [](auto first, const auto second, const auto third) {
 
 auto accumulateAll = [](auto source, auto pred) {
     return std::accumulate(source.begin(), source.end(), typename decltype(source)::value_type(), pred);
+};
+
+auto findInCollection = [](const auto& collection, auto pred) {
+    auto result = std::find_if(collection.begin(), collection.end(), pred);
+    return (result == collection.end()) ? std::nullopt : std::optional(*result);
 };
 
 namespace _1 {
@@ -185,22 +191,55 @@ auto oWins = [](const auto& board) {
     return any_of_collection(all(board), lineFilledWithO);
 };
 
+auto full = [](const auto& board) {
+    return all_of_collection(allRows(board), [](const auto& row){
+        return std::none_of(row.begin(), row.end(), [](char c){
+            return c == '-';
+        });
+    });
+};
+
 void test_x_wins()
 {
     char board[3][3] = {
 #if (0)
-        {'X', '-', 'O' },
+        {'O', '-', 'O' },
         {'X', 'O', '-' },
         {'X', '-', 'O' }
 #else
-        {'X', '-', 'O' },
+        {'X', 'O', 'X' },
         {'X', 'X', 'O' },
-        {'O', 'X', 'O' }
+        {'O', 'O', 'O' }
 #endif
     };
 
-    std::cout << "x win? " << xWins(board) << "\n";
-    std::cout << "o win? " << oWins(board) << "\n";
+    auto linesDescription = std::map<std::string, Line>{
+        {"1st row", row(board, 0)},
+        {"2nd row", row(board, 1)},
+        {"3rd row", row(board, 2)},
+        {"1st column", column(board, 0)},
+        {"2nd column", column(board, 1)},
+        {"3rd column", column(board, 2)},
+        {"main diagonal", mainDiagonal(board)},
+        {"sub diagonal", subDiagonal(board)}
+    };
+    if (xWins(board)) {
+        auto result = findInCollection(linesDescription, [](auto value){
+            return lineFilledWithX(value.second);
+        });
+        if (result.has_value()) {
+            std::cout << "x win : " << result->first << "\n";
+        }
+    } else if (oWins(board)) {
+        auto result = findInCollection(linesDescription, [](auto value){
+            return lineFilledWithO(value.second);
+        });
+        if (result.has_value()) {
+            std::cout << "o win : " << result->first << "\n";
+        }
+    } else if (full(board)) {
+        std::cout << "draw game !\n";
+    }
 }
 
 void test_lambda()
