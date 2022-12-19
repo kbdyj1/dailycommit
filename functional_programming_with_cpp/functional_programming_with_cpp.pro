@@ -10,5 +10,4 @@ SOURCES += \
         ch_04.cpp \
         ch_05.cpp \
         ch_06.cpp \
-        ch_07.cpp \
         main.cpp

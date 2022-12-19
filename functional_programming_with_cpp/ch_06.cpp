@@ -191,6 +191,12 @@ auto oWins = [](const auto& board) {
     return any_of_collection(all(board), lineFilledWithO);
 };
 
+auto playerWins = [](const auto& board, const auto& player) {
+    return any_of_collection(all(board), [player](auto line){
+        return lineFilledWith(line, player);
+    });
+};
+
 auto full = [](const auto& board) {
     return all_of_collection(allRows(board), [](const auto& row){
         return std::none_of(row.begin(), row.end(), [](char c){
@@ -223,14 +229,14 @@ void test_x_wins()
         {"main diagonal", mainDiagonal(board)},
         {"sub diagonal", subDiagonal(board)}
     };
-    if (xWins(board)) {
+    if (playerWins(board, 'X')) {
         auto result = findInCollection(linesDescription, [](auto value){
             return lineFilledWithX(value.second);
         });
         if (result.has_value()) {
             std::cout << "x win : " << result->first << "\n";
         }
-    } else if (oWins(board)) {
+    } else if (playerWins(board, 'O')) {
         auto result = findInCollection(linesDescription, [](auto value){
             return lineFilledWithO(value.second);
         });
@@ -298,10 +304,89 @@ void test_board_to_string() {
     std::cout << boardToString(board) << "\n";
 }
 
+auto True = []{
+    return true;
+};
+
+enum Result {
+    XWins,
+    OWins,
+    GameNotOverYet,
+    Draw
+};
+
+auto gameNotOverYet = [](auto board) {
+    return !full(board);
+};
+
+typedef Lines Board;
+
+using Rule = std::pair<std::function<bool()>, Result>;
+
+auto condition = [](auto rule) {
+    return rule.first();
+};
+
+auto result = [](auto rule) {
+    return rule.second;
+};
+
+auto findTheRule = [](const auto& rules) {
+    return *std::find_if(rules.begin(), rules.end(), [](auto rule){
+        return condition(rule);
+    });
+};
+
+auto resultForFirstRuleThaApplies = [](auto rules) {
+    return result(findTheRule(rules));
+};
+
+Result winner(Board board) {
+    auto gameNotOverYetOnBoard = std::bind(gameNotOverYet, board);
+    auto xWinsOnBoard = std::bind(xWins, board);
+    auto oWinsOnBoard = std::bind(oWins, board);
+
+    std::vector<Rule> rules = {
+        {xWinsOnBoard, XWins},
+        {oWinsOnBoard, OWins},
+        {gameNotOverYetOnBoard, GameNotOverYet},
+        {True, Draw}
+    };
+#if (0)
+    auto result = std::find_if(rules.begin(), rules.end(), [](auto pair){
+        return pair.first();
+    });
+
+    return result->second;
+#else
+    return resultForFirstRuleThaApplies(rules);
+#endif
+};
+
+void test_winner() {
+    auto board = Board {
+        { 'X', 'O', 'O' },
+        { 'O', 'X', 'X' },
+        { 'O', 'X', 'O' }
+    };
+
+    auto result = winner(board);
+    auto s = std::string{};
+    switch (result) {
+    case XWins: s = "x wins"; break;
+    case OWins: s = "o wins"; break;
+    case GameNotOverYet: s = "game not over"; break;
+    case Draw: s = "draw game"; break;
+    }
+
+    std::cout << "result: " << s << "\n";
+}
+
 void test() {
-    test_x_wins();
-    test_line_to_string();
-    test_board_to_string();
+    //test_x_wins();
+    //test_line_to_string();
+    //test_board_to_string();
+    test_winner();
 }
 
 } //_4 --------------------------------------------------------------

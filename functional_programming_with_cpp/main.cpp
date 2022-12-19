@@ -16,7 +16,7 @@ int main()
 {
     std::cout << std::boolalpha;
 
-    test_ch_07();
+    test_ch_06();
 
     return 0;
 }
