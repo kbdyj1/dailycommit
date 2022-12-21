@@ -11,4 +11,6 @@ SOURCES += \
         ch_05.cpp \
         ch_06.cpp \
         ch_08.cpp \
-        main.cpp
+        ch_09.cpp \
+        main.cpp \
+        parts/doctest.cpp
