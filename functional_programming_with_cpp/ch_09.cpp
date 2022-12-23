@@ -67,9 +67,6 @@ bool operator>(const Card& l, const Card& r) {
 
 typedef std::vector<Card> Cards;
 
-auto comparePokerHands = [](const auto& l, const auto& r) {
-    return true;
-};
 
 auto has5Cards =[](const auto& hand) {
     return hand.size() == 5;
@@ -100,6 +97,28 @@ auto isStraightFlush = [](const auto& hand) {
            allValuesInOrder(hand);
 };
 
+auto compareStraightFlushes = [](const auto& l, const auto& r) {
+    auto lValue = l.front();
+    auto rValue = r.front();
+    if (lValue > rValue) {
+        return 1;
+    } else if (lValue < rValue) {
+        return -1;
+    } else {
+        return 0;
+    }
+};
+
+auto comparePokerHands = [](const auto& l, const auto& r) {
+    if (isStraightFlush(l) && isStraightFlush(r)) {
+        return compareStraightFlushes(l, r);
+    } else if (isStraightFlush(l)) {
+        return 1;
+    } else if (isStraightFlush(r)) {
+        return -1;
+    }
+    return 0;
+};
 void test_win_with_straight_flush() {
     Cards r{ {0,'2'}, {2,'4'}, {1,'7'}, {3,'9'}, {1,'A'} };
 
@@ -108,21 +127,21 @@ void test_win_with_straight_flush() {
         Cards l{ {3,'2'}, {3,'3'}, {3,'4'}, {3,'5'}, {3,'6'} };
 
         auto result = comparePokerHands(l, r);
-        assert(result == true);
+        assert(result == 1);
     }
     //3 based straigt flush
     {
         Cards l{ {3,'3'}, {3,'4'}, {3,'5'}, {3,'6'}, {3,'7'} };
 
         auto result = comparePokerHands(l, r);
-        assert(result == true);
+        assert(result == 1);
     }
     //10 based straigt flush
     {
         Cards l{ {3,'T'}, {3,'J'}, {3,'Q'}, {3,'K'}, {3,'A'} };
 
         auto result = comparePokerHands(l, r);
-        assert(result == true);
+        assert(result == 1);
     }
     //right win
     {
@@ -130,7 +149,15 @@ void test_win_with_straight_flush() {
         Cards r{ {0,'2'}, {0,'3'}, {0,'4'}, {0,'5'}, {0,'6'} };
 
         auto result = comparePokerHands(l, r);
-        assert(result == false);
+        assert(result == -1);
+    }
+    //right win
+    {
+        Cards l{ {3,'2'}, {3,'3'}, {3,'4'}, {3,'5'}, {3,'6'} };
+        Cards r{ {0,'3'}, {0,'4'}, {0,'5'}, {0,'6'}, {0,'7'} };
+
+        auto result = comparePokerHands(l, r);
+        assert(result == -1);
     }
     std::cout << "test_win_with_straight_flush : PASS\n";
 }
@@ -152,12 +179,18 @@ void test_is_straight_flush() {
         auto result = isStraightFlush(hand);
         assert(result == false);
     }
+    //empty hand
+    {
+        Cards hand{};
+        auto result = isStraightFlush(hand);
+        assert(result == false);
+    }
 
     std::cout << "test_is_straight_flush : PASS\n";
 }
 
 void test() {
-    //test_win_with_straight_flush();
+    test_win_with_straight_flush();
     test_is_straight_flush();
 }
 

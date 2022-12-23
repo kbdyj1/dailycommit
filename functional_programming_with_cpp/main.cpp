@@ -12,12 +12,13 @@ void test_ch_05();
 void test_ch_06();
 void test_ch_08();
 void test_ch_09();
+void test_ch_10();
 
 int main()
 {
     std::cout << std::boolalpha;
 
-    test_ch_09();
+    test_ch_10();
 
     return 0;
 }
