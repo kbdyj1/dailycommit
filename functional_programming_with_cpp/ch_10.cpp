@@ -20,13 +20,16 @@
 namespace { //=================================================================
 
 template <typename Dest>
-auto transformAll = [](auto const source, auto pred) {
+auto transformAll = [](auto const& source, auto pred) {
     Dest result;
     result.reserve(source.size());
     std::transform(source.begin(), source.end(), std::back_inserter(result), pred);
-    return result;
+    return std::move(result);
 };
 
+auto increment = [](const auto& value) {
+    return value + 1;
+};
 
 auto measure = [](auto f) {
     auto t0 = std::chrono::high_resolution_clock::now();
@@ -213,6 +216,21 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 { //Reactive
+
+void test()
+{
+    const long Size1G = 125000000;
+    auto v = std::vector<long long>(Size1G);
+    std::fill_n(v.begin(), Size1G, 1000L);
+
+    auto result = transformAll<std::vector<long long>>(v, increment);
+
+    std::cout << result[0] << std::endl;
+}
+
+}
+
 } //namespace =================================================================
 
 void test_ch_10()
@@ -221,7 +239,8 @@ void test_ch_10()
     _1::test();
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }
