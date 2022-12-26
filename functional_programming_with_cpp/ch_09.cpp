@@ -1,5 +1,6 @@
 #include <iostream>
 #include <functional>
+#include <vector>
 #include <map>
 #include <assert.h>
 
