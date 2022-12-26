@@ -13,9 +13,10 @@
 #include <functional>
 #include <execution>
 #include <chrono>
-#include <math.h>
+#include <cmath>
 #include <future>
 #include <iterator>
+#include <numeric>
 
 namespace { //=================================================================
 
@@ -56,12 +57,12 @@ void test()
 
     auto v = std::vector{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto all_of_parallel = [&v](){
-        return std::all_of(std::execution::par, v.begin(), v.end(), [](auto value){
+        return std::all_of(/*std::execution::par, */v.begin(), v.end(), [](auto value){
             return 5 < value;
         });
     };
     auto all_of_sequence = [&v](){
-        return std::all_of(std::execution::seq, v.begin(), v.end(), [](auto value){
+        return std::all_of(/*std::execution::seq, */v.begin(), v.end(), [](auto value){
             return 5 < value;
         });
     };
