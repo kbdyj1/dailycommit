@@ -15,13 +15,14 @@ void test_ch_08();
 void test_ch_09();
 void test_ch_10();
 void test_ch_11();
+void test_ch_12();
 
 int main()
 {
     std::cout << std::boolalpha;
-    std::cout << "pid: " << getpid() << std::endl;
+    std::cout << "pid: " << getpid() << "\n" << std::endl;
 
-    test_ch_11();
+    test_ch_12();
 
     return 0;
 }
