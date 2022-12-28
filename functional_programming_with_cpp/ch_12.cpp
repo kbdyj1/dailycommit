@@ -269,6 +269,189 @@ void test()
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+template <typename ValueType>
+struct State {
+    const ValueType value;
+    const std::function<ValueType(const ValueType)> computeNext;
+
+    State<ValueType> nextState() const {
+        return State<ValueType>{computeNext(value), computeNext};
+    }
+};
+
+auto increment = [](const int current) {
+    return current + 1;
+};
+
+void testSimple()
+{
+    const auto autoIncrementIndex = State<int>{1, increment};
+    std::cout << "value: " << autoIncrementIndex.value << "\n";
+
+    const auto nextIncrementIndex = autoIncrementIndex.nextState();
+    std::cout << "value: " << nextIncrementIndex.value << "\n";
+}
+
+enum Token {
+    Blank,
+    X,
+    O
+};
+
+typedef std::vector<Token> Row;
+typedef std::vector<Row> Board;
+
+struct Move {
+    const Token token;
+    const int x;
+    const int y;
+};
+
+auto makeMove(const Board board, const Move move) -> Board
+{
+    auto nextBoard = Board(board);
+    nextBoard[move.x][move.y] = move.token;
+    return nextBoard;
+}
+
+auto printBoard = [](const auto& board) {
+    auto token = Token::Blank;
+    auto c = ' ';
+    for (auto y=0; y<3; y++) {
+        for (auto x=0; x<3; x++) {
+            token = board[x][y];
+            switch (token) {
+            case Token::Blank: c = '-'; break;
+            case Token::X: c = 'x'; break;
+            case Token::O: c = 'o'; break;
+            }
+            std::cout << c;
+        }
+        std::cout << "\n";
+    }
+    std::cout << "**********\n";
+};
+
+void testTicTacToe()
+{
+    const auto board = Board{
+        { Token::Blank, Token::Blank, Token::Blank },
+        { Token::Blank, Token::Blank, Token::Blank },
+        { Token::Blank, Token::Blank, Token::Blank }
+    };
+
+    auto firstMove = makeMove(board, {Token::X, 0, 0});
+    printBoard(firstMove);
+
+    auto secondMove = makeMove(firstMove, {Token::O, 1, 1});
+    printBoard(secondMove);
+}
+
+void test()
+{
+    //testSimple();
+
+    testTicTacToe();
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+auto plusOptional = [](std::optional<int> l, std::optional<int> r) -> std::optional<int>
+{
+    return (l == std::nullopt || r == std::nullopt)
+        ? std::nullopt
+        : std::make_optional(l.value() + r.value());
+};
+
+auto makeOptional = [](const std::function<int(int,int)> op)
+{
+    return [op](const std::optional<int> l, const std::optional<int> r) -> std::optional<int> {
+        if (l == std::nullopt || r == std::nullopt)
+            return std::nullopt;
+        return std::make_optional(op(l.value(), r.value()));
+    };
+};
+
+std::function<std::optional<int>(const int, const int)> divide0 = [](const int l, const int r) -> std::optional<int> {
+    return (r == 0)
+        ? std::nullopt
+        : std::make_optional(l / r);
+};
+
+void testPlus()
+{
+    auto plusOptional = makeOptional(std::plus<int>());
+
+    std::cout << "plusOptional(1,2): " << plusOptional(std::optional{1}, std::optional{2}).value() << "\n";
+
+    auto result = plusOptional(std::nullopt, std::optional{2});
+
+    if (result.has_value()){
+        std::cout << result.value();
+    } else {
+        std::cout << "nullopt";
+    }
+    std::cout << std::endl;
+}
+
+void testDiv()
+{
+    auto divOptional = makeOptional(std::divides<int>());
+
+    auto result = divOptional(std::optional{2}, std::optional{0});
+
+    std::cout << "divOptional(2, 0) : " << result.value_or(0) << "\n";
+}
+
+void test()
+{
+    //testPlus();
+
+    testDiv();
+}
+
+} //_8 --------------------------------------------------------------
+
+namespace _9 { //Monad
+
+template <typename ValueType>
+struct Maybe {
+    typedef std::function<std::optional<ValueType>(const ValueType, const ValueType)> OperationType;
+
+    const std::optional<ValueType> value;
+    std::optional<ValueType> apply(const OperationType operation, const std::optional<ValueType> second)
+    {
+        if (value == std::nullopt || second == std::nullopt)
+            return std::nullopt;
+
+        return operation(value.value(), second.value());
+    }
+};
+
+void test()
+{
+    std::function<std::optional<int>(const int, const int)> divide0 = [](const int l, const int r)
+    -> std::optional<int> {
+        return (r == 0) ? std::nullopt : std::make_optional(l / r);
+    };
+    {
+        auto value = Maybe<int>{1}.apply(std::plus<int>(), 2);
+        std::cout << "Maybe{1}.apply(plus<int>(), 2): " << value.value_or(0) << "\n";
+    }
+    {
+        //auto value = Maybe<int>{std::nullopt}.apply(divide0, 2);
+        //std::cout << "Maybe{nullopt}.apply(divide0, 2): " << value.value_or(-1) << "\n";
+        auto value = Maybe<int>{1}.apply(std::divides<int>(), 0);
+        std::cout << "Maybe{1}.apply(std::divides<int>, 0): " << value.value_or(-1) << "\n";
+    }
+}
+
+} //_9 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_12()
@@ -278,7 +461,10 @@ void test_ch_12()
     _2::test();
     _4::test();
     _5::test();
+    _6::test();
+    _7::test();
+    _8::test();
 #endif
 
-    _6::test();
+    _9::test();
 }
