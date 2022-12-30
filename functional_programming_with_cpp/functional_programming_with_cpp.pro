@@ -5,6 +5,8 @@ CONFIG -= qt
 
 LIBS += -lpthread
 
+INCLUDEPATH += range-v3/include
+
 SOURCES += \
         ch_01.cpp \
         ch_02.cpp \
@@ -18,5 +20,6 @@ SOURCES += \
         ch_11.cpp \
         ch_12.cpp \
         ch_13.cpp \
+        ch_14.cpp \
         main.cpp \
         parts/doctest.cpp
