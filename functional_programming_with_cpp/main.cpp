@@ -18,15 +18,14 @@ void test_ch_11();
 void test_ch_12();
 void test_ch_13();
 void test_ch_14();
+void test_ch_15();
 
 int main()
 {
     std::cout << std::boolalpha;
     std::cout << "pid: " << getpid() << "\n" << std::endl;
 
-#if __cplusplus > 201703L
-    test_ch_14();
-#endif
+    test_ch_15();
 
     return 0;
 }
