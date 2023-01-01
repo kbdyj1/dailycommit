@@ -1,6 +1,7 @@
 #include <iostream>
 #include <functional>
 #include <iterator>
+#include <numeric>
 
 namespace { //=================================================================
 
@@ -69,6 +70,58 @@ void test()
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+struct Person {
+    int age;
+    std::string name;
+};
+std::ostream& operator<<(std::ostream& os, const Person& person) {
+    os << "Person{ age: " << person.age << ", name: " << person.name << " }\n";
+    return os;
+};
+
+auto peopleToJson = [](const Person& person) {
+    std::string ret;
+    {
+        ret += "people{age: ";
+        ret += std::to_string(person.age);
+        ret += ", name: ";
+        ret += person.name;
+        ret += "}";
+    }
+    return ret;
+};
+
+void test()
+{
+    auto persons = std::vector<Person>{
+        { 18, "Minji" },
+        { 18, "Hani" },
+        { 17, "Daaniel" },
+        { 16, "Haerin" },
+        { 14, "Hyein" }
+    };
+
+    auto json = std::vector<std::string>(persons.size());
+    std::transform(persons.begin(), persons.end(), std::back_inserter(json), peopleToJson);
+    auto personJson = std::string{"people: {"} + std::accumulate(json.begin(), json.end(), std::string(), [](const std::string& l, const std::string& r){
+        return l.empty() ? r : (l + ", " + r);
+    }) + "}";
+
+    std::cout << personJson << std::endl;
+
+    auto sisters = std::vector<Person>{};
+    std::copy_if(persons.begin(), persons.end(), std::back_inserter(sisters), [](const Person& person){
+        return 17 < person.age;
+    });
+
+    std::cout <<"\nNew Jeans sister's\n";
+    std::copy(sisters.begin(), sisters.end(), std::ostream_iterator<Person>(std::cout, ""));
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_15()
@@ -76,7 +129,8 @@ void test_ch_15()
 #if (0)
     _1::test();
     _2::test();
+    _3::test();
 #endif
 
-    _3::test();
+    _4::test();
 }
