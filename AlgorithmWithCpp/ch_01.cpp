@@ -3,12 +3,26 @@
 #include <iterator>
 #include <exception>
 #include <type_traits>
+
+//container
 #include <vector>
+#include <list>
+#include <deque>
 #include <forward_list>
+
+//adapter
+#include <stack>
+#include <queue>
 
 using namespace std;
 
 namespace { //=============================================================
+
+template <typename T>
+auto printContainer = [](const auto& l){
+    std::copy(l.begin(), l.end(), std::ostream_iterator<T>(std::cout, " "));
+    cout << "\n";
+};
 
 namespace _1 {
 
@@ -153,6 +167,74 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 { //list
+
+void test()
+{
+    auto l = std::list<int>{1, 2, 3, 4, 5};
+
+    l.push_back(6);
+    l.insert(next(l.begin()), 0);
+
+    printContainer<int>(l);
+
+    l.reverse();
+
+    printContainer<int>(l);
+
+    l.remove_if([](int value){
+        return value % 2 == 0;
+    });
+
+    printContainer<int>(l);
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+void test()
+{
+    auto v = std::vector<int>{ 1, 2, 3, 4 };
+    auto iter3 = v.begin() + 3;
+    std::cout << "iter3: " << *iter3 << "\n";
+
+    v.insert(v.begin() + 2, 0);
+    std::cout << "iter3: " << *iter3 << "\n";
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+void test()
+{
+    auto dq = std::deque<int>{ 1, 2, 3, 4, 5 };
+
+    dq.push_front(0);
+    dq.push_back(6);
+    dq.insert(dq.begin()+2, 10);
+
+    printContainer<int>(dq);
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 { //stack
+
+void test()
+{
+    auto s = std::stack<int>{};
+
+    s.push(1);
+    s.push(2);
+    s.push(3);
+
+    std::cout << "stack.top(): " << s.top() << ", stack.empty(): " << s.empty() << "\n";
+}
+
+} //_8 --------------------------------------------------------------
+
 } //==========================================================================
 
 void test_ch_01()
@@ -163,7 +245,10 @@ void test_ch_01()
     _1::test();
     _2::test();
     _3::test(); //vector
+    _4::test(); //forward_list
+    _5::test(); //list
+    _6::test(); //iterator
 #endif
 
-    _4::test(); //forward_list
+    _7::test(); //deque
 }
