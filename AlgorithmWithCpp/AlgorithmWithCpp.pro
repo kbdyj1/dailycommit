@@ -5,4 +5,5 @@ CONFIG -= qt
 
 SOURCES += \
         ch_01.cpp \
+        ch_02.cpp \
         main.cpp
