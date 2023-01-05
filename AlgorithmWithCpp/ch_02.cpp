@@ -20,6 +20,10 @@ struct Org {
     static Node* find(Node* root, const string& position);
 
     bool add(const string& manager, const string& member);
+
+    void preOrder(Node* node);
+    void inOrder(Node* node);
+    void postOrder(Node* node);
 };
 
 Org Org::createOrg(const string& position)
@@ -67,6 +71,34 @@ bool Org::add(const string& manager, const string& member)
     return true;
 }
 
+void Org::preOrder(Node *node)
+{
+    if (node) {
+        cout << node->position << ", ";
+
+        preOrder(node->l);
+        preOrder(node->r);
+    }
+}
+
+void Org::inOrder(Node *node)
+{
+    if (node) {
+        inOrder(node->l);
+        cout << node->position << ", ";
+        inOrder(node->r);
+    }
+}
+
+void Org::postOrder(Node *node)
+{
+    if (node) {
+        inOrder(node->l);
+        inOrder(node->r);
+        cout << node->position << ", ";
+    }
+}
+
 void test()
 {
     auto tree = Org::createOrg("CEO");
@@ -78,6 +110,10 @@ void test()
     tree.add("Marketing", "Distribution");
     tree.add("Marketing", "Promotion");
     tree.add("VICE", "Finance");
+
+    //tree.preOrder(tree.root);   //CEO, VICE, IT VICE, Security, App, Marketing, Distribution, Promotion
+    tree.inOrder(tree.root);    //Security, IT VICE, App, VICE, Distribution, Marketing, Promotion, CEO
+    //tree.postOrder(tree.root);  //Security, IT VICE, App, VICE, Distribution, Marketing, Promotion, CEO
 }
 
 } //_1 --------------------------------------------------------------
