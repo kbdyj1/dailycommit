@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ struct Org {
     void preOrder(Node* node);
     void inOrder(Node* node);
     void postOrder(Node* node);
+    void levelOrder(Node* node);
 };
 
 Org Org::createOrg(const string& position)
@@ -99,6 +101,30 @@ void Org::postOrder(Node *node)
     }
 }
 
+void Org::levelOrder(Node *node)
+{
+    if (node) {
+        auto q = std::queue<Node*>{};
+        q.push(node);
+
+        while (!q.empty()) {
+            int size = q.size();
+
+            for (auto i=0; i<size; i++) {
+                auto current = q.front();
+                q.pop();
+
+                std::cout << current->position << ", ";
+                if (current->l)
+                    q.push(current->l);
+                if (current->r)
+                    q.push(current->r);
+            }
+            cout << endl;
+        }
+    }
+}
+
 void test()
 {
     auto tree = Org::createOrg("CEO");
@@ -112,8 +138,9 @@ void test()
     tree.add("VICE", "Finance");
 
     //tree.preOrder(tree.root);   //CEO, VICE, IT VICE, Security, App, Marketing, Distribution, Promotion
-    tree.inOrder(tree.root);    //Security, IT VICE, App, VICE, Distribution, Marketing, Promotion, CEO
+    //tree.inOrder(tree.root);    //Security, IT VICE, App, VICE, Distribution, Marketing, Promotion, CEO
     //tree.postOrder(tree.root);  //Security, IT VICE, App, VICE, Distribution, Marketing, Promotion, CEO
+    tree.levelOrder(tree.root);
 }
 
 } //_1 --------------------------------------------------------------
