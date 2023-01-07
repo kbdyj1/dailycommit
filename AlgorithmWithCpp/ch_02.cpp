@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <functional>
 
 using namespace std;
 
@@ -145,9 +146,178 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 { //BST
+
+template <typename T>
+class Tree {
+public:
+    struct Node {
+        T value;
+        Node* l;
+        Node* r;
+    };
+
+private:
+    Node* root;
+
+    void insertInternal(Node* node, Node* insert) {
+        auto nodeValue = node->value;
+        auto insertValue = insert->value;
+        if (insertValue < nodeValue) {
+            if (node->l) {
+                insertInternal(node->l, insert);
+            } else {
+                node->l = insert;
+            }
+        } else if (insertValue > nodeValue) {
+            if (node->r) {
+                insertInternal(node->r, insert);
+            } else {
+                node->r = insert;
+            }
+        } else {
+            std::cout << "same value exist: " << insertValue << "\n";
+
+            delete insert;
+        }
+    }
+
+    Node* removeInternal(Node* node, T value) {
+        if (node == nullptr)
+            return nullptr;
+
+        if (node->value == value) {
+            if (!node->l) {
+                auto tmp = node->r;
+                delete node;
+                return tmp;
+            }
+            if (!node->r) {
+                auto tmp = node->l;
+                delete node;
+                return tmp;
+            }
+
+            auto s = succssor(node);
+            node->value = s->value;
+
+            node->r = removeInternal(node->r, s->value);
+        } else if (node->value < value) {
+            if (node->r) {
+                node->r = removeInternal(node->r, value);
+            }
+        } else if (node->value > value) {
+            if (node->l) {
+                node->l = removeInternal(node->l, value);
+            }
+        }
+        return node;
+    }
+    Node* succssor(Node* node) {
+        Node* current = node->r;
+        while (current->l) {
+            current = current->l;
+        }
+        return current;
+    }
+
+public:
+    Tree() : root(nullptr)
+    {}
+    ~Tree()
+    {
+        postOrder(root, [](Node* node){
+            std::cout << "del(" << node->value << "), ";
+            delete node;
+        });
+        std::cout << "\n";
+    }
+
+    Node* rootNode() const {
+        return root;
+    }
+
+    void insert(T value) {
+        auto node = new Node{ value, nullptr, nullptr };
+
+        if (root) {
+            insertInternal(root, node);
+        } else {
+            root = node;
+        }
+    }
+    void remove(T value) {
+        if (root) {
+            root = removeInternal(root, value);
+        }
+    }
+    void preOrder(Node* node, const std::function<void(Node*)>& func) {
+        if (node) {
+            func(node);
+            preOrder(node->l, func);
+            preOrder(node->r, func);
+        }
+    }
+    void inOrder(Node* node, const std::function<void(Node*)>& func) {
+        if (node) {
+            inOrder(node->l, func);
+            func(node);
+            inOrder(node->r, func);
+        }
+    }
+    void postOrder(Node* node, const std::function<void(Node*)>& func) {
+        if (node) {
+            postOrder(node->l, func);
+            postOrder(node->r, func);
+            func(node);
+        }
+    }
+    void print() {
+        inOrder(root, [](Tree<int>::Node* node){
+            std::cout << node->value << ", ";
+        });
+        std::cout << "\n";
+    }
+};
+
+void test()
+{
+    auto tree = Tree<int>{};
+
+    tree.insert(3);
+    tree.insert(4);
+    tree.insert(8);
+    tree.insert(5);
+    tree.insert(1);
+    tree.insert(9);
+    tree.insert(7);
+    tree.insert(2);
+    tree.insert(6);
+
+    tree.print();
+
+    std::cout << "tree.remove(8)\n";
+    tree.remove(8);
+    tree.print();
+
+    std::cout << "tree.insert(8)\n";
+    tree.insert(8);
+    tree.print();
+
+    std::cout << "tree.remove(3)\n";
+    tree.remove(3);
+    tree.print();
+}
+
+} //_2 --------------------------------------------------------------
+
 } //==========================================================================
 
 void test_ch_02()
 {
+#if (0) //done
     _1::test();
+#endif
+
+    _2::test();
 }
