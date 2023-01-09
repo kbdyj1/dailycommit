@@ -314,13 +314,15 @@ void test()
 } //==========================================================================
 
 void test_ch_02_heap();
+void test_ch_02_graph();
 
 void test_ch_02()
 {
 #if (0) //done
     _1::test();
     _2::test();
+    test_ch_02_heap();
 #endif
 
-    test_ch_02_heap();
+    test_ch_02_graph();
 }
