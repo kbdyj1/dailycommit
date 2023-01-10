@@ -11,9 +11,12 @@ SOURCES += \
         ch_08_person.c \
         ch_08_student.c \
         ch_11.c \
+        ch_15.c \
         main.c
 
 HEADERS += \
     ch_08_person.h \
     ch_08_person_p.h \
     ch_08_student.h
+
+LIBS += -lpthread

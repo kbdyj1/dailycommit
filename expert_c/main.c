@@ -8,10 +8,11 @@ void test_ch_01();
 void test_ch_05();
 void test_ch_08();
 void test_ch_11();
+void test_ch_15();  // thread
 
 int main()
 {
-    test_ch_11();
+    test_ch_15();
 
     return 0;
 }
