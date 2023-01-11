@@ -10,6 +10,8 @@ Item {
         id: view
         anchors.fill: parent
 
+        objectName: "view3d"
+
         environment: SceneEnvironment {
             clearColor: "blue"
             backgroundMode: SceneEnvironment.Color

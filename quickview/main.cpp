@@ -61,7 +61,7 @@ void launchQuickView() {
     //testConversionBetweenQtAndJavascriptTypes(view);
     //testNestedItem(view);
     //testNewQmlGrammer(view);
-    //testQuick3D(view);
+    testQuick3D(view);
     //testStateMachine(view);
     //testJsValue();
     //testJsEngine();
@@ -73,7 +73,7 @@ void launchQuickView() {
     //test_defaultProperty(view, "qrc:/quickview/qml/TestDefaultProperty.qml");
     //testSimpleQml(view, "qrc:/quickview/qml/TestQuick.qml");
     //testSimpleQml(view, "qrc:/quickview/qml/TestAnimation.qml");
-    testSimpleQml(view, "qrc:/quickview/qml/RtoL.qml");
+    //testSimpleQml(view, "qrc:/quickview/qml/RtoL.qml");
 
     view->show();
 }
