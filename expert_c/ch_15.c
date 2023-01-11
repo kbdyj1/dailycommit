@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdbool.h>
+
+#define _GNU_SOURCE
 #include <unistd.h>
 
 static int thread_main(void* param)
@@ -101,6 +103,60 @@ static void test_thread_compete()
     fflush(stdout);
 }
 
+//-------------------------------------------------------------------
+
+static void* thread_main3(void* param)
+{
+    int* sharedValue = (int*)param;
+
+    int tid = gettid();
+
+    (*sharedValue)++;
+
+    printf("[%d] shared value: %d\n", tid, *sharedValue);
+
+    return NULL;
+}
+
+static void* thread_main4(void *param)
+{
+    int* sharedValue = (int*)param;
+
+    int tid = gettid();
+
+    *sharedValue += 2;
+
+    printf("[%d] shared value: %d\n", tid, *sharedValue);
+
+    return NULL;
+}
+
+void test_thread_compete_with_shared()
+{
+    int sharedValue = 0;
+
+    pthread_t t0;
+    pthread_t t1;
+
+    int result0 = pthread_create(&t0, NULL, thread_main3, &sharedValue);
+    int result1 = pthread_create(&t1, NULL, thread_main4, &sharedValue);
+
+    if (result0 || result1) {
+        printf("pthread_create() error: %d, %d", result0, result1);
+        exit(1);
+    }
+
+    result0 = pthread_join(t0, NULL);
+    result1 = pthread_join(t1, NULL);
+
+    if (result0 || result1) {
+        printf("pthread_join() error: %d, %d", result0, result1);
+        exit(2);
+    }
+
+    printf("sharedValue: %d\n", sharedValue);
+}
+
 //=============================================================================
 
 void test_ch_15()
@@ -109,7 +165,8 @@ void test_ch_15()
     test_thread_create();
     test_thread_id();
     test_detached_thread();
+    test_thread_compete();
 #endif
 
-    test_thread_compete();
+    test_thread_compete_with_shared();
 }

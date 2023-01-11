@@ -12,6 +12,7 @@ SOURCES += \
         ch_08_student.c \
         ch_11.c \
         ch_15.c \
+        ch_16.c \
         main.c
 
 HEADERS += \
