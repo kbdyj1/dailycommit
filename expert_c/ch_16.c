@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <semaphore.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
 
 static pthread_mutex_t mtx;
 
@@ -232,7 +235,7 @@ static void _4_test()
     pthread_t t0;
     pthread_t t1;
 
-#if defined(__APPLE__)
+#if defined(__APPLE__)  //MAC does not support unnamed semaphore
     semaphore = sem_open("sem0", O_CREATE|O_EXCL, 0644, 1);
 #else
     sem_t sem;
@@ -259,6 +262,76 @@ static void _4_test()
 #endif
 }
 
+//-------------------------------------------------------------------
+
+static pthread_barrier_t _5_barrier;
+static pthread_mutex_t _5_oxygen_mtx;
+static sem_t* _5_hydrogen_sem = NULL;
+static unsigned int _5_num_of_water = 0;
+
+static void* _5_hydrogen_thread(void* param)
+{
+    sem_wait(_5_hydrogen_sem);
+    pthread_barrier_wait(&_5_barrier);
+    sem_post(_5_hydrogen_sem);
+
+    return NULL;
+}
+
+static void* _5_oxygen_thread(void* param)
+{
+    pthread_mutex_lock(&_5_oxygen_mtx);
+    pthread_barrier_wait(&_5_barrier);
+    ++_5_num_of_water;
+    pthread_mutex_unlock(&_5_oxygen_mtx);
+
+    return NULL;
+}
+
+static void _5_test()
+{
+    pthread_mutex_init(&_5_oxygen_mtx, NULL);
+
+    sem_t sem;
+    _5_hydrogen_sem = &sem;
+    sem_init(_5_hydrogen_sem, 0, 2);
+
+    pthread_barrier_init(&_5_barrier, NULL, 3);
+
+    pthread_t t[150];
+
+    //O
+    for (int i=0; i<50; i++) {
+        if (pthread_create(&t[i], NULL, _5_oxygen_thread, NULL)) {
+            printf("oxygen pthread_create failed.\n");
+            exit(1);
+        }
+    }
+
+    //H2
+    for (int i=50; i<150; i++) {
+        if (pthread_create(&t[i], NULL, _5_hydrogen_thread, NULL)) {
+            printf("hydrogen pthread_create failed.\n");
+            exit(2);
+        }
+    }
+
+    printf("waiting for hydrogen and oxygen atmos to react...\n");
+
+    for (int i=0; i<150; i++) {
+        if (pthread_join(t[i], NULL)) {
+            printf("pthread_join failed.\n");
+            exit(3);
+        }
+    }
+
+    printf("number of water: %d\n", _5_num_of_water);
+
+    pthread_barrier_destroy(&_5_barrier);
+    sem_destroy(_5_hydrogen_sem);
+    pthread_mutex_destroy(&_5_oxygen_mtx);
+}
+
 //=============================================================================
 void test_ch_16()
 {
@@ -266,9 +339,10 @@ void test_ch_16()
     _1_test();
     _2_test();
     _3_test();
+    _4_test();
 #endif
 
-    _4_test();
+    _5_test();
 
     sleep(1);
 }
