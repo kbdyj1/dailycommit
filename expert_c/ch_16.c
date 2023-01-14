@@ -332,6 +332,201 @@ static void _5_test()
     pthread_mutex_destroy(&_5_oxygen_mtx);
 }
 
+//-------------------------------------------------------------------
+
+static void* _6_thread_0(void* param)
+{
+    int value = 0;
+
+    printf("thread #0 stack addr: %p\n", (void*)&value);
+
+    return NULL;
+}
+
+static void* _6_thread_1(void* param)
+{
+    int value = 0;
+
+    printf("thread #1 stack addr: %p\n", (void*)&value);
+
+    return NULL;
+}
+
+static void _6_test()
+{
+    size_t buffer_len = PTHREAD_STACK_MIN + 100;
+
+    char* buffer = (char*)malloc(buffer_len * sizeof(char));
+
+    pthread_t t0;
+    pthread_t t1;
+
+    int result0 = pthread_create(&t0, NULL, _6_thread_0, NULL);
+
+    pthread_attr_t attr;
+
+    pthread_attr_init(&attr);
+
+    if (pthread_attr_setstack(&attr, buffer, buffer_len)) {
+        printf("pthread_attr_setstack failed.\n");
+        exit(1);
+    }
+    int result1 = pthread_create(&t1, &attr, _6_thread_1, NULL);
+
+    if (result0 || result1) {
+        printf("pthread_create failed. %d, %d\n", result0, result1);
+        exit(2);
+    }
+
+    printf("main heap : %p\n", (void*)buffer);
+    printf("main stack: %p\n", (void*)&buffer_len);
+
+    result0 = pthread_join(t0, NULL);
+    result1 = pthread_join(t1, NULL);
+
+    if (result0 || result1) {
+        printf("pthread_join failed. %d, %d\n", result0, result1);
+        exit(3);
+    }
+
+    free(buffer);
+}
+
+//-------------------------------------------------------------------
+
+#define CHECK_RESULT(desc, result)    \
+    if (result) {               \
+        printf("%s error %d occured.\n", desc, result);  \
+        exit(1);                \
+    }
+
+#define PTHREAD_DETACHED
+
+#define USE_BARRIER_WAIT
+
+#if !defined(__APPLE__) && defined(USE_BARRIER_WAIT)
+#   define BARRIER_WAIT(barrier)    pthread_barrier_wait(&barrier)
+#else
+#   define BARRIER_WAIT(barrier)
+#endif
+
+static char* _7_array;
+static unsigned int _7_array_len;
+
+#ifdef USE_BARRIER_WAIT
+static pthread_barrier_t _7_barrier_alloc;
+static pthread_barrier_t _7_barrier_fill;
+static pthread_barrier_t _7_barrier_done;
+#endif
+
+static void* _7_thread_alloc(void* param)
+{
+    _7_array_len = 20;
+    _7_array = (char*)malloc(_7_array_len * sizeof(char));
+
+    BARRIER_WAIT(_7_barrier_alloc);
+
+    return NULL;
+}
+
+static void* _7_thread_filler(void* param)
+{
+    int even = *((int*)param);
+    char c = 'a';
+    size_t begin = 1;
+    if (even) {
+        c = 'Z';
+        begin = 0;
+    }
+
+    BARRIER_WAIT(_7_barrier_alloc);
+
+    for (size_t i=begin; i<_7_array_len; i+=2) {
+        _7_array[i] = even ? c-- : c++;
+    }
+    _7_array[_7_array_len-1] = '\0';
+
+    BARRIER_WAIT(_7_barrier_fill);
+
+    return NULL;
+}
+
+static void* _7_thread_printer(void* param)
+{
+    BARRIER_WAIT(_7_barrier_fill);
+
+    printf(">> %s\n", _7_array);
+
+    BARRIER_WAIT(_7_barrier_done);
+
+    return NULL;
+}
+
+static void* _7_thread_dealloc(void* param)
+{
+    BARRIER_WAIT(_7_barrier_done);
+
+    free(_7_array);
+
+#if defined(USE_BARRIER_WAIT)
+    pthread_barrier_destroy(&_7_barrier_alloc);
+    pthread_barrier_destroy(&_7_barrier_fill);
+    pthread_barrier_destroy(&_7_barrier_done);
+#endif
+
+    return NULL;
+}
+
+static void _7_test()
+{
+    pthread_t t0, t1, t2, t3, t4;
+
+    int ODD = 0;
+    int EVEN = 1;
+
+#if defined(USE_BARRIER_WAIT)
+    pthread_barrier_init(&_7_barrier_alloc, NULL, 3);
+    pthread_barrier_init(&_7_barrier_fill, NULL, 3);
+    pthread_barrier_init(&_7_barrier_done, NULL, 2);
+#endif
+
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+
+    int res;
+
+#if defined (PTHREAD_DETACHED)
+    res = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    CHECK_RESULT("pthread_attr_setdetachstate", res);
+#endif
+
+    res = pthread_create(&t0, &attr, _7_thread_alloc, NULL);
+    CHECK_RESULT("pthread_create", res);
+    res = pthread_create(&t1, &attr, _7_thread_filler, &EVEN);
+    CHECK_RESULT("pthread_create", res);
+    res = pthread_create(&t2, &attr, _7_thread_filler, &ODD);
+    CHECK_RESULT("pthread_create", res);
+    res = pthread_create(&t3, &attr, _7_thread_printer, NULL);
+    CHECK_RESULT("pthread_create", res);
+    res = pthread_create(&t4, &attr, _7_thread_dealloc, NULL);
+    CHECK_RESULT("pthread_create", res);
+
+#if defined(PTHREAD_DETACHED)
+    pthread_exit(NULL);
+#else
+    res = pthread_join(t0, NULL);
+    CHECK_RESULT("pthread_join #0", res);
+    res = pthread_join(t1, NULL);
+    CHECK_RESULT("pthread_join #1", res);
+    res = pthread_join(t2, NULL);
+    CHECK_RESULT("pthread_join #2", res);
+    res = pthread_join(t3, NULL);
+    CHECK_RESULT("pthread_join #3", res);
+    res = pthread_join(t4, NULL);
+    CHECK_RESULT("pthread_join #4", res);
+#endif
+}
+
 //=============================================================================
 void test_ch_16()
 {
@@ -340,9 +535,11 @@ void test_ch_16()
     _2_test();
     _3_test();
     _4_test();
+    _5_test();
+    _6_test();
 #endif
 
-    _5_test();
+    _7_test();
 
     sleep(1);
 }
