@@ -13,6 +13,8 @@ SOURCES += \
         ch_11.c \
         ch_15.c \
         ch_16.c \
+        ch_17.c \
+        ch_17_shm.c \
         main.c
 
 HEADERS += \
@@ -20,4 +22,4 @@ HEADERS += \
     ch_08_person_p.h \
     ch_08_student.h
 
-LIBS += -lpthread
+LIBS += -lpthread -lrt
