@@ -46,6 +46,7 @@ static void _3_test()
 //=============================================================================
 
 void test_ch_17_shm();
+void test_ch_17_shm_compete();
 
 void test_ch_17()
 {
@@ -55,7 +56,7 @@ void test_ch_17()
     _3_test();
 #endif
 
-    test_ch_17_shm();
+    test_ch_17_shm_compete();
 
     sleep(1);
 }

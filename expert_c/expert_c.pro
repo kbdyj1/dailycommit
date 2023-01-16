@@ -15,11 +15,15 @@ SOURCES += \
         ch_16.c \
         ch_17.c \
         ch_17_shm.c \
+        ch_17_shm_compete.c \
+        ch_18.c \
+        ch_18_mutex.c \
         main.c
 
 HEADERS += \
     ch_08_person.h \
     ch_08_person_p.h \
-    ch_08_student.h
+    ch_08_student.h \
+    helper.h
 
 LIBS += -lpthread -lrt

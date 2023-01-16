@@ -11,10 +11,11 @@ void test_ch_11();
 void test_ch_15();  // thread
 void test_ch_16();  // semaphore, mutext, condition...
 void test_ch_17();  // process
+void test_ch_18();  // process synchronization
 
 int main()
 {
-    test_ch_17();
+    test_ch_18();
 
     return 0;
 }
