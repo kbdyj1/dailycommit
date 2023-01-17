@@ -150,12 +150,14 @@ static void test()
 //=============================================================================
 
 void test_ch_18_mutex();
+void test_ch_18_cancel_flag();
 
 void test_ch_18()
 {
 #if (0) //done
     test();
+    test_ch_18_mutex();
 #endif
 
-    test_ch_18_mutex();
+    test_ch_18_cancel_flag();
 }

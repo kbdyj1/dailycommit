@@ -17,6 +17,7 @@ SOURCES += \
         ch_17_shm.c \
         ch_17_shm_compete.c \
         ch_18.c \
+        ch_18_cancel_flag.c \
         ch_18_mutex.c \
         main.c
 
