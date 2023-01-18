@@ -19,12 +19,21 @@ SOURCES += \
         ch_18.c \
         ch_18_cancel_flag.c \
         ch_18_mutex.c \
+        ch_18_shared_cond.c \
+        ch_18_shared_int32.c \
+        ch_18_shared_mem.c \
+        ch_18_shared_mutex.c \
         main.c
 
 HEADERS += \
     ch_08_person.h \
     ch_08_person_p.h \
     ch_08_student.h \
+    ch_18_shared_cond.h \
+    ch_18_shared_int32.h \
+    ch_18_shared_mem.h \
+    ch_18_shared_mutex.h \
+    common_def.h \
     helper.h
 
 LIBS += -lpthread -lrt

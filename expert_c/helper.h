@@ -1,8 +1,10 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #define CHECK_RESULT(result, message, exitcode)                         \
     if (result < 0) {                                                   \
