@@ -13,9 +13,9 @@ void test_ch_16();  // semaphore, mutext, condition...
 void test_ch_17();  // process
 void test_ch_18();  // process synchronization
 
-int main()
+int main(int argc, char* argv[])
 {
-    test_ch_18();
+    test_ch_18(argc, argv);
 
     return 0;
 }

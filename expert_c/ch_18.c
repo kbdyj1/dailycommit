@@ -151,13 +151,15 @@ static void test()
 
 void test_ch_18_mutex();
 void test_ch_18_cancel_flag();
+void test_ch_18_shared_test();
 
-void test_ch_18()
+void test_ch_18(int argc, char** argv)
 {
 #if (0) //done
     test();
     test_ch_18_mutex();
+    test_ch_18_cancel_flag();
 #endif
 
-    test_ch_18_cancel_flag();
+    test_ch_18_shared_test(argc, argv);
 }

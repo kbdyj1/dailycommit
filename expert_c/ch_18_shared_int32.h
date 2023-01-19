@@ -8,7 +8,7 @@ typedef struct {
     int32_t* ptr;
 } shared_int32_t;
 
-shared_int32_t* shared_int32_new(const char* name);
+shared_int32_t* shared_int32_new();
 void shared_int32_delete(shared_int32_t* obj);
 void shared_int32_construct(shared_int32_t* obj, const char* name);
 void shared_int32_destruct(shared_int32_t* obj);

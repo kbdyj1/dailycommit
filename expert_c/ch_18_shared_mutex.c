@@ -5,7 +5,9 @@
 
 shared_mutex_t* shared_mutex_new()
 {
-    return (shared_mutex_t*)malloc(sizeof(shared_mutex_t));
+    shared_mutex_t* shm = (shared_mutex_t*)malloc(sizeof(shared_mutex_t));
+    shm->shm = shared_mem_new();
+    return shm;
 }
 
 void shared_mutex_delete(shared_mutex_t* obj)

@@ -23,6 +23,7 @@ SOURCES += \
         ch_18_shared_int32.c \
         ch_18_shared_mem.c \
         ch_18_shared_mutex.c \
+        ch_18_test.c \
         main.c
 
 HEADERS += \

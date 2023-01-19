@@ -1,6 +1,6 @@
 #include "ch_18_shared_int32.h"
 
-shared_int32_t* shared_int32_new(const char* name)
+shared_int32_t* shared_int32_new()
 {
     shared_int32_t* obj = (shared_int32_t*)malloc(sizeof(shared_int32_t));
     obj->shm = shared_mem_new();
