@@ -24,6 +24,9 @@ SOURCES += \
         ch_18_shared_mem.c \
         ch_18_shared_mutex.c \
         ch_18_test.c \
+        ch_19.c \
+        ch_19_msgq.c \
+        ch_19_pipe.c \
         main.c
 
 HEADERS += \
