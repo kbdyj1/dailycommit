@@ -10,6 +10,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
         Client.cpp \
+        LocalServer.cpp \
         Server.cpp \
         main.cpp
 
@@ -19,4 +20,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    Connection.h
+    Connection.h \
+    LocalServer.h
