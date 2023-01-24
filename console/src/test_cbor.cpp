@@ -93,7 +93,9 @@ void test()
     qDebug() << "-inf: " << b1;
     qDebug() << "SNAN: " << b2;
 
+#if !defined(__APPLE__)
     qDebug() << "SNAN == SNAN: " << (SNAN == SNAN);
+#endif
 }
 
 } //_2 --------------------------------------------------------------

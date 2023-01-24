@@ -14,6 +14,7 @@ SOURCES = main.cpp \
         src/meta/test_binary.cpp \
         src/meta/test_meta_ch2.cpp \
         src/meta/test_traits.cpp \
+        src/test_adl.cpp \
         src/test_array.cpp \
         src/test_atomic.cpp \
         src/test_cbor.cpp \

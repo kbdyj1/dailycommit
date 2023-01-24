@@ -36,10 +36,11 @@ void test_qcache();
 void test_regexp();
 void test_law_of_demeter();
 void test_cbor();
+void test_adl();
 
 void testConsole()
 {
-    test_cbor();
+    test_adl();
 }
 
 //-----------------------------------------------------------------------------
