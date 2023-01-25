@@ -37,10 +37,11 @@ void test_regexp();
 void test_law_of_demeter();
 void test_cbor();
 void test_adl();
+void test_partial_function();
 
 void testConsole()
 {
-    test_adl();
+    test_partial_function();
 }
 
 //-----------------------------------------------------------------------------

@@ -34,6 +34,7 @@ SOURCES = main.cpp \
         src/test_lambda.cpp \
         src/test_locale.cpp \
         src/test_network.cpp \
+        src/test_partial_function.cpp \
         src/test_promise.cpp \
         src/test_qcache.cpp \
         src/test_qsettings.cpp \
