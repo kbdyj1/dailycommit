@@ -38,10 +38,11 @@ void test_law_of_demeter();
 void test_cbor();
 void test_adl();
 void test_partial_function();
+void test_strategy_pattern();
 
 void testConsole()
 {
-    test_partial_function();
+    test_strategy_pattern();
 }
 
 //-----------------------------------------------------------------------------

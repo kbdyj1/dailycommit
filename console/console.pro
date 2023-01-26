@@ -44,6 +44,7 @@ SOURCES = main.cpp \
         src/test_sfinae.cpp \
         src/test_sharedmemory.cpp \
         src/test_sql.cpp \
+        src/test_strategy_pattern.cpp \
         src/test_stringview.cpp \
         src/test_kdbindings.cpp \
         src/test_typetraits.cpp \
