@@ -27,6 +27,7 @@ SOURCES += \
         ch_19.c \
         ch_19_msgq.c \
         ch_19_pipe.c \
+        ch_20_calc_proto_serializer.c \
         main.c
 
 HEADERS += \
@@ -37,6 +38,9 @@ HEADERS += \
     ch_18_shared_int32.h \
     ch_18_shared_mem.h \
     ch_18_shared_mutex.h \
+    ch_20_calc_proto_req.h \
+    ch_20_calc_proto_res.h \
+    ch_20_calc_proto_seralizer.h \
     common_def.h \
     helper.h
 
