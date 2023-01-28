@@ -27,7 +27,10 @@ SOURCES += \
         ch_19.c \
         ch_19_msgq.c \
         ch_19_pipe.c \
+        ch_20_calc_proto_req.c \
         ch_20_calc_proto_serializer.c \
+        ch_20_uds_client.c \
+        ch_20_uds_server.c \
         main.c
 
 HEADERS += \
@@ -41,6 +44,8 @@ HEADERS += \
     ch_20_calc_proto_req.h \
     ch_20_calc_proto_res.h \
     ch_20_calc_proto_seralizer.h \
+    ch_20_calc_service.h \
+    ch_20_calc_uds_define.h \
     common_def.h \
     helper.h
 
