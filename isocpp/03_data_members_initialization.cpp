@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <array>
 
 namespace { //=================================================================
 
@@ -33,6 +34,16 @@ void test()
 } //_2 --------------------------------------------------------------
 
 namespace _3 { //c++14~
+
+struct Point {
+    float x = 0.0f;
+    float y = 0.0f;
+};
+
+void test()
+{
+    Point pt{ 10.0f, 10.0f };
+}
 
 } //_3 --------------------------------------------------------------
 
@@ -95,6 +106,36 @@ void test()
 }
 
 } //_5 --------------------------------------------------------------
+
+namespace _6{
+
+struct A {
+    int zero{};     //value initialization.
+    int a = 0;      //copy initialization
+    double b{10.5}; //direct list initialization
+#if (0)
+    short c(10);    //error: expected parameter declarator
+                    //error: expected ')'
+                    //note: to match this '('
+
+    int arr2[] = { 1, 2 };  //can't deduce
+    auto i = 1;             //type deduction doesn't work
+#endif
+    int d{ a + 10 };
+    int* p = new int(d);
+    double e{ *p * 2.0 };
+    long arr[4] = { 1, 2, 3, 4 };
+    std::array<int, 4> numbers{ 1, 2, 3, 4 };
+    double g{ compute() };
+
+    ~A()
+    {
+        delete p;
+    }
+    double compute() { return a * b; }
+};
+
+} //_6 --------------------------------------------------------------
 
 } //===========================================================================
 
