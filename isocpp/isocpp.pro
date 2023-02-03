@@ -8,4 +8,5 @@ SOURCES += \
         02_deferred_argument_evaluation.cpp \
         03_data_members_initialization.cpp \
         04_regular_types.cpp \
+        05_modern_c_in_depth_lambdas.cpp \
         main.cpp
