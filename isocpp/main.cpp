@@ -1,3 +1,5 @@
+#include <iostream>
+
 void test_using_final_in_c_to_improve_performance();
 void test_deferred_argument_evaluation();
 void test_data_member_initialization();
@@ -7,8 +9,14 @@ void test_modern_c_in_depth_lambdas();
 namespace { //=================================================================
 } //===========================================================================
 
+//#define CHECK_CXX_COMPILER_VERSION
+
 int main()
 {
+#ifdef CHECK_CXX_COMPILER_VERSION
+    std::cout << "__cplusplus: " << __cplusplus << '\n';
+#endif
+
 #if (0) //done
     test_using_final_in_c_to_improve_performance();
     test_deferred_argument_evaluation();
