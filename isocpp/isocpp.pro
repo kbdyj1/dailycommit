@@ -1,5 +1,5 @@
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console c++2a #c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
@@ -9,4 +9,5 @@ SOURCES += \
         03_data_members_initialization.cpp \
         04_regular_types.cpp \
         05_modern_c_in_depth_lambdas.cpp \
+        06_numbers_are_not_easy.cpp \
         main.cpp
