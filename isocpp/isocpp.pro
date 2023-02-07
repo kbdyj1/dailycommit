@@ -10,4 +10,5 @@ SOURCES += \
         04_regular_types.cpp \
         05_modern_c_in_depth_lambdas.cpp \
         06_numbers_are_not_easy.cpp \
+        07_initialize_list.cpp \
         main.cpp
