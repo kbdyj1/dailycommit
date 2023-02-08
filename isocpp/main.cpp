@@ -7,6 +7,7 @@ void test_regular_types();
 void test_modern_c_in_depth_lambdas();
 void test_numbers_are_not_easy();
 void test_initialize_list();
+void test_movable_primitive_types();
 
 namespace { //=================================================================
 } //===========================================================================
@@ -26,9 +27,10 @@ int main()
     test_regular_types();
     test_modern_c_in_depth_lambdas();
     test_numbers_are_not_easy();
+    test_initialize_list();
 #endif
 
-    test_initialize_list();
+    test_movable_primitive_types();
 
     return 0;
 }

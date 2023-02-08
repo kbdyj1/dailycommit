@@ -40,29 +40,6 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
-namespace _2 {
-
-template <typename T, T EmptyValue>
-struct MovablePrimitive {
-    T value = EmptyValue;
-
-    MovablePrimitive() = default;
-    MovablePrimitive(const T& init) : value(init)
-    {}
-    MovablePrimitive(const MovablePrimitive& other) = default;
-    MovablePrimitive(MovablePrimitive&& other) : value(std::exchange(value, other.value))
-    {}
-    MovablePrimitive& operator=(const MovablePrimitive& other) = default;
-    MovablePrimitive& operator=(MovablePrimitive&& other)
-    {
-        value = std::exchange(other.value, EmptyValue);
-        return *this;
-    }
-    operator T() { return value; }
-};
-
-} //_2 --------------------------------------------------------------
-
 } //===========================================================================
 
 void test_initialize_list()
