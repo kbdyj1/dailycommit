@@ -5,15 +5,8 @@
 #include <stdio.h>
 #include <signal.h>
 
-#define LOG_FILENAME    "/tmp/sd.log"
-#define CONFIG_FILENAME "/tmp/sd.conf"
 
-static volatile sig_atomic_t sig_hup_received = 0;
 
-void sig_hup_handler(int sig)
-{
-    sig_hup_received = 1;
-}
 
 int startDaemon(int flags)
 {
