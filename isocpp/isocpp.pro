@@ -12,4 +12,5 @@ SOURCES += \
         06_numbers_are_not_easy.cpp \
         07_initialize_list.cpp \
         08_movable_primitive_types.cpp \
+        09_static_ptr.cpp \
         main.cpp
