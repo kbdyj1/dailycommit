@@ -6,8 +6,6 @@
 
 namespace { //=================================================================
 
-namespace _1 {
-
 template <typename T, std::size_t N>
 class StaticVector
 {
@@ -58,6 +56,8 @@ struct MoveConstructor
     }
 };
 
+namespace _1 {
+
 struct Foo
 {
     int i;
@@ -93,6 +93,31 @@ void test()
 }
 
 } //_1 --------------------------------------------------------------
+
+namespace _2 {
+
+struct ops {
+    using binary_function = void(*)(void*, void*);
+    using unary_function = void(*)(void*);
+
+    binary_function move_construct_func;
+    binary_function move_assign_func;
+    unary_function destruct_func;
+};
+
+template <typename T, typename Functor>
+void call_typed_function(void* dst, void* src)
+{
+    Functor::call(static_cast<T*>(dst), static_cast<T*>(src));
+}
+
+template <typename T>
+void destruct_func(void* dst)
+{
+    static_cast<T*>(dst)->~T();
+}
+
+} //_2 --------------------------------------------------------------
 
 } //===========================================================================
 
