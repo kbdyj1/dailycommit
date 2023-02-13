@@ -13,4 +13,5 @@ SOURCES += \
         07_initialize_list.cpp \
         08_movable_primitive_types.cpp \
         09_static_ptr.cpp \
+        10_placement_new.cpp \
         main.cpp

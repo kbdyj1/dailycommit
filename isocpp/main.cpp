@@ -9,6 +9,7 @@ void test_numbers_are_not_easy();
 void test_initialize_list();
 void test_movable_primitive_types();
 void test_static_memory();
+void test_placement_new();
 
 namespace { //=================================================================
 } //===========================================================================
@@ -30,9 +31,10 @@ int main()
     test_numbers_are_not_easy();
     test_initialize_list();
     test_movable_primitive_types();
+    test_static_memory();
 #endif
 
-    test_static_memory();
+    test_placement_new();
 
     return 0;
 }
