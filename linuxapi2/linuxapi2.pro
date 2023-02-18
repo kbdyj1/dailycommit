@@ -7,6 +7,10 @@ SOURCES += \
         ch_17.cpp \
         ch_20.cpp \
         ch_21.cpp \
-        main.cpp
+        main.cpp \
+        utils.cpp
 
 LIBS += -lrt -lcrypt
+
+HEADERS += \
+    utils.h
