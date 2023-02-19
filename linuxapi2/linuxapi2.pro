@@ -14,3 +14,5 @@ LIBS += -lrt -lcrypt
 
 HEADERS += \
     utils.h
+
+DEFINES += "_POSIX_C_SOURCE=200112"

@@ -123,13 +123,83 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+#define USE_SA_SIGINFO
+
+#ifdef USE_SA_SIGINFO
+void sig_segv_handler(int sig, siginfo_t* info, void* context) {
+    printSigInfo(info);
+#else
+void sig_segv_handler(int sig) {
+#endif
+    int x;
+
+    printf("Caught signal %d (%s)\n", sig, strsignal(sig));
+    printf("top of stack near %10p\n", (void*)&x);
+
+    fflush(NULL);
+
+    _exit(EXIT_FAILURE);
+}
+
+void overflow_stack(int callNum)
+{
+    char a[100000];
+
+    printf("Call %4d - top of stack near %10p\n", callNum, &a[0]);
+
+    overflow_stack(callNum + 1);
+}
+
+void test()
+{
+    stack_t stk;
+    struct sigaction sa;
+    int j;
+
+    printf("top of standard stack is near %10p\n", (void*)&j);
+
+    stk.ss_sp = malloc(SIGSTKSZ);
+    if (NULL == stk.ss_sp) {
+        fprintf(stderr, "malloc error\n");
+        exit(-1);
+    }
+    stk.ss_size = SIGSTKSZ;
+    stk.ss_flags = 0;
+
+    if (-1 == sigaltstack(&stk, NULL)) {
+        fprintf(stderr, "sigaltstack error.\n");
+        exit(-1);
+    }
+
+#ifdef USE_SA_SIGINFO
+    sa.sa_sigaction = sig_segv_handler;
+    sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
+#else
+    sa.sa_handler = sig_segv_handler;
+    sa.sa_flags = SA_ONSTACK;
+#endif
+    sigemptyset(&sa.sa_mask);
+
+    if (-1 == sigaction(SIGSEGV, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+
+    overflow_stack(1);
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_21(int argc, const char** argv)
 {
 #if (0)
     _1::test(argc, argv);
+    _2::test();
 #endif
 
-    _2::test();
+    _3::test();
 }
