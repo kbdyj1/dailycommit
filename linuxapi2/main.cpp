@@ -3,7 +3,7 @@
 void test_ch_17();
 void test_ch_20(int argc, const char** argv);
 void test_ch_21(int argc, const char** argv);
-void test_ch_22();
+void test_ch_22(int argc, const char* argv[]);
 
 int main(int argc, const char** argv)
 {
@@ -15,7 +15,7 @@ int main(int argc, const char** argv)
     test_ch_21(argc, argv);
 #endif
 
-    test_ch_22();
+    test_ch_22(argc, argv);
 
     return 0;
 }
