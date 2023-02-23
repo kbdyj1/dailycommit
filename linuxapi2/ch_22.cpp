@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <sys/signalfd.h>
 #include "utils.h"
 
 namespace { //=================================================================
@@ -196,6 +197,93 @@ void test(int argc, const char* argv[])
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+void test(int argc, const char* argv[])
+{
+    int sig;
+    siginfo_t info;
+    sigset_t allSigs;
+
+    printf("%s PID: %ld\n", argv[0], (long)getpid());
+
+    sigfillset(&allSigs);
+    if (-1 == sigprocmask(SIG_SETMASK, &allSigs, NULL)) {
+        fprintf(stderr, "sigprocmask() error.\n");
+        exit(-1);
+    }
+
+    printf("%s signals blocked.\n", argv[0]);
+
+    if (1 < argc) {
+        int s = atoi(argv[1]);
+
+        printf("%s: about to delay %d seconds.\n", argv[0], s);
+        sleep(s);
+        printf("%s: finished delay.\n", argv[0]);
+    }
+
+    for ( ;; ) {
+        sig = sigwaitinfo(&allSigs, &info);
+        if (-1 == sig) {
+            fprintf(stderr, "sigwaitinfo() error.\n");
+            exit(-1);
+        }
+
+        printf("got signal: %d (%s)\n", sig, strsignal(sig));
+
+        printSigInfo(&info);
+    }
+}
+
+} //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+void test(int argc, const char* argv[])
+{
+    sigset_t mask;
+    int fd;
+    int j;
+    struct signalfd_siginfo info;
+    ssize_t s;
+
+    printf("%s PID: %ld\n", argv[0], (long)getpid());
+
+    sigemptyset(&mask);
+
+    for (j=1; j<argc; j++) {
+        sigaddset(&mask, atoi(argv[j]));
+    }
+
+    if (-1 == sigprocmask(SIG_BLOCK, &mask, NULL)) {
+        fprintf(stderr, "sigprocmask(SIG_BLOCK) error.\n");
+        exit(-1);
+    }
+
+    fd = signalfd(-1, &mask, 0);
+    if (-1 == fd) {
+        fprintf(stderr, "signalfd(-1) error.\n");
+        exit(-1);
+    }
+
+    for ( ;; ) {
+        s = read(fd, &info, sizeof(struct signalfd_siginfo));
+        if (s != sizeof(struct signalfd_siginfo)) {
+            fprintf(stderr, "read() error.\n");
+            exit(-1);
+        }
+
+        printf("%s: got signal %d (%s)\n", argv[0], info.ssi_signo, strsignal(info.ssi_signo));
+        if (SI_QUEUE == info.ssi_code) {
+            printf("ssi_pid: %d, ssi_int: %d", info.ssi_pid, info.ssi_int);
+        }
+        printf("\n");
+    }
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_22(int argc, const char* argv[])
@@ -203,7 +291,9 @@ void test_ch_22(int argc, const char* argv[])
 #if (0)
     _1::test();
     _2::test(argc, argv);
+    _3::test(argc, argv);
+    _4::test(argc, argv);
 #endif
 
-    _3::test(argc, argv);
+    _5::test(argc, argv);
 }
