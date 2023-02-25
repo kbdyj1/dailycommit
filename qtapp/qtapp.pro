@@ -12,7 +12,8 @@ SOURCES += \
         Client.cpp \
         LocalServer.cpp \
         Server.cpp \
-        main.cpp
+        main.cpp \
+        test_atomic.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
