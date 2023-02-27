@@ -8,6 +8,7 @@
 #include <time.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/time.h>
 
 namespace { //=================================================================
@@ -125,9 +126,90 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+#define BUF_SIZE    200
+
+void handler(int sig)
+{
+    printf("Caught signal(%d)\n", sig);
+}
+
+void test()
+{
+    struct sigaction sa;
+    char buf[BUF_SIZE];
+    ssize_t numRead;
+    int savedErrno;
+
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_handler = handler;
+    if (-1 == sigaction(SIGALRM, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+
+    alarm(5);
+
+    numRead = read(STDIN_FILENO, buf, BUF_SIZE-1);
+
+    savedErrno = errno;
+    alarm(0);
+    errno = savedErrno;
+
+    if (-1 == numRead) {
+        if (EINTR == errno) {
+            fprintf(stderr, "read timeout.\n");
+        } else {
+            fprintf(stderr, "read error.\n");
+        }
+    } else {
+        printf("successfuly read (%ld bytes): %.*s", (long)numRead, (int)numRead, buf);
+    }
+}
+
+#undef  BUF_SIZE
+
+} //_2 --------------------------------------------------------------
+
+namespace _3 {
+
+void handler(int sig)
+{
+    printf("Caught signal(%d)\n", sig);
+}
+
+void test()
+{
+    struct sigaction sa;
+
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_handler = handler;
+    if (-1 == sigaction(SIGINT, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+
+    unsigned int left = sleep(10);
+    if (left != 0) {
+        printf("sleep() interruped. %ds left.\n", left);
+    } else {
+        printf("sleep() end.\n");
+    }
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_23()
 {
+#if (0) //done
     _1::test();
+    _2::test();
+#endif
+
+    _3::test();
 }
