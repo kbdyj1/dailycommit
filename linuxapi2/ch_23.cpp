@@ -202,6 +202,62 @@ void test()
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+void handler(int sig)
+{
+    return;
+}
+
+void test()
+{
+    struct timeval start, finish;
+    struct timespec request, remain;
+    struct sigaction sa;
+    int s;
+
+    request.tv_sec = 10;
+    request.tv_nsec = 500000;
+
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
+
+    if (-1 == sigaction(SIGINT, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+    if (-1 == gettimeofday(&start, NULL)) {
+        fprintf(stderr, "gettimeofday(start) error.\n");
+        exit(-1);
+    }
+
+    for ( ;; ) {
+        s = nanosleep(&request, &remain);
+        if (-1 == s && EINTR != errno) {
+            fprintf(stderr, "nanosleep() error.\n");
+            exit(-1);
+        }
+        if (-1 == gettimeofday(&finish, NULL)) {
+            fprintf(stderr, "gettimeofday(finish) error.\n");
+            exit(-1);
+        }
+
+        printf("Slept for: %9.6f secs\n", finish.tv_sec - start.tv_sec + (finish.tv_usec - start.tv_usec)/1000000.0);
+
+        if (0 == s)
+            break;
+
+        printf("Remaining: %2ld.%09ld\n", (int)remain.tv_sec, remain.tv_nsec);
+
+        request = remain;
+    }
+
+    printf("Sleep complete.\n");
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_23()
@@ -209,7 +265,8 @@ void test_ch_23()
 #if (0) //done
     _1::test();
     _2::test();
+    _3::test();
 #endif
 
-    _3::test();
+    _4::test();
 }
