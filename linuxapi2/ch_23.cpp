@@ -258,15 +258,86 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+void handler(int sig)
+{
+    return;
+}
+
+void test_getcpuclockid(pid_t pid)
+{
+    //pid : 2858 (QtCreator)
+
+    clockid_t cid;
+    int ret = clock_getcpuclockid(pid, &cid);
+    if (0 == ret) {
+        printf("pid: %d, clock id: %d\n", pid, cid);
+    } else {
+        fprintf(stderr, "clock_getcpuclockid(): %d\n", ret);
+    }
+}
+
+void test_clock_nanosleep()
+{
+    struct sigaction sa;
+
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
+
+    if (-1 == sigaction(SIGINT, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+
+    struct timespec request;
+
+    if (-1 == clock_gettime(CLOCK_REALTIME, &request)) {
+        fprintf(stderr, "clock_gettime() error.\n");
+        exit(-1);
+    }
+
+    request.tv_sec += 20;
+
+    int s = clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &request, NULL);
+    if (0 != s) {
+        if (EINTR == s) {
+            printf("interrupted by signal.\n");
+        } else {
+            fprintf(stderr, "clock_nanosleep() error.\n");
+            exit(-1);
+        }
+    }
+    printf("clock_nanosleep() timeout.\n");
+}
+
+void test(int argc, const char* argv[])
+{
+#if (0) //done
+    if (1 < argc) {
+        pid_t pid = atoi(argv[1]);
+        test_getcpuclockid(pid);
+    } else {
+        fprintf(stderr, "usage: linuxapi2 pid\n");
+    }
+#endif
+
+    test_clock_nanosleep();
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
-void test_ch_23()
+void test_ch_23(int argc, const char* argv[])
 {
 #if (0) //done
     _1::test();
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test(argc, argv);
 }
