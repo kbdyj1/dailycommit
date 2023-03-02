@@ -12,7 +12,7 @@ SOURCES += \
         main.cpp \
         utils.cpp
 
-LIBS += -lrt -lcrypt
+LIBS += -lrt -lcrypt -lpthread
 
 HEADERS += \
     utils.h

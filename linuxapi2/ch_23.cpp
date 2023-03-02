@@ -3,12 +3,16 @@
 //      timer & sleep
 //=============================================================================
 
+#undef  _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 199309
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <signal.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pthread.h>
 #include <sys/time.h>
 
 namespace { //=================================================================
@@ -328,6 +332,149 @@ void test(int argc, const char* argv[])
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+#define TIMER_SIG   SIGRTMAX
+
+void handler(int sig, siginfo_t* si, void* p)
+{
+    timer_t* tid;
+
+    tid = (timer_t*)si->si_value.sival_ptr;
+
+    printf("Got signal %d\n", sig);
+    printf("\t*sival_ptr: %ld\n", (long)*tid);
+    printf("\ttimer_getoverrun(): %ld\n", (long)timer_getoverrun(*tid));
+}
+
+void test()
+{
+    struct itimerspec ts;
+    struct sigaction sa;
+    struct sigevent se;
+    timer_t* tid = (timer_t*) malloc(sizeof(timer_t));
+
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = handler;
+    sigemptyset(&sa.sa_mask);
+    if (-1 == sigaction(TIMER_SIG, &sa, NULL)) {
+        fprintf(stderr, "sigaction() error.\n");
+        exit(-1);
+    }
+
+    se.sigev_notify = SIGEV_SIGNAL;
+    se.sigev_signo = TIMER_SIG;
+    se.sigev_value.sival_ptr = &tid;
+
+    if (-1 == timer_create(CLOCK_REALTIME, &se, tid)) {
+        fprintf(stderr, "timer_create() error.\n");
+        exit(-1);
+    }
+
+    ts.it_interval.tv_sec = 5;
+    ts.it_interval.tv_nsec = 0;
+    ts.it_value.tv_sec = 10;
+    ts.it_value.tv_nsec = 0;
+
+    if (-1 == timer_settime(*tid, 0, &ts, NULL)) {
+        fprintf(stderr, "timer_settime() error.\n");
+        exit(-1);
+    }
+
+    for ( ;; ) {
+        pause();
+    }
+
+    timer_delete(*tid);
+    printf("timer_delete().\n");
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+int expireCnt = 0;
+
+void threadFunc(union sigval sv)
+{
+    timer_t* tid;
+    int s;
+
+    tid = (timer_t*)sv.sival_ptr;
+
+    printf("threadFunc()\n");
+    printf("\t*sival_ptr: %ld\n", (long)*tid);
+    printf("\ttimer_getoverrun(): %ld\n", (long)timer_getoverrun(*tid));
+
+    s = pthread_mutex_lock(&mtx);
+    if (0 != s) {
+        fprintf(stderr, "pthread_mutex_lock() error.\n");
+        exit(-1);
+    }
+
+    expireCnt += 1 + timer_getoverrun(*tid);
+
+    s = pthread_mutex_unlock(&mtx);
+    if (0 != s) {
+        fprintf(stderr, "pthread_mutex_unlock() error.\n");
+        exit(-1);
+    }
+
+    s = pthread_cond_signal(&cond);
+    if (0 != s) {
+        fprintf(stderr, "pthread_cond_signal() error.\n");
+        exit(-1);
+    }
+}
+
+void test()
+{
+    struct sigevent se;
+    struct itimerspec ts;
+    timer_t* tid;
+    int s, j;
+
+    tid = (timer_t*)malloc(sizeof(timer_t));
+
+    se.sigev_notify = SIGEV_THREAD;
+    se.sigev_notify_function = threadFunc;
+    se.sigev_notify_attributes = NULL;
+    se.sigev_value.sival_ptr = tid;
+
+    if (-1 == timer_create(CLOCK_REALTIME, &se, tid)) {
+        fprintf(stderr, "timer_create() error.\n");
+        exit(-1);
+    }
+
+    printf("timerid: %ld\n", (long)*tid);
+
+    ts.it_interval.tv_sec = 2;
+    ts.it_interval.tv_nsec = 0;
+    ts.it_value.tv_sec = 5;
+    ts.it_value.tv_nsec = 0;
+
+    if (-1 == timer_settime(tid, 0, &ts, NULL)) {
+        fprintf(stderr, "timer_settime() error.\n");
+        exit(-1);
+    }
+
+    for ( ;; ) {
+        s = pthread_cond_wait(&cond, &mtx);
+        if (0 != s) {
+            fprintf(stderr, "pthread_cond_wait() error.\n");
+            exit(-1);
+        }
+
+        printf("main(): expireCnt: %d\n", expireCnt);
+    }
+}
+
+
+} //_7 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_23(int argc, const char* argv[])
@@ -337,7 +484,9 @@ void test_ch_23(int argc, const char* argv[])
     _2::test();
     _3::test();
     _4::test();
+    _5::test(argc, argv);
+    _6::test();
 #endif
 
-    _5::test(argc, argv);
+    _7::test();
 }
