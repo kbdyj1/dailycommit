@@ -8,12 +8,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <signal.h>
 #include <unistd.h>
 #include <errno.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <sys/timerfd.h>
 
 namespace { //=================================================================
 
@@ -472,8 +474,72 @@ void test()
     }
 }
 
-
 } //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+void test()
+{
+    struct itimerspec ts;
+    struct timespec start, now;
+    int maxExp, fd, secs, nanosecs;
+    uint64_t numExp;
+    ssize_t s;
+
+    ts.it_interval.tv_sec = 5;
+    ts.it_interval.tv_nsec = 0;
+    ts.it_value.tv_sec = 10;
+    ts.it_value.tv_nsec = 0;
+
+    maxExp = 5;
+
+    fd = timerfd_create(CLOCK_REALTIME, 0);
+    if (-1 == fd) {
+        fprintf(stderr, "timerfd_create() error.\n");
+        exit(-1);
+    }
+
+    if (-1 == timerfd_settime(fd, 0, &ts, NULL)) {
+        fprintf(stderr, "timerfd_settime() error.\n");
+        exit(-1);
+    }
+
+    if (-1 == clock_gettime(CLOCK_MONOTONIC, &start)) {
+        fprintf(stderr, "clock_gettime(start) error.\n");
+        exit(-1);
+    }
+
+    for (int i=0; i<maxExp; ) {
+        s = read(fd, &numExp, sizeof(uint64_t));
+        if (sizeof(uint64_t) != s) {
+            fprintf(stderr, "read() error.\n");
+            exit(-1);
+        }
+
+        i += numExp;
+
+        if (-1 == clock_gettime(CLOCK_MONOTONIC, &now)) {
+            fprintf(stderr, "clock_gettime(now) error.\n");
+            exit(-1);
+        }
+
+        secs = now.tv_sec - start.tv_sec;
+        nanosecs = now.tv_nsec - start.tv_nsec;
+        if (nanosecs < 0) {
+            secs--;
+            nanosecs += 1000000000;
+        }
+        printf("%d.%03d: expirations read: %llu; total=%llu\n",
+               secs,
+               (nanosecs + 500000) / 1000000,
+               (unsigned long long)numExp,
+               (unsigned long long)i);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_8 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -486,7 +552,8 @@ void test_ch_23(int argc, const char* argv[])
     _4::test();
     _5::test(argc, argv);
     _6::test();
+    _7::test();
 #endif
 
-    _7::test();
+    _8::test();
 }
