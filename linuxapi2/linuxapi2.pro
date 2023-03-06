@@ -10,6 +10,7 @@ SOURCES += \
         ch_22.cpp \
         ch_23.cpp \
         ch_24.cpp \
+        ch_25.cpp \
         main.cpp \
         utils.cpp
 
