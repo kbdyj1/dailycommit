@@ -1,5 +1,9 @@
+#define _GNU_SOURCE
+
 #include "utils.h"
 #include <string.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 
 void printSigset(FILE* of, const char* prefix, const sigset_t* ss)
 {
@@ -63,4 +67,36 @@ void printSigInfo(siginfo_t* info)
     printf("utime: %d\n", info->si_utime);
     printf("stime: %d\n", info->si_stime);
     printf("---------------------------------------------------\n");
+}
+
+void errorExit(const char *message, int error)
+{
+    fprintf(stderr, "%s", message);
+    exit(error);
+}
+
+void printWaitStatus(const char* msg, int status)
+{
+    if (msg != NULL)
+        printf("%s", msg);
+
+    if (WIFEXITED(status)) {
+        printf("child exited, status=%d\n", WEXITSTATUS(status));
+    } else if (WIFSIGNALED(status)) {
+        int sig = WTERMSIG(status);
+        printf("child killed by signal %d (%s)", sig, strsignal(sig));
+
+        if (WCOREDUMP(status)) {
+            printf(" (core dumped)");
+        }
+
+        printf("\n");
+    } else if (WIFSTOPPED(status)) {
+        int sig = WSTOPSIG(status);
+        printf("child stopped by signal %d, (%s)\n", sig, strsignal(sig));
+    } else if (WIFCONTINUED(status)) {
+        printf("child continued.\n");
+    } else {
+        printf("what happend to this child? (status=%x)\n", (unsigned int)status);
+    }
 }
