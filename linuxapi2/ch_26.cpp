@@ -148,13 +148,164 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+const int CMD_SIZE = 128;
+
+void test()
+{
+    pid_t child;
+    char cmd[CMD_SIZE];
+    int j;
+
+    setbuf(stdout, NULL);
+
+    printf("[P] PID=%ld\n", (long)getpid());
+
+    switch (child = fork()) {
+    case -1:
+        errorExit("fork() error.\n");
+
+    case 0:
+        printf("[ ] child PID: %ld exiting\n", (long)getpid());
+        _exit(EXIT_SUCCESS);
+
+    default:
+        sleep(3);
+        j = snprintf(cmd, CMD_SIZE, "ps | grep %s", "linuxapi2");
+        cmd[j] = '\0';
+
+        system(cmd);
+
+        if (-1 == kill(child, SIGKILL)) {
+            errorExit("kill(child, SIGKILL) failed.\n");
+        }
+
+        sleep(3);
+
+        printf("[ ] After sending SIGKILL to zombie (PID=%ld)\n", (long)child);
+
+        system(cmd);
+
+        printf("[ ] before wait().\n");
+
+        int status;
+        int pid = wait(&status);
+
+        printf("[ ] after wait(). PID = %ld, status = %d\n", (long)pid, status);
+
+        sleep(3);
+
+        system(cmd);
+
+        exit(EXIT_SUCCESS);
+    }
+}
+
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+int liveChildren = 0;
+
+void sig_child_handler(int sig)
+{
+    int saveErrno = errno;
+    pid_t child;
+    int status;
+    
+    printf("Caught SIGCHLD.\n");
+    
+    while ((child = waitpid(-1, &status, WNOHANG)) > 0) {
+        printf("sig_child_handler: Reaped child: %ld\n", (long)child);
+        
+        printWaitStatus(NULL, status);
+        
+        liveChildren--;
+    }
+    
+    if (-1 == child && errno != ECHILD) {
+        fprintf(stderr, "waitpid() error: %s\n", strerror(errno));
+        errorExit("waitpid() error. \n");
+    }
+    
+    sleep(5);
+    
+    printf("sig_child_handler returning...\n");
+    
+    errno = saveErrno;
+}
+
+void test()
+{
+    int j;
+    int sigCount = 0;
+    const int CHILDNUM = 3;
+    const int sleepTable[CHILDNUM] = { 1, 2, 4 };
+    
+    setbuf(stdout, NULL);
+    
+    liveChildren = CHILDNUM;
+    struct sigaction sa;
+    
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = sig_child_handler;
+    
+    if (-1 == sigaction(SIGCHLD, &sa, NULL)) {
+        errorExit("sigaction() error.\n");
+    }
+
+    sigset_t emptyMask, blockMask;
+
+    sigemptyset(&blockMask);
+    sigaddset(&blockMask, SIGCHLD);
+    if (-1 == sigprocmask(SIG_SETMASK, &blockMask, NULL)) {
+        errorExit("sigprocmask(blockMask) error.\n");
+    }
+
+    for (j=0; j<CHILDNUM; j++) {
+        switch (fork()) {
+        case -1:
+            errorExit("for() error.\n");
+
+        case 0:
+            sleep(sleepTable[j]);
+            printf("child %d (PID = %ld) exiting.\n", j, (long)getpid());
+            _exit(EXIT_SUCCESS);
+
+        default:
+            break;
+        }
+    }
+
+    sigemptyset(&emptyMask);
+
+    while (0 < liveChildren) {
+        if (-1 == sigsuspend(&emptyMask) && errno != EINTR) {
+            errorExit("sigsuspend() error.\n");
+        }
+        sigCount++;
+
+        printf("[ ] sigCount: %d\n", sigCount);
+    }
+
+    printf("All %d children have terminated. SIGCHLD was caught %d times\n", CHILDNUM, sigCount);
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_26()
 {
 #if (0) //done
     _1::test();
+    _2::test();
+    _3::test();
 #endif
 
-    _2::test();
+    _4::test();
 }
