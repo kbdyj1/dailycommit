@@ -42,13 +42,42 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test()
+{
+    const char* filename = "echo";
+    execlp(filename, filename, "Hello, Qt", (char *)NULL);
+
+    errorExit("execlp() error.\n");
+}
+
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+void test()
+{
+    char* env[] = { "GREET=salut", "BYE=adieu", NULL };
+    const char* pathname = "/usr/bin/echo";
+    char* filename = "echo";
+
+    execle(pathname, filename, "Hello, Qt", (char*)NULL, env);
+
+    errorExit("execlp() error.\n");
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_27()
 {
 #if (0) //done
     _1::test();
+    _2::test();
+    _3::test();
 #endif
 
-    _2::test();
+    _4::test();
 }
