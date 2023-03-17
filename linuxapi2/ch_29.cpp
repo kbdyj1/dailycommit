@@ -113,6 +113,45 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void handler(int sig)
+{}
+
+void test()
+{
+    struct sigaction sa;
+
+    setbuf(stdout, NULL);
+
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
+
+    if (-1 == sigaction(SIGHUP, &sa, NULL)) {
+        errorExit("sigaction(SIGHUP, ...) error.\n");
+    }
+
+    pid_t child = fork();
+
+    if (0 == child) {
+        if (-1 == setpgid(0, 0))
+           errorExit("setpgid(0, 0) error.\n");
+    }
+
+    print_pid(getpid());
+
+    alarm(60);
+
+    for ( ;; ) {
+        pause();
+
+        printf("%ld: caught SIGHUP\n", (long)getpid());
+    }
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_29()
