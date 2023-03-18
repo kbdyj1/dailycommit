@@ -152,13 +152,73 @@ void test()
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+void handler(int sig)
+{
+    printf("PID: %ld caught signal %2d (%s)\n", (long)getpid(), sig, strsignal(sig));
+}
+
+void test(int argc, const char* argv[])
+{
+    pid_t parent;
+    pid_t child;
+    struct sigaction sa;
+
+    if (argc < 2) {
+        printf("usage: %s {d|s}...");
+        exit(-1);
+    }
+
+    setbuf(stdout, NULL);
+
+    parent = getpid();
+    print_pid(parent, "parent: ");
+
+    printf("foreground process group is: %ld\n", (long)tcgetpgrp(STDIN_FILENO));
+
+    for (int j=1; j<argc; j++) {
+        child = fork();
+        if (-1 == child) {
+            errorExit("fork() error.\n");
+        }
+
+        if (0 == child) {
+            if (argv[j][0] == 'd') {
+                if (-1 == setpgid(0, 0))
+                    errorExit("setpgid() error.\n");
+            }
+        }
+
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = 0;
+        sa.sa_handler = handler;
+
+        if (-1 == sigaction(SIGHUP, &sa, NULL)) {
+            errorExit("sigaction");
+        }
+
+        break;
+    }
+
+    alarm(30);
+
+    print_pid(getpid());
+
+    for ( ;; )
+        pause();
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
-void test_ch_29()
+void test_ch_29(int argc, const char* argv[])
 {
 #if (0) //done
     _1::test();
+    _2::test();
 #endif
 
-    _2::test();
+    _4::test(argc, argv);
 }
