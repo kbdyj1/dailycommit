@@ -337,6 +337,69 @@ void test()
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+void handler(int sig)
+{
+    printf("PID=%ld: caught signal %d (%s)\n", (long)getpid(), sig, strsignal(sig));
+}
+
+void test()
+{
+    setbuf(stdout, NULL);
+
+    struct sigaction sa;
+
+    sigemptyset(&sa.sa_mask);
+
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
+
+    if (-1 == sigaction(SIGHUP, &sa, NULL))
+        errorExit("sigaction(SIGHUP)\n");
+    if (-1 == sigaction(SIGCONT, &sa, NULL))
+        errorExit("sigaction(SIGCONT)\n");
+
+    print_pid(getpid());
+
+    int childNum = 2;
+    bool stopBySignal[] = {
+#if (0)
+        true, false
+#else
+        false, false
+#endif
+    };
+
+    for (int i=0; i<childNum; i++) {
+        switch (fork()) {
+        case -1:
+            errorExit("fork() error.\n");
+
+        case 0:
+            print_pid(getpid(), "child ");
+            if (stopBySignal[i]) {
+                printf("PID=%ld stopping\n", (long)getpid());
+                raise(SIGSTOP);
+            } else {
+                alarm(60);
+                printf("PID=%ld pausing\n", (long)getpid());
+                pause();
+            }
+            _exit(EXIT_SUCCESS);
+
+        default:
+            break;
+        }
+    }
+
+    sleep(3);
+    printf("parent exiting...\n");
+    exit(EXIT_SUCCESS);
+}
+
+} //_7 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void test_ch_29(int argc, const char* argv[])
@@ -346,7 +409,8 @@ void test_ch_29(int argc, const char* argv[])
     _2::test();
     _4::test(argc, argv);
     _5::test();
+    _6::test();
 #endif
 
-    _6::test();
+    _7::test();
 }

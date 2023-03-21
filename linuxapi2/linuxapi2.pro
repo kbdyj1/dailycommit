@@ -15,6 +15,7 @@ SOURCES += \
         ch_27.cpp \
         ch_28.cpp \
         ch_29.cpp \
+        ch_30.cpp \
         main.cpp \
         utils.cpp
 
