@@ -12,4 +12,6 @@ void printSigInfo(siginfo_t* info);
 void errorExit(const char* message, int error=-1);
 void printWaitStatus(const char* msg, int status);
 
+double timeval2double(struct timeval* time);
+
 #endif // UTILS_H

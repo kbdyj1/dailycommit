@@ -100,3 +100,11 @@ void printWaitStatus(const char* msg, int status)
         printf("what happend to this child? (status=%x)\n", (unsigned int)status);
     }
 }
+
+double timeval2double(struct timeval* time)
+{
+    double ret = time->tv_sec;
+    ret += time->tv_usec / 1000000.0;
+
+    return ret;
+}
