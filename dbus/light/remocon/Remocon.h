@@ -15,6 +15,8 @@ public slots:
     void turnOn();
     void turnOff();
 
+    void testSlot(const QString&);
+
 private:
     local::Light* light = nullptr;
 };
