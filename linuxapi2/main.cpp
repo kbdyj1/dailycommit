@@ -16,6 +16,7 @@ void test_ch_28();
 void test_ch_29(int argc, const char* argv[]);
 void test_ch_30(int argc, const char* argv[]);
 void test_ch_31(int argc, const char* argv[]);
+void test_ch_32();
 
 int main(int argc, const char** argv)
 {
@@ -34,9 +35,10 @@ int main(int argc, const char** argv)
     test_ch_28();
     test_ch_29(argc, argv);
     test_ch_30(argc, argv);
+    test_ch_31(argc, argv);
 #endif
 
-    test_ch_31(argc, argv);
+    test_ch_32();
 
     return 0;
 }
