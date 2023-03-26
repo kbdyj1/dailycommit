@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <syslog.h>
 #include <sys/stat.h>
 
 #include "utils.h"
@@ -97,12 +98,29 @@ const char* CONFIG_FILE = "/tmp/ch_32_2.cfg";
 
 volatile sig_atomic_t sig_hup_received = 0;
 
-FILE* logfd = NULL;
-
-void sig_handler(int sig)
+void sig_handler(int)
 {
     sig_hup_received = 1;
 }
+
+#define USE_SYS_LOG
+
+#ifdef USE_SYS_LOG
+void logOpen(const char* appName)
+{
+    int logOptions = LOG_PID;
+    int facility = LOG_USER;
+
+    openlog(appName, logOptions, facility);
+}
+void logClose()
+{
+    closelog();
+}
+
+#define logMessage(...) syslog(LOG_DEBUG, __VA_ARGS__)
+#else
+FILE* logfd = NULL;
 
 void logMessage(const char* format, ...)
 {
@@ -147,6 +165,7 @@ void logClose()
     logMessage("Closing log file");
     fclose(logfd);
 }
+#endif
 
 void readConfig(const char* filename)
 {
@@ -201,7 +220,7 @@ void test()
         if (unslept == 0) {
             count++;
 
-            logMessage("Main: %d\n", count);
+            logMessage("Main: %d", count);
             unslept = SLEEP_TIME;
         }
     }
