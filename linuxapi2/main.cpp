@@ -17,9 +17,13 @@ void test_ch_29(int argc, const char* argv[]);
 void test_ch_30(int argc, const char* argv[]);
 void test_ch_31(int argc, const char* argv[]);
 void test_ch_32();
+void test_ch_33(int argc, const char* argv[]);
 
 int main(int argc, const char** argv)
 {
+    (void)argc;
+    (void)argv;
+
     std::cout << std::boolalpha;
 
 #if (0) //done
@@ -36,9 +40,10 @@ int main(int argc, const char** argv)
     test_ch_29(argc, argv);
     test_ch_30(argc, argv);
     test_ch_31(argc, argv);
+    test_ch_32();
 #endif
 
-    test_ch_32();
+    test_ch_33(argc, argv);
 
     return 0;
 }
