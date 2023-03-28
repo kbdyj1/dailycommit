@@ -5,4 +5,5 @@ CONFIG -= qt
 
 SOURCES += \
         composit.cpp \
+        decorator.cpp \
         main.cpp
