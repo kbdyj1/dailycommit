@@ -7,4 +7,5 @@ SOURCES += \
         composit.cpp \
         decorator.cpp \
         flyweight.cpp \
-        main.cpp
+        main.cpp \
+        proxy.cpp
