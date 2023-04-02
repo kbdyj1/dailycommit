@@ -9,9 +9,14 @@ CONFIG -= app_bundle
 
 SOURCES += \
         01_qvarlengtharray.cpp \
+        02_exec.cpp \
+        TestExec.cpp \
         main.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    TestExec.h
