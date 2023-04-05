@@ -6,6 +6,7 @@ void test_composit();
 void test_decorator();
 void test_flyweight();
 void test_proxy();
+void test_chain_of_responsibility();
 
 int main()
 {
@@ -13,9 +14,10 @@ int main()
     test_composit();
     test_decorator();
     test_flyweight();
+    test_proxy();
 #endif
 
-    test_proxy();
+    test_chain_of_responsibility();
 
     return 0;
 }

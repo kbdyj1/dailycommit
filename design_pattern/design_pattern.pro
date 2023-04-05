@@ -4,6 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        chain_of_responsibility.cpp \
         composit.cpp \
         decorator.cpp \
         flyweight.cpp \
