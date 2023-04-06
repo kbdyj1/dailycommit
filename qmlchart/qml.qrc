@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>RSSMemoryUtilization.qml</file>
+        <file>component/Line.qml</file>
+        <file>component/LineV.qml</file>
+    </qresource>
+</RCC>
