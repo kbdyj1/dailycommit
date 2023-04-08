@@ -16,7 +16,7 @@ void testLocalServer(int argc, char* argv[], QObject* parent)
         if (0 == strncmp(argv[1], "s", 1)) {
     #ifdef USE_LOCAL_SERVER
             qDebug() << "start LocalServer...";
-            auto* localServer = new LocalServer(&a);
+            auto* localServer = new LocalServer(parent);
             if (localServer->listen()) {
                 qDebug() << "localServer->listen(): true";
             }
