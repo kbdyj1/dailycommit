@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>PropertyBindings.qml</file>
+        <file>ResolvingProperties.qml</file>
+        <file>SequenceTips.qml</file>
+    </qresource>
+</RCC>

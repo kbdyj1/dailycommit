@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-
+#include "SequenceType.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +13,11 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
+    qmlRegisterType<SequenceType>("Performance.Example", 1, 0, "SequenceType");
     engine.load(url);
+
+
 
     return app.exec();
 }
