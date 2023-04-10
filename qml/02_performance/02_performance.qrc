@@ -3,5 +3,6 @@
         <file>PropertyBindings.qml</file>
         <file>ResolvingProperties.qml</file>
         <file>SequenceTips.qml</file>
+        <file>MemoryAllocationInAQMLApp.qml</file>
     </qresource>
 </RCC>
