@@ -1,6 +1,9 @@
-QT += quick
+QT += qml quick concurrent
+
+CONFIG += qmltypes
 
 SOURCES += \
+        CppLogicTest.cpp \
         main.cpp
 
 resources.files = main.qml 
@@ -20,4 +23,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    CppLogicTest.h \
     SequenceType.h

@@ -1,4 +1,5 @@
-import QtQuick
+import QtQuick 2.0
+import QtQuick.Window 2.0
 
 // Use async, event-driven programming
 // Use work threads
@@ -88,7 +89,8 @@ Window {
         Loader {
             id: loader
             //source: "/PropertyBindings.qml"
-            source: "/SequenceTips.qml"
+            //source: "/SequenceTips.qml"
+            source: "/QmlVsCpp.qml"
         }
     }
 }
