@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include "SequenceType.h"
 #include "CppLogicTest.h"
+#include "CppModel.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
 
     qmlRegisterType<SequenceType>("Performance.Example", 1, 0, "SequenceType");
+    qmlRegisterType<CppModel>("CppModel.Example", 1, 0, "CppModel");
 
     engine.rootContext()->setContextProperty("cpp", new CppLogicTest(&engine));
 

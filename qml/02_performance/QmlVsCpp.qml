@@ -34,6 +34,29 @@ Item {
         console.assert(compareArray(jsOutput, cppOutputAsync), "Output differs!")
     }
 
+    Rectangle {
+        id: bg
+
+        anchors.fill: parent
+
+        color: "red"
+
+        MouseArea {
+            anchors.fill: parent
+
+            onClicked: {
+                Qt.callLater(bg.changeBackground, "yellow")
+                Qt.callLater(bg.changeBackground, "blue")
+                Qt.callLater(bg.changeBackground, "green")
+            }
+        }
+
+        function changeBackground(newColor) {
+            console.log("changedBackground(" + newColor + ")")
+            bg.color = newColor
+        }
+    }
+
     Component.onCompleted: {
         test()
     }

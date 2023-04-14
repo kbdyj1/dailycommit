@@ -4,6 +4,7 @@ CONFIG += qmltypes
 
 SOURCES += \
         CppLogicTest.cpp \
+        CppModel.cpp \
         main.cpp
 
 resources.files = main.qml 
@@ -24,4 +25,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     CppLogicTest.h \
+    CppModel.h \
     SequenceType.h

@@ -78,6 +78,8 @@ import QtQuick.Window 2.0
 // > per-object JavaScript data ("var" properties, JavaScript functions and signal handler, and non-optimized binding expressions)
 // > variables allocated during expression evalution
 Window {
+    id: window
+
     width: 640
     height: 480
     visible: true
@@ -86,11 +88,22 @@ Window {
     Item {
         id: root
 
+        width: window.width; height: window.height
+
         Loader {
             id: loader
+
+            anchors.fill: parent
+
             //source: "/PropertyBindings.qml"
             //source: "/SequenceTips.qml"
-            source: "/QmlVsCpp.qml"
+            //source: "/QmlVsCpp.qml"
+            //source: "/ModelView.qml"
+            source: "/ListViewVsFlickableRepeater.qml"
+
+            onLoaded: {
+                console.log("source: " + loader.source + " load OK")
+            }
         }
     }
 }

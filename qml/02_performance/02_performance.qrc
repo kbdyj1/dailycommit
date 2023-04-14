@@ -5,5 +5,7 @@
         <file>SequenceTips.qml</file>
         <file>MemoryAllocationInAQMLApp.qml</file>
         <file>QmlVsCpp.qml</file>
+        <file>ModelView.qml</file>
+        <file>ListViewVsFlickableRepeater.qml</file>
     </qresource>
 </RCC>
