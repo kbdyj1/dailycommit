@@ -5,6 +5,7 @@ CONFIG += qmltypes
 SOURCES += \
         CppLogicTest.cpp \
         CppModel.cpp \
+        Literal.cpp \
         main.cpp
 
 resources.files = main.qml 

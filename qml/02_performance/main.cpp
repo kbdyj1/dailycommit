@@ -5,10 +5,15 @@
 #include "CppLogicTest.h"
 #include "CppModel.h"
 
+#define RUN_AS_CONSOLE
+
+void test_literal();
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+#ifndef RUN_AS_CONSOLE
     QQmlApplicationEngine engine;
     const QUrl url("qrc:/02_performance/main.qml");
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -23,6 +28,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("cpp", new CppLogicTest(&engine));
 
     engine.load(url);
+#else
+    test_literal();
+#endif
 
     return app.exec();
 }
