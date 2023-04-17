@@ -21,10 +21,11 @@ SOURCES += \
         ch_33.cpp \
         ch_34.cpp \
         ch_35.cpp \
+        ch_37.cpp \
         main.cpp \
         utils.cpp
 
-LIBS += -lrt -lcrypt -lpthread -lcap
+LIBS += -lrt -lcrypt -lpthread -lcap -ldl
 
 HEADERS += \
     utils.h
