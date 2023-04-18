@@ -10,6 +10,7 @@ CONFIG -= app_bundle
 SOURCES += \
         01_qvarlengtharray.cpp \
         02_exec.cpp \
+        03_bytearray.cpp \
         TestExec.cpp \
         main.cpp
 
