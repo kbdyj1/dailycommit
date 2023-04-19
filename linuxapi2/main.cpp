@@ -3,6 +3,7 @@
 namespace { //=================================================================
 } //namespace =================================================================
 
+// Book 1 -----------------------------------------------------------
 void test_ch_17();
 void test_ch_20(int argc, const char** argv);
 void test_ch_21(int argc, const char** argv);
@@ -22,6 +23,9 @@ void test_ch_34();
 void test_ch_35(int argc, const char* argv[]);
 void test_ch_37();
 
+// Book 2 -----------------------------------------------------------
+void exec_ch_01();
+
 int main(int argc, const char** argv)
 {
     (void)argc;
@@ -29,7 +33,7 @@ int main(int argc, const char** argv)
 
     std::cout << std::boolalpha;
 
-#if (0) //done
+#if (0) //done (Book 1)
     test_ch_17();
     test_ch_20(argc, argv);
     test_ch_21(argc, argv);
@@ -47,9 +51,13 @@ int main(int argc, const char** argv)
     test_ch_33(argc, argv);
     test_ch_34();
     test_ch_35(argc, argv);
+    test_ch_37();
 #endif
 
-    test_ch_37();
+#if (0) //done (Book 2)
+#endif
+
+    exec_ch_01();
 
     return 0;
 }
