@@ -23,6 +23,7 @@ SOURCES += \
         1/ch_35.cpp \
         1/ch_37.cpp \
         2/ch_01.cpp \
+        2/ch_02.cpp \
         main.cpp \
         utils.cpp
 
