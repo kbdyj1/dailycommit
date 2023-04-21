@@ -69,10 +69,17 @@ void printSigInfo(siginfo_t* info)
     printf("---------------------------------------------------\n");
 }
 
-void errorExit(const char *message, int error)
+void errorExit(const char *message, int exitCode)
 {
     fprintf(stderr, "%s", message);
-    exit(error);
+    exit(exitCode);
+}
+
+void errnoExit(const char* message, int errno, int exitCode)
+{
+    const char* errstr = strerror(errno);
+    fprintf(stderr, "%s %s\n", message, errstr);
+    exit(exitCode);
 }
 
 void printWaitStatus(const char* msg, int status)

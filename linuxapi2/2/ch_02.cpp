@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include "utils.h"
 
 namespace { //=================================================================
 
@@ -8,7 +9,7 @@ int global = 0;
 
 namespace _1 {
 
-pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;    // static mutex
 
 void* threadFunc(void* param)
 {
@@ -67,9 +68,124 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+void test_result(const char* message, int s)
+{
+    if (s != 0) {
+        errnoExit(message, s);
+    } else {
+        printf("%s: ok\n", message);
+    }
+}
+
+void test()
+{
+    pthread_mutex_t mtx;
+    pthread_mutexattr_t attr;
+
+    int s = pthread_mutexattr_init(&attr);
+    test_result("pthread_mutexattr_init", s);
+
+    s = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+    test_result("pthread_mutexattr_settype", s);
+
+    s = pthread_mutex_init(&mtx, &attr);
+    test_result("pthread_mutex_init", s);
+
+    s = pthread_mutex_destroy(&mtx);
+    test_result("pthread_mutex_destroy", s);
+}
+
+} //_2 --------------------------------------------------------------
+
+namespace _3 {
+
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+int sharedCnt = 0;
+
+void* consumerThread(void* arg)
+{
+    int count = *(int*)arg;
+    int s;
+
+    while (count) {
+        s = pthread_mutex_lock(&mtx);
+
+        while (sharedCnt == 0) {
+            s = pthread_cond_wait(&cond, &mtx);
+        }
+
+        --count;
+        --sharedCnt;
+
+        printf("consumer(count: %d, shared: %d\n", count, sharedCnt);
+
+        s = pthread_mutex_unlock(&mtx);
+    }
+    return NULL;
+}
+
+void* producerThread(void* arg)
+{
+    int count = *(int*)arg;
+    int s;
+    for (int i=0; i<count; i++) {
+        s = pthread_mutex_lock(&mtx);
+        if (s != 0) {
+            errnoExit("pthread_mutex_lock(): ", s);
+        }
+
+        sharedCnt++;
+
+        s = pthread_mutex_unlock(&mtx);
+        if (s != 0) {
+            errnoExit("pthread_mutex_unlock: ", s);
+        }
+
+        s = pthread_cond_signal(&cond);
+    }
+    return NULL;
+}
+
+void test()
+{
+    int totalCnt = 100;
+    int localCnt = 25;
+    constexpr int threadCnt = 4;
+
+    pthread_t producer[threadCnt];
+    pthread_t consumer;
+
+    int s = pthread_create(&consumer, NULL, consumerThread, &totalCnt);
+    if (s != 0) {
+        errnoExit("pthread_create(consumer): ", s);
+    }
+    for (int i=0; i<threadCnt; i++) {
+        s = pthread_create(&producer[i], NULL, producerThread, &localCnt);
+        if (s != 0) {
+            errnoExit("pthread_create(producer): ", s);
+        }
+    }
+
+    pthread_join(consumer, NULL);
+    pthread_join(producer[0], NULL);
+    pthread_join(producer[1], NULL);
+    pthread_join(producer[2], NULL);
+    pthread_join(producer[3], NULL);
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_02()
 {
+#if (0) //done
     _1::test();
+    _2::test();
+#endif
+
+    _3::test();
 }
