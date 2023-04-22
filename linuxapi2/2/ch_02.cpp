@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <memory.h>
 #include "utils.h"
 
 namespace { //=================================================================
@@ -178,6 +180,116 @@ void test()
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+pthread_cond_t threadDied = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+
+int totalThreads = 0;
+int totalLives = 0;
+int totalUnjoined = 0;
+
+enum state_t {
+    STATE_ALIVE,
+    STATE_TERMINATE,
+    STATE_JOINED
+};
+
+struct threadinfo {
+    pthread_t tid;
+    enum state_t state;
+    int sleepTime;
+    int index;
+}* pthreadinfo;
+
+void* threadFunc(void* arg)
+{
+    threadinfo* pinfo = (threadinfo*)arg;
+    int s;
+
+    sleep(pinfo->sleepTime);
+    printf("thread[%ld] terminated.\n", (long)pinfo->index);
+
+    s = pthread_mutex_lock(&mtx);
+    if (s != 0) {
+        errnoExit("pthread_mutex_lock(): ", s);
+    }
+
+    totalUnjoined++;
+    pinfo->state = STATE_TERMINATE;
+
+    s = pthread_mutex_unlock(&mtx);
+    if (s != 0) {
+        errnoExit("pthread_mutex_unlock(): ", s);
+    }
+
+    s = pthread_cond_signal(&threadDied);
+    if (s != 0) {
+        errnoExit("pthread_cond_signal(): ", s);
+    }
+
+    return NULL;
+}
+
+void test()
+{
+    int s;
+    constexpr int numThreads = 5;
+    int sleeps[] = { 1, 1, 2, 3, 3 };
+
+    pthreadinfo = (threadinfo*)malloc(numThreads * sizeof(*pthreadinfo));
+    for (int i=0; i<numThreads; i++) {
+        pthreadinfo[i].sleepTime = sleeps[i];
+        pthreadinfo[i].state = STATE_ALIVE;
+        pthreadinfo[i].index = i;
+        s = pthread_create(&pthreadinfo[i].tid, NULL, threadFunc, (void*)&pthreadinfo[i]);
+        if (s != 0) {
+            errnoExit("pthread_create(): ", s);
+        }
+    }
+
+    totalThreads = numThreads;
+    totalLives = numThreads;
+
+    while (0 < totalLives) {
+        s = pthread_mutex_lock(&mtx);
+        if (s != 0) {
+            errnoExit("pthread_mutex_lock(): ", s);
+        }
+
+        while (0 == totalUnjoined) {
+            s = pthread_cond_wait(&threadDied, &mtx);
+            if (s != 0) {
+                errnoExit("pthread_cond_wait(): ", s);
+            }
+        }
+
+        for (int i=0; i<totalThreads; i++) {
+            if (pthreadinfo[i].state == STATE_TERMINATE) {
+                s = pthread_join(pthreadinfo[i].tid, NULL);
+                if (s != 0) {
+                    errnoExit("pthread_join(): ", s);
+                }
+
+                pthreadinfo[i].state = STATE_JOINED;
+                --totalLives;
+                --totalUnjoined;
+
+                printf("Reaped thread %d (totalLive: %d)\n", i, totalLives);
+            }
+        }
+
+        s = pthread_mutex_unlock(&mtx);
+        if (s != 0) {
+            errnoExit("pthread_mutex_unlock(): ", s);
+        }
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_02()
@@ -185,7 +297,8 @@ void exec_ch_02()
 #if (0) //done
     _1::test();
     _2::test();
+    _3::test();
 #endif
 
-    _3::test();
+    _4::test();
 }
