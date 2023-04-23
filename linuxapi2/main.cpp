@@ -26,6 +26,7 @@ void test_ch_37();
 // Book 2 -----------------------------------------------------------
 void exec_ch_01();
 void exec_ch_02();
+void exec_ch_03();
 
 int main(int argc, const char** argv)
 {
@@ -57,9 +58,10 @@ int main(int argc, const char** argv)
 
 #if (0) //done (Book 2)
     exec_ch_01();
+    exec_ch_02();
 #endif
 
-    exec_ch_02();
+    exec_ch_03();
 
     return 0;
 }
