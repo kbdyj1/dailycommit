@@ -2,9 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <errno.h>
 #include "utils.h"
 
 namespace { //=================================================================
+
+#define MAX_ERROR_LEN   256
 
 namespace _1 {
 
@@ -36,8 +40,6 @@ void test()
 
 namespace _2 {
 
-#define MAX_ERROR_LEN   256
-
 char buf[MAX_ERROR_LEN];
 
 char* strError(int err)
@@ -67,7 +69,7 @@ void initKey()
 {
     int s = pthread_key_create(&strErrorKey, onDestroy);
     if (s != 0) {
-        errnoExit("pthread_key_create(): ", s);
+        //errnoExit("pthread_key_create(): ", s);
     }
 }
 
@@ -75,7 +77,7 @@ char* strError(int err)
 {
     int s = pthread_once(&once, initKey);
     if (s != 0) {
-        errnoExit("pthread_once(): ", s);
+        //errnoExit("pthread_once(): ", s);
     }
 
     char* buf = (char*) pthread_getspecific(strErrorKey);
@@ -84,7 +86,7 @@ char* strError(int err)
 
         s = pthread_setspecific(strErrorKey, buf);
         if (s != 0) {
-            errnoExit("pthread_setspecific(): ", s);
+            //errnoExit("pthread_setspecific(): ", s);
         }
     }
 
@@ -97,11 +99,35 @@ char* strError(int err)
     return buf;
 }
 
+void test()
+{
+    printf("sysconf(_SC_THREAD_KEY_MAX): %d\n", sysconf(_SC_THREAD_KEYS_MAX));
+}
+
 } //_3 --------------------------------------------------------------
+
+namespace _4 { // TLS
+
+__thread char buf[MAX_ERROR_LEN];
+
+char* strError(int err)
+{
+    if (err < 0 || err >= _sys_nerr || _sys_errlist[err] == NULL) {
+        snprintf(buf, MAX_ERROR_LEN, "Unknown error %d", err);
+    } else {
+        strncpy(buf, _sys_errlist[err], MAX_ERROR_LEN-1);
+        buf[MAX_ERROR_LEN-1] = '\0';
+    }
+    return buf;
+}
+
+} //_4 --------------------------------------------------------------
 
 } //namespace =================================================================
 
 void exec_ch_03()
 {
+#if (0) //done
     _1::test();
+#endif
 }

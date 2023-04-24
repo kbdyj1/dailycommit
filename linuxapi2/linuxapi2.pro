@@ -25,6 +25,7 @@ SOURCES += \
         2/ch_01.cpp \
         2/ch_02.cpp \
         2/ch_03.cpp \
+        2/ch_04.cpp \
         main.cpp \
         utils.cpp
 
