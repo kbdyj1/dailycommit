@@ -70,9 +70,68 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+void test()
+{
+    int fd[2];
+
+    setbuf(stdout, NULL);
+
+    printf("Parent started.\n");
+
+    if (-1 == pipe(fd)) {
+        errorExit("pipe() error.\n");
+    }
+
+    const int numChild = 3;
+    const int sleepChild[] = { 4, 2, 5 };
+
+    for (int j=0; j<numChild; j++) {
+        switch (fork()) {
+        case -1:
+            errorExit("fork() error.\n");
+
+        case 0:
+            if (-1 == close(fd[0])) {
+                errorExit("CHILD close(fd[0]) error.\n");
+            }
+            sleep(sleepChild[j]);
+
+            printf("Child %d (PID:%ld) closing pipe\n", j, (long)getpid());
+            if (-1 == close(fd[1])) {
+                errorExit("CHILD close(fd[1]) error.\n");
+            }
+
+            _exit(EXIT_SUCCESS);
+
+        default:
+            break;
+        }
+    }
+
+    if (-1 == close(fd[1])) {
+        errorExit("PARENT close(fd[1]) error.\n");
+    }
+    int dummy;
+    if (-1 == read(fd[0], &dummy, 1)) {
+        errorExit("PARENT read() error.\n");
+    }
+
+    printf("PARENT ready.\n");
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_2 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_07()
 {
+#if (0) //done
     _1::test();
+#endif
+
+    _2::test();
 }
