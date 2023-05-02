@@ -7,11 +7,26 @@
 #include <unistd.h>
 #include <limits.h>
 #include <ctype.h>
+#include <errno.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 #include "utils.h"
 
 namespace { //=================================================================
+
+#define SERVER_FIFO             "/tmp/svr"
+#define CLIENT_FIFO_TEMPLATE    "/tmp/client.%ld"
+#define CLIENT_FIFO_NAME_LEN    (sizeof(CLIENT_FIFO_TEMPLATE) + 20)
+
+struct request_t {
+    pid_t pid;
+    int seqLen;
+};
+
+struct response_t {
+    int seqNum;
+};
 
 namespace _1 {
 
@@ -274,7 +289,127 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+void server()
+{
+    char clientFifo[CLIENT_FIFO_NAME_LEN];
+    struct request_t req;
+    struct response_t res;
+    int seqNum = 0;
+
+    umask(0);
+
+    if (-1 == mkfifo(SERVER_FIFO, S_IRUSR | S_IWUSR | S_IWGRP) && errno != EEXIST) {
+        errorExit("mkfifo() error");
+    }
+
+    int serverFd = open(SERVER_FIFO, O_RDONLY);
+    if (-1 == serverFd) {
+        errorExit("open(SERVER_FIFO, O_RDONLY) error.\n");
+    }
+
+    int dummyFd = open(SERVER_FIFO, O_WRONLY);
+    if (-1 == dummyFd) {
+        errorExit("open(SERVER_FIFO, O_WRONLY) error.\n");
+    }
+
+    if (SIG_ERR == signal(SIGPIPE, SIG_IGN)) {
+        errorExit("signal(SIGPIPE, SIG_IGN) error.\n");
+    }
+
+    for ( ;; ) {
+        if (read(serverFd, &req, sizeof(struct request_t) != sizeof(struct request_t))) {
+            fprintf(stderr, "read() error.\n");
+            continue;
+        }
+
+        memset(clientFifo, 0, CLIENT_FIFO_NAME_LEN);
+
+        snprintf(clientFifo, CLIENT_FIFO_NAME_LEN, CLIENT_FIFO_TEMPLATE, (long)req.pid);
+        int clientFd = open(clientFifo, O_WRONLY);
+        if (-1 == clientFd) {
+            fprintf(stderr, "open %s error.\n", clientFifo);
+            continue;
+        }
+
+        res.seqNum = seqNum;
+
+        if (write(clientFd, &res, sizeof(struct response_t)) != sizeof(struct response_t)) {
+            fprintf(stderr, "write(lientFd, &res, sizeof(struct response_t)) error.\n");
+        }
+
+        if (-1 == close(clientFd)) {
+            fprintf(stderr, "close() error.\n");
+        }
+
+        seqNum += 1;
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+char clientFifo[CLIENT_FIFO_NAME_LEN];
+
+void removeFifo()
+{
+    unlink(clientFifo);
+}
+
+void client()
+{
+    umask(0);
+
+    memset(clientFifo, 0, CLIENT_FIFO_NAME_LEN);
+
+    snprintf(clientFifo, CLIENT_FIFO_NAME_LEN, CLIENT_FIFO_TEMPLATE, (long)getpid());
+    if (-1 == mkfifo(clientFifo, S_IRUSR | S_IWUSR | S_IWGRP) && errno != EEXIST) {
+        errorExit("CLIENT: mkfifo() error.\n");
+    } else {
+        printf("CLIENT: %s created.\n", clientFifo);
+    }
+    if (0 != atexit(removeFifo)) {
+        errorExit("atexit(removeFifo) error.\n");
+    }
+
+    struct request_t req;
+    struct response_t res;
+
+    req.pid = getpid();
+    req.seqLen = 1;
+
+    int serverFd = open(SERVER_FIFO, O_WRONLY);
+    if (-1 == serverFd) {
+        errorExit("CLIENT: open(SERVER_FIFO, O_WRONLY) error.\n");
+    }
+
+    if (write(serverFd, &req, sizeof(struct request_t)) != sizeof(struct request_t)) {
+        errorExit("CLIENT: write() error.\n");
+    }
+
+    int clientFd = open(clientFifo, O_RDONLY);
+    if (-1 == clientFd) {
+        errorExit("CLIENT: open(, O_RDONLY) error.\n");
+    }
+
+    if (read(clientFd, &res, sizeof(struct response_t)) != sizeof(struct response_t)) {
+        errorExit("CLIENT, read() error.\n");
+    }
+
+    printf("CLIENT: received %d\n", res.seqNum);
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_6 --------------------------------------------------------------
+
 } //namespace =================================================================
+
+#define USE_FIFO_SERVER
 
 void exec_ch_07()
 {
@@ -282,7 +417,12 @@ void exec_ch_07()
     _1::test();
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+#if defined(USE_FIFO_SERVER)
+    _5::server();
+#else
+    _6::client();
+#endif
 }
