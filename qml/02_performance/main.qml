@@ -99,7 +99,8 @@ Window {
             //source: "/SequenceTips.qml"
             //source: "/QmlVsCpp.qml"
             //source: "/ModelView.qml"
-            source: "/ListViewVsFlickableRepeater.qml"
+            //source: "/ListViewVsFlickableRepeater.qml"
+            source: "/AnimatedImageTest.qml"
 
             onLoaded: {
                 console.log("source: " + loader.source + " load OK")

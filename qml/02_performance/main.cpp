@@ -5,7 +5,7 @@
 #include "CppLogicTest.h"
 #include "CppModel.h"
 
-#define RUN_AS_CONSOLE
+//#define RUN_AS_CONSOLE
 
 void test_literal();
 
