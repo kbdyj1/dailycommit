@@ -1,6 +1,6 @@
 QT += qml quick concurrent
 
-CONFIG += qmltypes
+#CONFIG += qmltypes
 
 SOURCES += \
         CppLogicTest.cpp \

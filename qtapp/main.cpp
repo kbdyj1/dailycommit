@@ -6,6 +6,7 @@ namespace { //=================================================================
 
 void test_atomic();
 void test_01_ServerClientCommunication();
+void test_process(QObject* parent);
 
 int main(int argc, char *argv[])
 {
@@ -13,8 +14,10 @@ int main(int argc, char *argv[])
 
 #if (0) //done
     test_atomic();
-#endif
     test_01_ServerClientCommunication();
+#endif
+
+    test_process(&a);
 
     return a.exec();
 }
