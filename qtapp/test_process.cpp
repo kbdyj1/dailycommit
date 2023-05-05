@@ -2,6 +2,7 @@
 #include <QStringList>
 #include <QProcess>
 #include <QDebug>
+#include <QFile>
 
 namespace  { //================================================================
 
@@ -52,9 +53,40 @@ void test(QObject* parent)
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+void test(QObject* parent)
+{
+    auto program = QString{"gzip"};
+    auto* process = new QProcess(parent);
+
+    process->start(program, QStringList() << "-c");
+    if (!process->waitForStarted()) {
+        qDebug() << program << " run failed.";
+        return;
+    }
+
+    process->write("Hello, Qt6!!!");
+    process->closeWriteChannel();
+
+    if (!process->waitForFinished()) {
+        qDebug() << "waitForFinished() error.\n";
+        return;
+    }
+
+    auto result = process->readAll();
+    qDebug() << "\nresult: " << result;
+}
+
+} //_2 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_process(QObject* parent)
 {
+#if (0) //done
     _1::test(parent);
+#endif
+
+    _2::test(parent);
 }
