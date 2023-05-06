@@ -28,6 +28,7 @@ SOURCES += \
         2/ch_04.cpp \
         2/ch_05.cpp \
         2/ch_07.cpp \
+        2/ch_08.cpp \
         main.cpp \
         utils.cpp
 
