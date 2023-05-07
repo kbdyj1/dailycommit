@@ -22,6 +22,8 @@ namespace _1 {
 #   define FTOK_PATH   "/tmp/ftok.path"
 #endif
 
+//#define DELETE_MSQID
+
 key_t createMsgQ_key()
 {
 #if defined(USE_PRIVATE)
@@ -61,12 +63,14 @@ void test()
     printf("\tmode: %d\n", msqds.msg_perm.mode);
     printf("\tseq: %d\n", msqds.msg_perm.__seq);
 
+#if defined (DELETE_MSQID)
     printf("delete key(%ld)...", (long)key);
     if (-1 == msgctl(id, IPC_RMID, NULL)) {
         printf(" failed.\n");
     } else {
         printf(" done.\n");
     }
+#endif
 }
 
 } //_1 --------------------------------------------------------------
