@@ -31,6 +31,7 @@ void exec_ch_04(int argc, const char** argv);
 void exec_ch_05();
 void exec_ch_07();
 void exec_ch_08();
+void exec_ch_09();
 
 int main(int argc, const char** argv)
 {
@@ -67,9 +68,10 @@ int main(int argc, const char** argv)
     exec_ch_04(argc, argv);
     exec_ch_05();
     exec_ch_07();
+    exec_ch_08();
 #endif
 
-    exec_ch_08();
+    exec_ch_09();
 
     return 0;
 }
