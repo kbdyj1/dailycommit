@@ -37,6 +37,7 @@ SOURCES += \
 LIBS += -lrt -lcrypt -lpthread -lcap -ldl
 
 HEADERS += \
+    semun.h \
     utils.h
 
 DEFINES += "_POSIX_C_SOURCE=200112"
