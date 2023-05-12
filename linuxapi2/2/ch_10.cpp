@@ -90,13 +90,58 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "usage: %s semid value.\n", argv[0]);
+        exit(-1);
+    }
+    semid_ds ds;
+    semun arg;
+    int id = atoi(argv[1]);
+    if (-1 == id) {
+        errorExit("atoi() error.\n");
+    }
+
+    arg.buf = &ds;
+
+    if (-1 == semctl(id, 0, IPC_STAT, arg)) {
+        errorExit("semctl() error.\n");
+    }
+
+    if (ds.sem_nsems != argc -2) {
+        fprintf(stderr, "set contains %ld semaphores, but %d values were supplied.\n", (long)ds.sem_nsems, argc - 2);
+        exit(-2);
+    }
+
+    arg.array = (unsigned short*)calloc(ds.sem_nsems, sizeof(arg.array[0]));
+    if (NULL == arg.array) {
+        errorExit("arg.array is NULL");
+    }
+
+    for (int j=2; j<argc; j++) {
+        arg.array[j-2] = atoi(argv[j]);
+    }
+
+    if (-1 == semctl(id, 0, SETALL, arg)) {
+        errorExit("semctl() #2 error.\n");
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_10(int argc, const char* argv[])
 {
 #if (0) //done
     _1::test(argc, argv);
+    _2::test(argc, argv);
 #endif
 
-    _2::test(argc, argv);
+    _3::test(argc, argv);
 }
