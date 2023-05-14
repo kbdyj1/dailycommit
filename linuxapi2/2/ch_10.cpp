@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/sem.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <memory.h>
 #include <unistd.h>
 
@@ -134,6 +135,89 @@ void test(int argc, const char* argv[])
 
 } //_3 --------------------------------------------------------------
 
+namespace _4 {
+
+void sigHandle(int sig)
+{
+    printf("signal %d.\n", sig);
+}
+
+void test()
+{
+    signal(SIGTERM, sigHandle);
+
+    int id = semget(IPC_PRIVATE, 3, S_IRUSR | S_IWUSR);
+    sembuf sops[3];
+    sops[0] = {0, -1, 0};
+    sops[1] = {1, 2, 0};
+    sops[2] = {2, 0, IPC_NOWAIT};
+
+    printf("pid: %ld\n", (long)getpid());
+
+    if (-1 == semop(id, sops, 3)) {
+        if (EAGAIN == errno) {
+            printf("operation would have blocked\n");
+        } else if (EINTR == errno) {
+            printf("operation would have interrupted.\n");
+        } else {
+            errorExit("semop() error.\n");
+        }
+    }
+}
+
+} //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+bool bUseSemUndo = false;
+bool bRetryOnInterrupt = true;
+
+int initSemAvailable(int id, int no)
+{
+    semun arg;
+
+    arg.val = 1;
+
+    return semctl(id, no, SETVAL, arg);
+}
+
+int initSemInUse(int id, int no)
+{
+    semun arg;
+
+    arg.val = 0;
+
+    return semctl(id, no, SETVAL, arg);
+}
+
+int reserveSem(int id, int no)
+{
+    sembuf sops;
+
+    sops.sem_num = no;
+    sops.sem_op = -1;
+    sops.sem_flg = bUseSemUndo ? SEM_UNDO : 0;
+
+    while (-1 == semop(id, &sops, 1)) {
+        if (errno != EINTR || !bRetryOnInterrupt)
+            return -1;
+    }
+    return 0;
+}
+
+int releaseSem(int id, int no)
+{
+    sembuf sops;
+
+    sops.sem_num = no;
+    sops.sem_op = 1;
+    sops.sem_flg = bUseSemUndo ? SEM_UNDO : 0;
+
+    return semop(id, &sops, 1);
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_10(int argc, const char* argv[])
@@ -141,7 +225,8 @@ void exec_ch_10(int argc, const char* argv[])
 #if (0) //done
     _1::test(argc, argv);
     _2::test(argc, argv);
+    _3::test(argc, argv);
 #endif
 
-    _3::test(argc, argv);
+    _4::test();
 }
