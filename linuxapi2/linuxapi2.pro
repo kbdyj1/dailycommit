@@ -31,6 +31,7 @@ SOURCES += \
         2/ch_08.cpp \
         2/ch_09.cpp \
         2/ch_10.cpp \
+        2/ch_11.cpp \
         main.cpp \
         utils.cpp
 

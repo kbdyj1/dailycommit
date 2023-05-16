@@ -230,3 +230,23 @@ void exec_ch_10(int argc, const char* argv[])
 
     _4::test();
 }
+
+int ch_10_initSemAvailable(int id, int no)
+{
+    return _5::initSemAvailable(id, no);
+}
+
+int ch_10_initSemInUse(int id, int no)
+{
+    return _5::initSemInUse(id, no);
+}
+
+int ch_10_reserveSem(int id, int no)
+{
+    return _5::reserveSem(id, no);
+}
+
+int ch_10_releaseSem(int id, int no)
+{
+    return _5::releaseSem(id, no);
+}
