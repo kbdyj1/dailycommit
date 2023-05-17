@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "utils.h"
@@ -16,6 +17,31 @@ int ch_10_reserveSem(int id, int no);
 int ch_10_releaseSem(int id, int no);
 
 namespace { //=================================================================
+
+void print_time_t(const char* format, time_t time)
+{
+    tm *t = localtime(&time);
+    int year = 1900 + t->tm_year;
+    int month = t->tm_mon + 1;
+    if (t->tm_year) {
+        printf("%s%d/%d/%d-%d:%d:%d\n", format, year, month, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
+    } else {
+        printf("%s / / --:--:--\n");
+    }
+}
+
+void print_shmid_ds(const shmid_ds *ds)
+{
+    printf("DEST: %s\n", ds->shm_perm.mode == SHM_DEST ? "true" : "false");
+    printf("LOCK: %s\n", ds->shm_perm.mode == SHM_LOCK ? "true" : "false");
+    printf("segsz: %d\n", ds->shm_segsz);
+    print_time_t("atime: ", ds->shm_atime);
+    print_time_t("dtime: ", ds->shm_dtime);
+    print_time_t("ctime: ", ds->shm_ctime);
+    printf("cpid: %ld\n", (long)ds->shm_cpid);
+    printf("lpid: %ld\n", (long)ds->shm_lpid);
+    printf("attached: %d\n", ds->shm_nattch);
+}
 
 namespace _1 {
 
@@ -107,6 +133,10 @@ void sender()
         if (0 == pseg->cnt)
             break;
     }
+
+    shmid_ds ds;
+    shmctl(shmid, IPC_STAT, &ds);
+    print_shmid_ds(&ds);
 
     if (-1 == ch_10_reserveSem(semid, WRITE_SEM)) {
         errorExit("ch_10_reserveSem() error. #2\n");
