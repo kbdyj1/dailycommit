@@ -1,5 +1,12 @@
+//#define USE_MAP_ANON
+
+#ifdef  USE_MAP_ANON
+#   define _BSD_SOURCE
+#endif
+
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -98,13 +105,88 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test()
+{
+    int fd = open("/dev/zero", O_RDWR);
+    if (-1 == fd) {
+        errorExit("open(/dev/zero) error.\n");
+    } else {
+        fprintf(stdout, "/dev/zero -> %d\n", fd);
+    }
+
+    void* addr = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (addr == MAP_FAILED) {
+        errorExit("mmap() error.\n");
+    }
+
+    close(fd);
+    exit(EXIT_SUCCESS);
+}
+
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+void test()
+{
+    int* addr;
+
+#ifdef USE_MAP_ANON
+    addr = (int*) mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    if (addr == MAP_FAILED)
+        errorExit("mmap() failed.\n");
+#else
+    int fd = open("/dev/zero", O_RDWR);
+    if (-1 == fd)
+        errorExit("open(/dev/zero) failed.\n");
+
+    addr = (int*)mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (addr == MAP_FAILED)
+        errorExit("mmap() failed.\n");
+
+    if (-1 == close(fd))
+        errorExit("close(fd) error.\n");
+#endif
+
+    *addr = 1;
+
+    switch (fork()) {
+    case -1:
+        errorExit("fork() error.\n");
+
+    case 0:
+        printf("Child, value: %d\n", *addr);
+        (*addr)++;
+
+        if (-1 == munmap(addr, sizeof(int)))
+            errorExit("munmap() failed.\n");
+        _exit(EXIT_SUCCESS);
+        break;
+
+    default:
+        if (-1 == wait(NULL))
+            errorExit("wait() error.\n");
+        printf("Parent, value: %d\n", *addr);
+        if (-1 == munmap(addr, sizeof(int)))
+            errorExit("munmap() error.\n");
+        exit(EXIT_SUCCESS);
+        break;
+    }
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_12(int argc, const char* argv[])
 {
 #if (0) //done
     _1::test(argc, argv);
+    _2::test(argc, argv);
+    _3::test();
 #endif
 
-    _2::test(argc, argv);
+    _4::test();
 }
