@@ -178,6 +178,21 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+void test()
+{
+    int fd = open("/dev/zero", O_RDWR);
+    void* addr = mmap(NULL, 4096, PROT_READ, MAP_PRIVATE, fd, 0);
+    printf("  mmap(): %p\n", addr);
+    close(fd);
+
+    addr = mremap(addr, 4096, 8196, MREMAP_MAYMOVE);
+    printf("mremap(): %p\n", addr);
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_12(int argc, const char* argv[])
@@ -186,7 +201,8 @@ void exec_ch_12(int argc, const char* argv[])
     _1::test(argc, argv);
     _2::test(argc, argv);
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test();
 }
