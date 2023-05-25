@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 #include <limits.h>
+#include <pthread.h>
 #include <unistd.h>
 #include "utils.h"
 
@@ -214,6 +215,72 @@ void test(int argc, const char* argv[])
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+void threadFunc(sigval v);
+
+void notifySetup(mqd_t* pid)
+{
+    sigevent ev;
+    ev.sigev_notify = SIGEV_THREAD;
+    ev.sigev_notify_function = threadFunc;
+    ev.sigev_notify_attributes = NULL;
+    ev.sigev_value.sival_ptr = pid;
+
+    if (-1 == mq_notify(*pid, &ev)) {
+        errorExit("notifySetup() failed.\n");
+    }
+}
+
+void threadFunc(sigval v)
+{
+    mqd_t* pid = (mqd_t*)v.sival_ptr;
+    mq_attr attr;
+
+    if (-1 == mq_getattr(*pid, &attr)) {
+        errorExit("mq_getattr() failed.\n");
+    }
+
+    char* buffer = (char*)malloc(attr.mq_msgsize);
+    if (NULL == buffer) {
+        errorExit("malloc() failed.");
+    }
+
+    notifySetup(pid);
+
+    ssize_t reads;
+
+    while (0 <= (reads = mq_receive(*pid, buffer, attr.mq_msgsize, NULL))) {
+        printf("Reads %ld bytes.\n", reads);
+    }
+
+    if (EAGAIN != errno) {
+        errorExit("mq_receive() failed.\n");
+    }
+
+    free(buffer);
+
+    pthread_exit(NULL);
+}
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s mq-name\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    mqd_t id = mq_open(argv[1], O_RDONLY | O_NONBLOCK);
+    if (-1 == id) {
+        errorExit("mq_open() failed.\n");
+    }
+
+    notifySetup(&id);
+    pause();
+}
+
+} //_6 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_15(int argc, const char* argv[])
@@ -223,7 +290,8 @@ void exec_ch_15(int argc, const char* argv[])
     _2::test(argc, argv);
     _3::test(argc, argv);
     _4::test(argc, argv);
+    _5::test(argc, argv);
 #endif
 
-    _5::test(argc, argv);
+    _6::test(argc, argv);
 }
