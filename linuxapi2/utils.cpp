@@ -75,9 +75,9 @@ void errorExit(const char *message, int exitCode)
     exit(exitCode);
 }
 
-void errnoExit(const char* message, int errno, int exitCode)
+void errnoExit(const char* message, int err, int exitCode)
 {
-    const char* errstr = strerror(errno);
+    const char* errstr = strerror(err);
     fprintf(stderr, "%s %s\n", message, errstr);
     exit(exitCode);
 }
