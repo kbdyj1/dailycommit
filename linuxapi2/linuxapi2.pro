@@ -22,20 +22,20 @@ SOURCES += \
         1/ch_34.cpp \
         1/ch_35.cpp \
         1/ch_37.cpp \
-        2/ch_01.cpp \
-        2/ch_02.cpp \
-        2/ch_03.cpp \
-        2/ch_04.cpp \
-        2/ch_05.cpp \
-        2/ch_07.cpp \
-        2/ch_08.cpp \
-        2/ch_09.cpp \
-        2/ch_10.cpp \
-        2/ch_11.cpp \
-        2/ch_12.cpp \
-        2/ch_13.cpp \
-        2/ch_15.cpp \
-        2/ch_16.cpp \
+        2/ch2_01.cpp \
+        2/ch2_02.cpp \
+        2/ch2_03.cpp \
+        2/ch2_04.cpp \
+        2/ch2_05.cpp \
+        2/ch2_07.cpp \
+        2/ch2_08.cpp \
+        2/ch2_09.cpp \
+        2/ch2_10.cpp \
+        2/ch2_11.cpp \
+        2/ch2_12.cpp \
+        2/ch2_13.cpp \
+        2/ch2_15.cpp \
+        2/ch2_16.cpp \
         main.cpp \
         utils.cpp
 
