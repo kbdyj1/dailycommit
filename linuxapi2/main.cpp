@@ -38,6 +38,7 @@ void exec_ch_12(int argc, const char* argv[]);
 void exec_ch_13(int argc, const char* argv[]);
 void exec_ch_15(int argc, const char* argv[]);
 void exec_ch_16(int argc, const char* argv[]);
+void exec_ch_17(int argc, const char* argv[]);
 
 int main(int argc, const char** argv)
 {
@@ -81,9 +82,10 @@ int main(int argc, const char** argv)
     exec_ch_12(argc, argv);
     exec_ch_13(argc, argv);
     exec_ch_15(argc, argv);
+    exec_ch_16(argc, argv);
 #endif
 
-    exec_ch_16(argc, argv);
+    exec_ch_17(argc, argv);
 
     return 0;
 }
