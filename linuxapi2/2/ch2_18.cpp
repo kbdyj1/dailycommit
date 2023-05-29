@@ -1,6 +1,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/file.h>
 #include <unistd.h>
 #include "utils.h"
@@ -58,9 +59,99 @@ void test(int argc, const char* argv[])
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+const int MAX_LINE = 100;
+
+void printUsage(const char* argv[])
+{
+    fprintf(stderr, "Usage: %s cmd [r|w|u] start length\n", argv[0]);
+}
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        printUsage(argv);
+    }
+
+    int fd = open(argv[0], O_RDWR);
+    if (-1 == fd) {
+        errorExit("open() failed.\n");
+    }
+
+    char line[MAX_LINE];
+    char c;
+    char l;
+    long start, len;
+    struct flock fl;
+    int cmd;
+    int lock;
+    int status;
+
+    for ( ;; ) {
+        printf("PID: %ld\n", (long)getpid());
+        fflush(stdout);
+
+        if (NULL == fgets(line, MAX_LINE, stdin)) {
+            exit(EXIT_SUCCESS);
+        }
+        line[strlen(line) -1] = '\0';
+
+        if (*line == '\0')
+            continue;
+
+        if (line[0] == '?') {
+            printUsage(argv);
+            continue;
+        }
+
+        int numRead = sscanf(line, "%c %c %ld %ld", &c, &l, &start, &len);
+        fl.l_start = start;
+        fl.l_len = len;
+        cmd = (c == 'g') ? F_GETLK : (c == 's') ? F_SETLK : F_SETLKW;
+        fl.l_type = (l == 'r') ? F_RDLCK : (l == 'w') ? F_WRLCK : F_UNLCK;
+        fl.l_whence = SEEK_SET;
+
+        status = fcntl(fd, cmd, &fl);
+
+        if (F_GETLK == cmd) {
+            if (-1 == status) {
+                errorExit("fcntl(F_GETLK) failed.\n");
+            } else {
+                if (F_UNLCK == fl.l_type) {
+                    printf("[PID=%ld] lock can be placed.\n", (long)getpid());
+                } else {
+                    printf("[PID=%ld] denied by %s lock on %ld:%ld, held by PID %ld\n"
+                           , (long)getpid()
+                           , (fl.l_type == F_RDLCK ? "READ" : "WRITE")
+                           , start
+                           , len
+                           , (long)fl.l_pid);
+                }
+            }
+        } else {
+            if (0 == status) {
+                printf("[PID=%ld] %s\n", (long)getpid(), (l == 'u' ? "unlocked" : "got lock"));
+            } else if (EAGAIN == errno || EACCES == errno) {
+                printf("[PID=%ld] failed (incompatible lock)\n", (long)getpid());
+            } else if (EDEADLK == errno) {
+                printf("[PID=%ld] failed (deadlock)\n", (long)getpid());
+            } else {
+                errorExit("fcntl(F_SETLK(W) failed.\n");
+            }
+        }
+    }
+}
+
+} //_2 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_18(int argc, const char* argv[])
 {
+#if (0) //done
     _1::test(argc, argv);
+#endif
+
+    _2::test(argc, argv);
 }
