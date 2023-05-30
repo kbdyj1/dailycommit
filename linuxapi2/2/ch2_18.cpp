@@ -145,6 +145,47 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+int lockRegionCommon(int fd, int cmd, int type, int whence, int start, off_t len)
+{
+    struct flock fl;
+
+    fl.l_type = type;
+    fl.l_whence = whence;
+    fl.l_start = start;
+    fl.l_len = len;
+
+    return fcntl(fd, cmd, &fl);
+}
+
+int lockRegion(int fd, int type, int whence, int start, off_t len)
+{
+    return lockRegionCommon(fd, F_SETLK, type, whence, start, len);
+}
+
+int lockRegionWait(int fd, int type, int whence, int start, off_t len)
+{
+    return lockRegionCommon(fd, F_SETLKW, type, whence, start, len);
+}
+
+pid_t isRegionLocked(int fd, int type, int whence, int start, off_t len)
+{
+    struct flock fl;
+
+    fl.l_type = type;
+    fl.l_whence = whence;
+    fl.l_start = start;
+    fl.l_len = len;
+
+    if (-1 == fcntl(fd, F_GETLK, &fl))
+        return -1;
+
+    return (fl.l_type == F_UNLCK) ? 0 : fl.l_pid;
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_18(int argc, const char* argv[])
