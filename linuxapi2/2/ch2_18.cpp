@@ -184,7 +184,56 @@ pid_t isRegionLocked(int fd, int type, int whence, int start, off_t len)
     return (fl.l_type == F_UNLCK) ? 0 : fl.l_pid;
 }
 
+const int BUF_SIZE = 100;
+const int CPF_CLOEXEC = 1;
+
+int createPidFile(const char* program, const char* pidFile, int flags)
+{
+    int fd = open(pidFile, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (-1 == fd)
+        errorExit("open() failed.\n");
+
+    if (flags & CPF_CLOEXEC) {
+        flags = fcntl(fd, F_GETFD);
+        if (-1 == flags) {
+            fprintf(stderr, "Could not get flags for PID %s\n", pidFile);
+            exit(EXIT_FAILURE);
+        }
+
+        flags |= FD_CLOEXEC;
+
+        if (-1 == fcntl(fd, F_SETFD, flags)) {
+            errorExit("fcntl(F_SETFD) failed.\n");
+        }
+    }
+
+    if (-1 == lockRegion(fd, F_WRLCK, SEEK_SET, 0, 0)) {
+        if (EAGAIN == errno || EACCES == errno) {
+            fprintf(stderr, "PID file %s is locked; probably '%s' is already running\n", pidFile, program);
+        } else {
+            fprintf(stderr, "Unable to lock PID file '%s'\n", pidFile);
+        }
+        exit(EXIT_FAILURE);
+    }
+
+    if (-1 == ftruncate(fd, 0))
+        errorExit("ftruncate() failed.\n");
+
+    char buf[BUF_SIZE];
+    snprintf(buf, BUF_SIZE, "%ld\n", (long)getpid());
+    if (write(fd, buf, strlen(buf)) != strlen(buf))
+        fprintf(stderr, "Writing to PID file '%s'\n", pidFile);
+
+    return fd;
+}
+
 } //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+
+
+} //_4 --------------------------------------------------------------
 
 } //namespace =================================================================
 
