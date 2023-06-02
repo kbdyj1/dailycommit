@@ -8,9 +8,9 @@
 
 namespace { //=================================================================
 
-namespace _1 {
-
 #define SOCK_NAME   "/tmp/9Lq7BNBnBycd6nxy.sock"
+
+namespace _1 {
 
 void client()
 {
@@ -98,9 +98,83 @@ void test(int argc, const char* argv[])
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+void server()
+{
+    int fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+    if (-1 == fd)
+        errorExit("[SERVER] socket() failed.\n");
+
+    sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+
+    addr.sun_family = AF_UNIX;
+    strcpy(addr.sun_path, SOCK_NAME);
+
+    if (-1 == bind(fd, (sockaddr*)&addr, sizeof(addr))) {
+        close(fd);
+        unlink(SOCK_NAME);
+
+        errnoExit("bind() failed", errno);
+    }
+    const int BUF_LEN = 128;
+    char buf[BUF_LEN];
+    int len = sizeof(addr);
+    ssize_t recvLen = recvfrom(fd, buf, BUF_LEN, 0, (sockaddr*)&addr, (socklen_t*)&len);
+
+    buf[recvLen] = 0;
+    printf("%lu bytes read: %s\n", recvLen, buf);
+
+    close(fd);
+    unlink(SOCK_NAME);
+}
+
+void client(const char* message)
+{
+    int fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+    if (-1 == fd)
+        errorExit("[SERVER] socket() failed.\n");
+
+    sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+
+    addr.sun_family = AF_UNIX;
+    strcpy(addr.sun_path, SOCK_NAME);
+
+    ssize_t sendLen = sendto(fd, message, strlen(message), 0, (sockaddr*)&addr, sizeof(addr));
+    printf("%lu bytes send\n", sendLen);
+
+    close(fd);
+    unlink(SOCK_NAME);
+}
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s [s|c]\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    if (argv[1][0] == 'c') {
+        if (argc < 3) {
+            client("Hello, Qt6!");
+        } else {
+            client(argv[2]);
+        }
+    } else if (argv[1][0] == 's') {
+        server();
+    }
+}
+
+} //_2 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_19(int argc, const char* argv[])
 {
+#if (0) //done
     _1::test(argc, argv);
+#endif
+
+    _2::test(argc, argv);
 }
