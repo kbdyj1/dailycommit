@@ -40,6 +40,7 @@ SOURCES += \
         2/ch2_18.cpp \
         2/ch2_19.cpp \
         2/ch2_20.cpp \
+        2/ch2_22.cpp \
         main.cpp \
         utils.cpp
 
