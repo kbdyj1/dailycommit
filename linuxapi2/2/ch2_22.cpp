@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
+#include <ctype.h>
 #include "utils.h"
 
 namespace { //=================================================================
@@ -122,8 +123,9 @@ void test()
             fprintf(stderr, "Unknown AF\n");
             break;
         }
-
     }
+
+    freeaddrinfo(result);
 }
 
 } //_3 --------------------------------------------------------------
@@ -150,6 +152,109 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+const int BUF_SIZE = 10;
+const int PORT_NUM = 50002;
+
+void server(int argc, const char* argv[])
+{
+    int fd = socket(AF_INET6, SOCK_DGRAM, 0);
+    if (-1 == fd) {
+        errnoExit("socket", errno);
+    }
+
+    sockaddr_in6 svaddr;
+    memset(&svaddr, 0, sizeof(svaddr));
+    svaddr.sin6_family = AF_INET6;
+    svaddr.sin6_addr = in6addr_any;
+    svaddr.sin6_port = htons(PORT_NUM);
+
+    if (-1 == bind(fd, (sockaddr*)&svaddr, sizeof(svaddr))) {
+        errnoExit("bind", errno);
+    }
+
+    char buf[BUF_SIZE];
+    sockaddr_in6 claddr;
+
+    char ip6[INET6_ADDRSTRLEN];
+
+    for ( ;; ) {
+        socklen_t len = sizeof(sockaddr_in6);
+        ssize_t numBytes = recvfrom(fd, buf, BUF_SIZE, 0, (sockaddr*)&claddr, &len);
+        if (-1 == numBytes) {
+            errnoExit("recvfrom", errno);
+        }
+
+        if (NULL == inet_ntop(AF_INET6, &claddr.sin6_addr, ip6, INET6_ADDRSTRLEN)) {
+            printf("Couldn't convert client address to string.\n");
+        } else {
+            printf("Server received %ld bytes from (%s, %u)\n", (long)numBytes, ip6, ntohs(claddr.sin6_port));
+        }
+
+        for (int j=0; j<numBytes; j++)
+            buf[j] = toupper(buf[j]);
+
+        if (numBytes != sendto(fd, buf, numBytes, 0, (sockaddr*)&claddr, len)) {
+            errorExit("sendto() failed.\n");
+        }
+    }
+}
+
+void client(int argc, const char* argv[])
+{
+    if (argc < 4) {
+        fprintf(stderr, "Usage: %s c host message\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    int fd = socket(AF_INET6, SOCK_DGRAM, 0);
+    if (-1 == fd) {
+        errnoExit("socket", errno);
+    }
+
+    sockaddr_in6 svaddr;
+    memset(&svaddr, 0, sizeof(svaddr));
+    svaddr.sin6_family = AF_INET6;
+    svaddr.sin6_port = htons(PORT_NUM);
+
+    if (0 >= inet_pton(AF_INET6, argv[2], &svaddr.sin6_addr)) {
+        errorExit("inet_pton() failed.\n");
+    }
+
+    char resp[BUF_SIZE];
+
+    for (int j=3; j<argc; j++) {
+        ssize_t len = strlen(argv[j]);
+        if (len != sendto(fd, argv[j], len, 0, (sockaddr*)&svaddr, sizeof(svaddr))) {
+            errorExit("sendto() failed.\n");
+        }
+
+        ssize_t numBytes = recvfrom(fd, resp, BUF_SIZE, 0, NULL, NULL);
+        if (-1 == numBytes) {
+            errnoExit("recvfrom", errno);
+        }
+
+        printf("Response: %d: %s\n", j-1, resp);
+    }
+}
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2 || (argv[1][0] != 'c' && argv[1][0] != 's')) {
+        fprintf(stderr, "Usage: %s [c|s] ...\n", argv[0]);
+    }
+
+    char c = argv[1][0];
+    if (c == 's') {
+        server(argc, argv);
+    } else {
+        client(argc, argv);
+    }
+}
+
+} //_5 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_22(int argc, const char* argv[])
@@ -157,7 +262,8 @@ void exec_ch_22(int argc, const char* argv[])
 #if (0) //done
     _2::test();
     _3::test();
+    _4::test();
 #endif
 
-    _4::test();
+    _5::test(argc, argv);
 }
