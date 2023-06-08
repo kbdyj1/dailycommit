@@ -12,8 +12,6 @@
 
 namespace { //=================================================================
 
-namespace _1 {
-
 ssize_t readLine(int fd, void* buffer, size_t n)
 {
     if (n <= 0 || NULL == buffer) {
@@ -52,6 +50,8 @@ ssize_t readLine(int fd, void* buffer, size_t n)
 
     return toRead;
 }
+
+namespace _1 {
 
 } //_1 --------------------------------------------------------------
 
@@ -255,6 +255,178 @@ void test(int argc, const char* argv[])
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+const char* PORT_NUM = "50000";
+const int INT_LEN = 30;
+const int BACKLOG = 50;
+
+void server(int argc, const char* argv[])
+{
+    if (SIG_ERR == signal(SIGPIPE, SIG_IGN)) {
+        errorExit("signal(SIGPIPE, SIG_IGN) failed.\n");
+    }
+
+    addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
+
+    addrinfo* result;
+
+    if (0 != getaddrinfo(NULL, PORT_NUM, &hints, &result)) {
+        errorExit("getaddrinfo() failed.\n");
+    }
+
+    int optVal = 1;
+    addrinfo* p;
+    int fd;
+    for (p = result; p != NULL; p = p->ai_next) {
+        fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (-1 == fd)
+            continue;
+
+        if (-1 == setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof(optVal))) {
+            errnoExit("setsockopt", errno);
+        }
+
+        if (0 == bind(fd, p->ai_addr, p->ai_addrlen))
+            break;
+
+        close(fd);
+    }
+
+    if (NULL == p) {
+        errorExit("Could not bind socket to any address.\n");
+    }
+
+    if (-1 == listen(fd, BACKLOG)) {
+        errnoExit("listen", errno);
+    }
+
+    freeaddrinfo(result);
+
+    sockaddr_storage claddr;
+    char host[NI_MAXHOST];
+    char service[NI_MAXSERV];
+    char reqBuf[INT_LEN];
+    char resBuf[INT_LEN];
+    uint32_t seqNum = argc ? atoi(argv[0]) : 0;
+
+    for ( ;; ) {
+        socklen_t addrLen = sizeof(sockaddr_storage);
+        int cfd = accept(fd, (sockaddr*)&claddr, &addrLen);
+        if (-1 == cfd) {
+            fprintf(stderr, "accept() failed.\n");
+            continue;
+        }
+
+        if (0 == getnameinfo((sockaddr*)&claddr, addrLen, host, NI_MAXHOST, service, NI_MAXSERV, 0)) {
+            printf("Connection from (%s, %s)\n", host, service);
+        } else {
+            printf("Connection from: ?\n");
+        }
+
+        if (0 >= readLine(cfd, reqBuf, INT_LEN)) {
+            close(cfd);
+            continue;
+        }
+
+        int reqLen = atoi(reqBuf);
+        if (reqLen <= 0) {
+            close(cfd);
+            continue;
+        }
+
+        snprintf(resBuf, INT_LEN, "%d\n", seqNum);
+
+        ssize_t len = strlen(resBuf);
+        if (len != write(cfd, resBuf, len)) {
+            fprintf(stderr, "write() error.\n");
+        }
+
+        seqNum += reqLen;
+
+        if (-1 == close(cfd)) {
+            errnoExit("close", errno);
+        }
+    }
+}
+
+void client(int argc, const char* argv[])
+{
+    if (argc < 1) {
+        fprintf(stderr, "Usage: program c host (number)\n");
+        return;
+    }
+    addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_NUMERICSERV;
+
+    addrinfo* result;
+    if (0 != getaddrinfo(argv[0], PORT_NUM, &hints, &result)) {
+        errorExit("getaddrinfo() failed.\n");
+    }
+
+    int cfd;
+    addrinfo* p;
+    for (p = result; p != NULL; p = result->ai_next) {
+        cfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (-1 == cfd)
+            continue;
+
+        if (-1 != connect(cfd, p->ai_addr, p->ai_addrlen))
+            break;
+
+        close(cfd);
+    }
+
+    if (NULL == p) {
+        errorExit("Could not connect socket to any address.\n");
+    }
+
+    freeaddrinfo(result);
+
+    const char* reqStr = (1 < argc) ? argv[1] : "1";
+    ssize_t reqLen = strlen(reqStr);
+
+    if (reqLen != write(cfd, reqStr, reqLen)) {
+        errorExit("write() failed.\n");
+    }
+    if (1 != write(cfd, "\n", 1)) {
+        errorExit("write(\\n) failed.");
+    }
+
+    char buf[INT_LEN];
+    ssize_t numRead = readLine(cfd, buf, INT_LEN);
+    if (-1 == numRead) {
+        errnoExit("readLine", errno);
+    }
+    if (0 == numRead) {
+        errorExit("Unexpected EOF from server");
+    }
+
+    printf("Sequence: %s", buf);
+}
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        return;
+    }
+    char c = argv[1][0];
+
+    if (c == 's') {
+        server(argc-2, argv+2);
+    } else  if (c == 'c'){
+        client(argc-2, argv+2);
+    }
+}
+
+} //_6 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_22(int argc, const char* argv[])
@@ -263,7 +435,8 @@ void exec_ch_22(int argc, const char* argv[])
     _2::test();
     _3::test();
     _4::test();
+    _5::test(argc, argv);
 #endif
 
-    _5::test(argc, argv);
+    _6::test(argc, argv);
 }

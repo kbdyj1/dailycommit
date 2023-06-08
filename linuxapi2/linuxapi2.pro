@@ -42,11 +42,13 @@ SOURCES += \
         2/ch2_20.cpp \
         2/ch2_22.cpp \
         main.cpp \
+        mysock.cpp \
         utils.cpp
 
 LIBS += -lrt -lcrypt -lpthread -lcap -ldl
 
 HEADERS += \
+    mysock.h \
     semun.h \
     utils.h
 
