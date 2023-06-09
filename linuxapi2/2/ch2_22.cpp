@@ -427,6 +427,63 @@ void test(int argc, const char* argv[])
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+void test(int argc, const char* argv[])
+{
+    char str[INET6_ADDRSTRLEN];
+
+    for (int i=1; i<argc; i++) {
+        hostent* h = gethostbyname(argv[i]);
+        if (NULL == h) {
+            fprintf(stderr, "gethostbyname(%s) failed.\n", argv[i]);
+            continue;
+        }
+
+        printf("Canonical name: %s\n", h->h_name);
+        printf(" alias(es): ");
+        for (char** pp = h->h_aliases; *pp != NULL; pp++)
+            printf(" %s", *pp);
+
+        int type = h->h_addrtype;
+        printf("\n address type: %s\n", (type == AF_INET) ? "AF_INET" : (type == AF_INET6) ? "AF_INET6" : "?");
+        if (type == AF_INET || type == AF_INET6) {
+            printf(" address(es): ");
+            for (char** pp = h->h_addr_list; *pp != NULL; pp++) {
+                printf(" %s", inet_ntop(h->h_addrtype, *pp, str, INET6_ADDRSTRLEN));
+            }
+            printf("\n");
+        }
+    }
+}
+
+} //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+void test(int argc, const char* argv[])
+{
+    if (2 < argc) {
+#if (1)
+        servent* s = getservbyname(argv[1], argv[2]);
+#else
+        int port = htons(atoi(argv[1]));
+        servent* s = getservbyport(port, argv[2]);
+#endif
+        if (s) {
+            printf("Canonical name: %s\n", s->s_name);
+            printf(" alias(es): ");
+            for (char** pp = s->s_aliases; *pp != NULL; pp++) {
+                printf(" %s", *pp);
+            }
+            printf("\n port: %d\n", ntohs(s->s_port));
+            printf(" protocol: %s\n", s->s_proto);
+        }
+    }
+}
+
+} //_8 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_22(int argc, const char* argv[])
@@ -436,7 +493,9 @@ void exec_ch_22(int argc, const char* argv[])
     _3::test();
     _4::test();
     _5::test(argc, argv);
+    _6::test(argc, argv);
+    _7::test(argc, argv);
 #endif
 
-    _6::test(argc, argv);
+    _8::test(argc, argv);
 }
