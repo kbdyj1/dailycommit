@@ -41,13 +41,16 @@ SOURCES += \
         2/ch2_19.cpp \
         2/ch2_20.cpp \
         2/ch2_22.cpp \
+        2/ch2_23.cpp \
         main.cpp \
+        mydaemon.cpp \
         mysock.cpp \
         utils.cpp
 
 LIBS += -lrt -lcrypt -lpthread -lcap -ldl
 
 HEADERS += \
+    mydaemon.h \
     mysock.h \
     semun.h \
     utils.h
