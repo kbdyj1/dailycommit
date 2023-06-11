@@ -41,6 +41,44 @@ void handleRequest(int fd)
     }
 }
 
+void multiServer()
+{
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = sigChildHandler;
+
+    if (-1 == sigaction(SIGCHLD, &sa, NULL)) {
+        errnoExit("sigaction", errno);
+    }
+
+    int fd = myListen(SERVICE, 10, NULL);
+    if (-1 == fd) {
+        errnoExit("myListen", errno);
+    }
+
+    for ( ;; ) {
+        int cfd = accept(fd, NULL, NULL);
+        if (-1 == cfd) {
+            errnoExit("accept", errno);
+        }
+
+        switch (fork()) {
+        case -1:
+            errnoExit("fork", errno);
+
+        case 0:
+            close(fd);
+            handleRequest(cfd);
+            _exit(EXIT_SUCCESS);
+
+        default:
+            close(cfd);
+            break;
+        }
+    }
+}
+
 void server()
 {
     socklen_t addrlen;
