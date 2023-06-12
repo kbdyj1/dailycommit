@@ -97,9 +97,69 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+const int IS_ADDR_STR_LEN = 256;
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s service\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    socklen_t len;
+    int lfd = myListen(argv[1], 5, &len);
+    if (-1 == lfd) {
+        errnoExit("myListen", errno);
+    }
+
+    int confd = myConnect(NULL, argv[1], SOCK_STREAM);
+    if (-1 == confd) {
+        errnoExit("myConnect", errno);
+    }
+
+    int afd = accept(lfd, NULL, NULL);
+    if (-1 == afd) {
+        errnoExit("accept", errno);
+    }
+
+    void* addr = malloc(len);
+    if (NULL == addr) {
+        errorExit("malloc() failed.\n");
+    }
+
+    if (-1 == getsockname(confd, (sockaddr*)addr, &len)) {
+        errnoExit("getsockname(con)", errno);
+    }
+
+    char buf[IS_ADDR_STR_LEN];
+    printf("getsockname(confd): %s\n", myAddressStr((sockaddr*)addr, len, buf, IS_ADDR_STR_LEN));
+
+    if (-1 == getsockname(afd, (sockaddr*)addr, &len)) {
+        errnoExit("getsockname(accept)", errno);
+    }
+
+    printf("getsockname(accept): %s\n", myAddressStr((sockaddr*)addr, len, buf, IS_ADDR_STR_LEN));
+
+    if (-1 == getpeername(confd, (sockaddr*)addr, &len)) {
+        errnoExit("getpeername(con)", errno);
+    }
+    printf("getpeername(confd): %s\n", myAddressStr((sockaddr*)addr, len, buf, IS_ADDR_STR_LEN));
+
+    if (-1 == getpeername(afd, (sockaddr*)addr, &len)) {
+        errnoExit("getpeername(accept)", errno);
+    }
+    printf("getpeername(accept): %s\n", myAddressStr((sockaddr*)addr, len, buf, IS_ADDR_STR_LEN));
+
+    sleep(30);
+    exit(EXIT_SUCCESS);
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_24(int argc, const char* argv[])
 {
-
+    _3::test(argc, argv);
 }
