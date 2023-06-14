@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <memory.h>
 #include "mysock.h"
 #include "utils.h"
 
@@ -156,6 +158,85 @@ void test(int argc, const char* argv[])
 }
 
 } //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+const char* SOCK_PATH = "scm_rights";
+
+int unixConnect(const char* path, int type)
+{
+    return 0;
+}
+
+void test(int argc, const char* argv[])
+{
+    if (1 == argc) {
+        fprintf(stderr, "Usage: %s [d] file\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    union {
+        char buf[CMSG_SPACE(sizeof(int))];
+        cmsghdr align;
+    } controlMsg;
+
+    bool useDatagramSocket = false;
+    int fileIndex = 1;
+    if (3 == argc) {
+        useDatagramSocket = ('d' == argv[1][0]);
+        fileIndex = 2;
+    }
+
+    int fd = open(argv[fileIndex], O_RDONLY);
+    if (-1 == fd) {
+        errnoExit("open", errno);
+    }
+
+    msghdr header;
+    header.msg_name = NULL;
+    header.msg_namelen = 0;
+
+    iovec iov;
+    int data = 12345;
+
+    header.msg_iov = &iov;
+    header.msg_iovlen = 1;
+    iov.iov_base = &data;
+    iov.iov_len = sizeof(data);
+
+    printf("sending data = %d\n", data);
+
+    header.msg_control = controlMsg.buf;
+    header.msg_controllen = sizeof(controlMsg.buf);
+
+    memset(controlMsg.buf, 0, sizeof(controlMsg.buf));
+
+    cmsghdr* pHeader = CMSG_FIRSTHDR(&header);
+    pHeader->cmsg_len = CMSG_LEN(sizeof(int));
+    pHeader->cmsg_level = SOL_SOCKET;
+    pHeader->cmsg_type = SCM_RIGHTS;
+    memcpy(CMSG_DATA(pHeader), &fd, sizeof(int));
+
+    int sfd = unixConnect(SOCK_PATH, useDatagramSocket ? SOCK_DGRAM : SOCK_STREAM);
+    if (-1 == sfd) {
+        errnoExit("myConnect", errno);
+    }
+
+    ssize_t ret = sendmsg(sfd, &header, 0);
+    if (-1 == ret) {
+        errnoExit("sendmsg", errno);
+    }
+
+    printf("sendmsg() returned %zd\n", ret);
+
+    if (-1 == close(fd)) {
+        errnoExit("close", errno);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_4 --------------------------------------------------------------
 
 } //namespace =================================================================
 
