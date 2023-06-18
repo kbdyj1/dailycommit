@@ -237,13 +237,107 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+const int BUF_SIZE = 100;
+
+void test()
+{
+    termios ti, save;
+    char buf[BUF_SIZE];
+
+    if (-1 == tcgetattr(STDIN_FILENO, &ti)) {
+        errnoExit("tcgetattr", errno);
+    }
+    save = ti;
+    ti.c_lflag &= ~ECHO;
+    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &ti)) {
+        errnoExit("tcsetattr", errno);
+    }
+
+    printf("Enter text: ");
+    fflush(stdout);
+
+    if (NULL == fgets(buf, BUF_SIZE, stdin)) {
+        printf("Got EOF/error on fgets\n");
+    } else {
+        printf("\nRead: %s\n", buf);
+    }
+
+    if (-1 == tcsetattr(STDIN_FILENO, TCSANOW, &save)) {
+        errnoExit("tcsetattr", errno);
+    }
+    exit(EXIT_SUCCESS);
+}
+
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+int ttySetCBreak(int fd, termios* ti)
+{
+    termios t;
+    if (-1 == tcgetattr(fd, &t)) {
+        return -1;
+    }
+    if (NULL != ti)
+        *ti = t;
+
+    t.c_lflag &= ~(ICANON | ECHO);
+    t.c_lflag |= ISIG;
+
+    t.c_iflag &= ~ICRNL;
+
+    t.c_cc[VMIN] = 1;
+    t.c_cc[VTIME] = 0;
+
+    if (-1 == tcsetattr(fd, TCSAFLUSH, &t)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int ttySetRaw(int fd, termios* ti)
+{
+    termios t;
+    if (-1 == tcgetattr(fd, &t)) {
+        return -1;
+    }
+    if (NULL != ti)
+        *ti = t;
+
+    t.c_lflag &= ~(ICANON | ISIG | IEXTEN | ECHO);
+
+    t.c_iflag &= ~(BRKINT | ICRNL | IGNBRK | IGNCR | INLCR | INPCK | ISTRIP | IXON | PARMRK);
+
+    t.c_oflag &= ~OPOST;
+
+    t.c_cc[VMIN] = 1;
+    t.c_cc[VTIME] = 0;
+
+    if (-1 == tcsetattr(fd, TCSAFLUSH, &t)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+void test()
+{
+
+}
+
+} //_4 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_25(int argc, const char* argv[])
 {
 #if (0) //done
+    _1::test();
     _2::test(argc, argv);
 #endif
-    _1::test();
 
+    _3::test();
 }
