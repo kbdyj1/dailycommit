@@ -9,8 +9,6 @@
 
 namespace { //=================================================================
 
-namespace _1 {
-
 const char* baudString(int baud)
 {
     switch (baud) {
@@ -103,6 +101,8 @@ const char* charSizeString(int csize)
         return "Invalid";
     }
 }
+
+namespace _1 {
 
 void print_termios(const char* name, int fd)
 {
@@ -323,12 +323,162 @@ int ttySetRaw(int fd, termios* ti)
     return 0;
 }
 
-void test()
-{
+termios userTermios;
 
+void sigHandler(int sig)
+{
+    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &userTermios)) {
+        errnoExit("tcsetattr", errno);
+    }
+    _exit(EXIT_SUCCESS);
+}
+
+void tstpSigHandler(int sig)
+{
+    termios ti;
+    sigset_t tstpMask, prevMask;
+    struct sigaction sa;
+    int saveErrno = errno;
+
+    if (-1 == tcgetattr(STDIN_FILENO, &ti)) {
+        errnoExit("tcgetattr", errno);
+    }
+    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &userTermios)) {
+        errnoExit("tcsetattr", errno);
+    }
+
+    if (SIG_ERR == signal(SIGTSTP, SIG_DFL)) {
+        errorExit("signal(SIGTSTP, SIG_DFL)");
+    }
+    raise(SIGTSTP);
+
+    sigemptyset(&tstpMask);
+    sigaddset(&tstpMask, SIGTSTP);
+    if (-1 == sigprocmask(SIG_UNBLOCK, &tstpMask, &prevMask)) {
+        errnoExit("sigprocmask(SIG_UNBLOCK, ...)", errno);
+    }
+
+    // after SIGCONT ...
+
+    if (-1 == sigprocmask(SIG_SETMASK, &prevMask, NULL)) {
+        errnoExit("sigpromask", errno);
+    }
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = tstpSigHandler;
+    if (-1 == sigaction(SIGTSTP, &sa, NULL)) {
+        errnoExit("sigaction(SIGTSTP, ...)", errno);
+    }
+
+    if (-1 == tcgetattr(STDIN_FILENO, &userTermios)) {
+        errnoExit("tcgetattr", errno);
+    }
+    errno = saveErrno;
+}
+
+void test(int argc, const char* argv[])
+{
+    char c;
+    struct sigaction sa, prev;
+    ssize_t n;
+
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+
+    if (1 < argc) {
+       if (-1 == ttySetCBreak(STDIN_FILENO, &userTermios)) {
+           errnoExit("ttySetCBreat", errno);
+       }
+
+       sa.sa_handler = sigHandler;
+
+       if (-1 == sigaction(SIGQUIT, NULL, &prev)) {
+           errnoExit("sigaction(SIGQUIT)", errno);
+       }
+       if (SIG_IGN != prev.sa_handler) {
+           if (-1 == sigaction(SIGQUIT, &sa, NULL)) {
+               errnoExit("sigaction(SIGQUIT) #2", errno);
+           }
+       }
+
+       if (-1 == sigaction(SIGINT, NULL, &prev)) {
+           errnoExit("sigaction(SIGINT)", errno);
+       }
+       if (SIG_IGN != prev.sa_handler) {
+           if (-1 == sigaction(SIGINT, &sa, NULL)) {
+               errnoExit("sigaction(SIGINT) #2", errno);
+           }
+       }
+
+       sa.sa_handler = tstpSigHandler;
+
+       if (-1 == sigaction(SIGTSTP, NULL, &prev)) {
+           errnoExit("sigaction(SIGTSTP)", errno);
+       }
+       if (SIG_IGN != prev.sa_handler) {
+           if (-1 == sigaction(SIGTSTP, &sa, NULL)) {
+               errnoExit("sigaction(SIGTSTP) #2", errno);
+           }
+       }
+    } else {
+        if (-1 == ttySetRaw(STDIN_FILENO, &userTermios)) {
+            errnoExit("ttySetRaw", errno);
+        }
+    }
+
+    sa.sa_handler = sigHandler;
+
+    if (-1 == sigaction(SIGTERM, &sa, NULL)) {
+        errnoExit("sigaction(SIGTERM)", errno);
+    }
+
+    setbuf(stdout, NULL);
+
+    for ( ;; ) {
+        n = read(STDIN_FILENO, &c, 1);
+        if (-1 == n) {
+            errorExit("read() failed.\n");
+        }
+        if (0 == n)
+            break;
+
+        if (isalpha(c)) {
+            putchar(tolower(c));
+        } else if (c == '\n' || c == '\r') {
+            putchar(c);
+        } else if (iscntrl(c)) {
+            printf("^%c", c^64);
+        } else {
+            putchar('*');
+        }
+
+        if ('q' == c)
+            break;
+    }
+
+    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &userTermios)) {
+        errnoExit("tcsetattr", errno);
+    }
+    exit(EXIT_SUCCESS);
 }
 
 } //_4 --------------------------------------------------------------
+
+namespace _5 {
+
+void test()
+{
+    termios ti;
+
+    if (-1 == tcgetattr(STDIN_FILENO, &ti)) {
+        errnoExit("tcgetattr", errno);
+    }
+
+    speed_t rate = cfgetispeed(&ti);
+    printf("stdin baud rate: %s\n", baudString(rate));
+}
+
+} //_5 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -337,7 +487,9 @@ void exec_ch_25(int argc, const char* argv[])
 #if (0) //done
     _1::test();
     _2::test(argc, argv);
+    _3::test();
+    _4::test(argc, argv);
 #endif
 
-    _3::test();
+    _5::test();
 }
