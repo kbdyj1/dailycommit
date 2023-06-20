@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include "utils.h"
 
 namespace { //=================================================================
@@ -480,6 +481,73 @@ void test()
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+void printWinSize(int fd)
+{
+    winsize ws;
+    if (-1 == ioctl(fd, TIOCGWINSZ, &ws)) {
+        errnoExit("ioctl(... TIOCGWINSZ ...)", errno);
+    }
+    printf("row: %d, col: %d, xpixel: %d, ypixel: %d\n", ws.ws_row, ws.ws_col, ws.ws_xpixel, ws.ws_ypixel);
+}
+
+void sigWinChangeHandler(int sig)
+{
+}
+
+void getChangeWinSize()
+{
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = sigWinChangeHandler;
+
+    if (-1 == sigaction(SIGWINCH, &sa, NULL)) {
+        errnoExit("sigaction(SIGWINCH, ...)", errno);
+    }
+
+    for ( ;; ) {
+        pause();
+
+        printWinSize(STDIN_FILENO);
+    }
+}
+
+void setWinSize()
+{
+    winsize ws;
+    ws.ws_row = 24;
+    ws.ws_col = 80;
+    ws.ws_xpixel = 0;
+    ws.ws_ypixel = 0;
+
+    if (-1 == ioctl(STDIN_FILENO, TIOCSWINSZ, &ws)) {
+        errnoExit("ioctl(... TIOCSWINSZ ...)", errno);
+    }
+}
+
+void test()
+{
+#if (0)
+    getChangeWinSize();
+#else
+    setWinSize();
+#endif
+}
+
+} //_6 --------------------------------------------------------------
+
+namespace _7 {
+
+void test()
+{
+    printf("isatty(STDIN_FILENO): %d\n", isatty(STDIN_FILENO));
+    printf("ttyname(STDIN_FILENO): %s\n", ttyname(STDIN_FILENO));
+}
+
+} //_6 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_25(int argc, const char* argv[])
@@ -489,7 +557,9 @@ void exec_ch_25(int argc, const char* argv[])
     _2::test(argc, argv);
     _3::test();
     _4::test(argc, argv);
+    _5::test();
+    _6::test();
 #endif
 
-    _5::test();
+    _7::test();
 }
