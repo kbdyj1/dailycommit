@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <sys/poll.h>
 
 #include "utils.h"
 
@@ -84,13 +86,77 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test(int argc, const char* argv[])
+{
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s num-pipes [num-writes]\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+
+    int numPipes = atoi(argv[1]);
+    int (*pfds)[2];
+
+    pfds = (int(*)[2]) calloc(numPipes, sizeof(int[2]));
+    if (NULL == pfds) {
+        errorExit("calloc");
+    }
+
+    pollfd* pollFd = (pollfd*) calloc(numPipes, sizeof(pollfd));
+    if (NULL == pollFd) {
+        errorExit("calloc");
+    }
+
+    for (int j=0; j<numPipes; j++) {
+        if (-1 == pipe(pfds[j])) {
+            errnoExit("pipe", errno);
+        }
+    }
+
+    int numWrites = 1;
+    if (2 < argc) {
+        numWrites = atoi(argv[2]);
+    }
+
+    srand(time(NULL));
+    for (int j=0; j<numWrites; j++) {
+        int r = random() % numPipes;
+        printf("Writing to fd: %3d (read fd: %3d)\n", pfds[r][1], pfds[r][0]);
+        if (-1 == write(pfds[r][1], "a", 1)) {
+            errnoExit("write", errno);
+        }
+    }
+
+    for (int j=0; j<numWrites; j++) {
+        pollFd[j].fd = pfds[j][0];
+        pollFd[j].events = POLL_IN;
+    }
+
+    int ready = poll(pollFd, numPipes, -1);
+    if (-1 == ready) {
+        errnoExit("poll", errno);
+    }
+
+    printf("poll() returned: %d\n", ready);
+
+    for (int j=0; j<numPipes; j++) {
+        if (pollFd[j].revents & POLL_IN) {
+            printf("Readable: %d %3d\n", j, pollFd[j].fd);
+        }
+    }
+}
+
+} //_2 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_26(int argc, const char* argv[])
 {
 #if (0) //done
     _1::test();
+    _2::test(argc, argv);
 #endif
 
-    _2::test(argc, argv);
+    _3::test(argc, argv);
 }
