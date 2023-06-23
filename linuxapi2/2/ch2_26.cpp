@@ -1,6 +1,8 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <termio.h>
 #include <time.h>
 #include <errno.h>
 #include <unistd.h>
@@ -147,7 +149,89 @@ void test(int argc, const char* argv[])
     }
 }
 
-} //_2 --------------------------------------------------------------
+} //_3 --------------------------------------------------------------
+
+namespace _4 {
+
+volatile sig_atomic_t gotSigIO = 0;
+
+void sigHandler(int sig)
+{
+    gotSigIO = 1;
+}
+
+int ttySetCBreak(int fd, termios* ti)
+{
+    termios t;
+    if (-1 == tcgetattr(fd, &t)) {
+        return -1;
+    }
+    if (NULL != ti)
+        *ti = t;
+
+    t.c_lflag &= ~(ICANON | ECHO);
+    t.c_lflag |= ISIG;
+
+    t.c_iflag &= ~ICRNL;
+
+    t.c_cc[VMIN] = 1;
+    t.c_cc[VTIME] = 0;
+
+    if (-1 == tcsetattr(fd, TCSAFLUSH, &t)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+
+void test()
+{
+    struct sigaction sa;
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = sigHandler;
+
+    if (-1 == sigaction(SIGIO, &sa, NULL)) {
+        errnoExit("sigaction", errno);
+    }
+
+    if (-1 == fcntl(STDIN_FILENO, F_SETOWN, getpid())) {
+        errnoExit("fcntl(F_SETOWN)", errno);
+    }
+
+    int flags = fcntl(STDIN_FILENO, F_GETFL);
+    if (-1 == fcntl(STDIN_FILENO, F_SETFL, flags | O_ASYNC | O_NONBLOCK)) {
+        errnoExit("fcntl(F_SETFL)", errno);
+    }
+
+    termios orig;
+    if (-1 == ttySetCBreak(STDIN_FILENO, &orig)) {
+        errnoExit("ttySetCBreak", errno);
+    }
+
+    bool done = false;
+    for (int i=0; !done; i++) {
+        for (int j=0; j<100000000; j++) {
+            continue;
+        }
+        if (gotSigIO) {
+            char c;
+            while (0 < read(STDIN_FILENO, &c, 1) && !done) {
+                printf("cnt=%d read=%c\n", i, c);
+                done = c == '#';
+            }
+            gotSigIO = 0;
+        }
+    }
+
+    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig)) {
+        errnoExit("tcsetattr", errno);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
+} //_4 --------------------------------------------------------------
 
 } //namespace =================================================================
 
@@ -156,7 +240,7 @@ void exec_ch_26(int argc, const char* argv[])
 #if (0) //done
     _1::test();
     _2::test(argc, argv);
-#endif
-
     _3::test(argc, argv);
+#endif
+    _4::test();
 }
