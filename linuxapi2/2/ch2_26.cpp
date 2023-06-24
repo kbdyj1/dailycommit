@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <sys/poll.h>
+#include <sys/epoll.h>
 
 #include "utils.h"
 
@@ -233,6 +234,31 @@ void test()
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+void test()
+{
+    int sig = fcntl(STDIN_FILENO, F_GETSIG);
+    if (0 == sig) {
+        sig = SIGIO;    // default
+    }
+    printf("fcntl(STDIN_FILENO, F_GETSIG): %s\n", strsignal(sig));
+}
+
+} //_5 --------------------------------------------------------------
+
+namespace _6 {
+
+void test()
+{
+    int fd = epoll_create(8);
+    if (-1 == fd) {
+        errnoExit("epoll_create", errno);
+    }
+}
+
+} //_6 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_26(int argc, const char* argv[])
@@ -241,6 +267,9 @@ void exec_ch_26(int argc, const char* argv[])
     _1::test();
     _2::test(argc, argv);
     _3::test(argc, argv);
-#endif
     _4::test();
+    _5::test();
+#endif
+
+    _6::test();
 }
