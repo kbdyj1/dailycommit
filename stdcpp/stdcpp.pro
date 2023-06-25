@@ -5,4 +5,5 @@ CONFIG -= qt
 
 SOURCES += \
         main.cpp \
-        test_constexpr.cpp
+        test_constexpr.cpp \
+        test_weak_ptr.cpp
