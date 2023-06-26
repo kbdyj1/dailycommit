@@ -259,6 +259,74 @@ void test()
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+const int MAX_BUF = 1000;
+const int MAX_EVENTS = 5;
+
+void test(int argc, const char* argv[])
+{
+    int epfd = epoll_create(argc -1);
+    if (-1 == epfd)
+        errnoExit("epoll_create", errno);
+
+    for (int i=1; i<argc; i++) {
+        int fd = open(argv[i], O_RDONLY);
+        if (-1 == fd)
+            errnoExit("open", errno);
+
+        printf("Opened \"%s\" on fd %d\n", argv[i], fd);
+
+        epoll_event ev;
+        ev.events = EPOLLIN;
+        ev.data.fd = fd;
+
+        if (-1 == epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev))
+            errnoExit("epoll_ctl", errno);
+    }
+
+    int openFds = argc - 1;
+    epoll_event evlist[MAX_EVENTS];
+    char buf[MAX_BUF];
+
+    while (0 < openFds) {
+        printf("About to epoll_wait()\n");
+        int ready = epoll_wait(epfd, evlist, MAX_EVENTS, -1);
+        if (-1 == ready) {
+            if (EINTR == errno)
+                continue;
+            else
+                errnoExit("epoll_wait", errno);
+        }
+
+        printf("Ready: %d\n", ready);
+
+        for (int j=0; j<ready; j++) {
+            printf("\tfd=%d; events: %s%s%s\n", evlist[j].data.fd,
+                   (evlist[j].events & EPOLLIN) ? "EPOLLIN " : "",
+                    (evlist[j].events & EPOLLHUP) ? "EPOLLHUP " : "",
+                    (evlist[j].events & EPOLLERR) ? "EPOLLERR " : "");
+
+            if (evlist[j].events & EPOLLIN) {
+                int s = read(evlist[j].data.fd, buf, MAX_BUF);
+                if (-1 == s)
+                    errnoExit("read", errno);
+            } else if (evlist[j].events & (EPOLLHUP | EPOLLERR)) {
+                printf("\tclosing fd %d\n", evlist[j].data.fd);
+                if (-1 == close(evlist[j].data.fd))
+                    errnoExit("close", errno);
+
+                --openFds;
+            }
+        }
+    }
+
+    printf("All file descriptors closed; bye\n");
+    exit(EXIT_SUCCESS);
+}
+
+} //_7 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_26(int argc, const char* argv[])
@@ -269,7 +337,8 @@ void exec_ch_26(int argc, const char* argv[])
     _3::test(argc, argv);
     _4::test();
     _5::test();
+    _6::test();
 #endif
 
-    _6::test();
+    _7::test(argc, argv);
 }
