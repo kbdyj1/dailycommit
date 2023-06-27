@@ -6,6 +6,7 @@
 #include <time.h>
 #include <errno.h>
 #include <unistd.h>
+#include <algorithm>
 #include <sys/select.h>
 #include <sys/poll.h>
 #include <sys/epoll.h>
@@ -326,6 +327,82 @@ void test(int argc, const char* argv[])
 }
 
 } //_7 --------------------------------------------------------------
+
+namespace _8 {
+
+int pfds[2];
+
+void handler(int sig)
+{
+    int save = errno;
+    if (-1 == write(pfds[1], "x", 1) && EAGAIN != errno)
+        errnoExit("write", errno);
+
+    errno = save;
+}
+
+void test()
+{
+    fd_set readfds;
+    int nfds = 2;
+
+    if (-1 == pipe(pfds))
+        errnoExit("pipe", errno);
+
+    FD_SET(pfds[0], &readfds);
+    nfds = std::max(nfds, pfds[0] + 1);
+
+    int flags = fcntl(pfds[0], F_GETFL);
+    if (-1 == flags)
+        errnoExit("fcntl", errno);
+
+    flags |= O_NONBLOCK;
+
+    if (-1 == fcntl(pfds[0], F_SETFL, flags))
+        errnoExit("fcntl", errno);
+
+    flags = fcntl(pfds[1], F_GETFL);
+    if (-1 == flags)
+        errnoExit("fcntl", errno);
+
+    flags |= O_NONBLOCK;
+
+    if (-1 == fcntl(pfds[1], F_SETFL, flags))
+        errnoExit("fcntl", errno);
+
+    struct sigaction sa;
+
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    sa.sa_handler = handler;
+    if (-1 == sigaction(SIGINT, &sa, NULL))
+        errnoExit("sigaction", errno);
+
+    int ready;
+    struct timeval* pto;
+
+    while ((ready = select(nfds, &readfds, NULL, NULL, pto)) == -1 && errno == EINTR)
+        continue;
+
+    if (-1 == ready)
+        errnoExit("select", errno);
+
+    char c;
+    if (FD_ISSET(pfds[0], &readfds)) {
+        printf("a signal was caught\n");
+
+        for ( ;; ) {
+            if (-1 == read(pfds[0], &c, 1)) {
+                if (EAGAIN == errno)
+                    break;
+                else
+                    errnoExit("read", errno);
+            }
+        }
+    }
+}
+
+} //_8 --------------------------------------------------------------
 
 } //namespace =================================================================
 
