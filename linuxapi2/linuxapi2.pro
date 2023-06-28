@@ -45,6 +45,7 @@ SOURCES += \
         2/ch2_24.cpp \
         2/ch2_25.cpp \
         2/ch2_26.cpp \
+        2/ch2_27.cpp \
         main.cpp \
         mydaemon.cpp \
         mysock.cpp \
