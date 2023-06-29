@@ -4,13 +4,13 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <libgen.h>
 #include <sys/termios.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 #include "utils.h"
 
 namespace { //=================================================================
-
-namespace _1 {
 
 const int MAX_BUF = 64;
 
@@ -127,6 +127,8 @@ pid_t ptyFork(int* master, char* slaveName, size_t len, const termios* slaveTerm
     }
 }
 
+namespace _1 {
+
 void test()
 {
     char buffer[MAX_BUF];
@@ -138,6 +140,57 @@ void test()
 }
 
 } //_1 --------------------------------------------------------------
+
+namespace _2 {
+
+const int MAX_BUF = 256;
+const int MAX_NAME = 1024;
+
+termios tty;
+
+void ttyReset()
+{
+    if (-1 == tcsetattr(STDIN_FILENO, TCSANOW, &tty)) {
+        errnoExit("tcsetattr", errno);
+    }
+}
+
+void test(int argc, const char* argv[])
+{
+    if (-1 == tcgetattr(STDIN_FILENO, &tty)) {
+        errnoExit("tcgetattr", errno);
+    }
+
+    winsize ws;
+    if (0 > ioctl(STDIN_FILENO, TIOCSWINSZ, &ws)) {
+        errorExit("ioctl(STDIN_FILENO, TIOCSWINSZ, ...)");
+    }
+
+    int fd;
+    char slaveName[MAX_NAME];
+    pid_t child = ptyFork(&fd, slaveName, MAX_NAME, &tty, &ws);
+    if (-1 == child)
+        errnoExit("ptyFork", errno);
+
+
+    if (0 == child) {
+        char* shell = getenv("SHELL");
+        if (NULL == shell || *shell == '\0')
+            shell = "/bin/sh";
+
+        execlp(shell, shell, (char*)NULL);
+        errorExit("execlp");
+    }
+
+    int flags = O_WRONLY | O_CREAT | O_TRUNC | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+    int sfd = open(1 < argc ? argv[1] : "typescript", flags);
+    if (-1 == sfd)
+        errnoExit("open", errno);
+
+    // tty set raw
+    }
+
+} //_2 --------------------------------------------------------------
 
 } //namespace =================================================================
 
