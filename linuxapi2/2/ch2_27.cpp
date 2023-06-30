@@ -192,6 +192,64 @@ void test(int argc, const char* argv[])
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+const char* PTY_PREFIX = "/dev/pty";
+const char* TTY_PREFIX = "/dev/tty";
+const int PTY_PREFIX_LEN = (sizeof(PTY_PREFIX) -1);
+const int PTY_NAME_LEN = (PTY_PREFIX_LEN + sizeof("XY"));
+const char* X_RANGE = "pqrstuvwxyzabcde";
+const char* Y_RANGE = "0123456789abcdef";
+
+int bsdPtyMasterOpen(char* slaveName, size_t slaveNameLen)
+{
+    if (slaveNameLen < PTY_NAME_LEN) {
+        errno = EOVERFLOW;
+        return -1;
+    }
+
+    printf("PTY_PREFIX_LEN: %d\n", PTY_PREFIX_LEN);
+
+    char name[PTY_NAME_LEN];
+    memset(name, 0, PTY_NAME_LEN);
+    strncpy(name, PTY_PREFIX, PTY_PREFIX_LEN);
+    for (const char* x = X_RANGE; *x != '\0'; x++) {
+        name[PTY_PREFIX_LEN] = *x;
+
+        for (const char* y = Y_RANGE; *y != '\0'; y++) {
+            name[PTY_PREFIX_LEN + 1] = *y;
+
+            int fd = open(name, O_RDWR);
+            if (-1 == fd) {
+                if (ENOENT == errno) {
+                    return -1;
+                } else {
+                    continue;
+                }
+            } else {
+                int n = snprintf(slaveName, slaveNameLen, "%s%c%c", PTY_PREFIX, *x, *y);
+                if (slaveNameLen <= n) {
+                    errno = EOVERFLOW;
+                    return -1;
+                } else if (-1 == n) {
+                    return -1;
+                } else {
+                    return fd;
+                }
+            }
+        }
+    }
+
+    return -1;
+}
+
+void test()
+{
+
+}
+
+} //_3 --------------------------------------------------------------
+
 } //namespace =================================================================
 
 void exec_ch_27(int argc, const char* argv[])
