@@ -12,7 +12,8 @@ SOURCES += \
         02_exec.cpp \
         03_bytearray.cpp \
         TestExec.cpp \
-        main.cpp
+        main.cpp \
+        test_ownership.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
