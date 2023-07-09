@@ -7,6 +7,8 @@ void test_weak_ptr();
 void test_exception();
 void test_lambda();
 void test_fileio();
+void test_macro();
+void test_move();
 
 int main()
 {
@@ -15,9 +17,11 @@ int main()
     test_weak_ptr();
     test_exception();
     test_lambda();
+    test_fileio();
+    test_macro();
 #endif
 
-    test_fileio();
+    test_move();
 
     return 0;
 }

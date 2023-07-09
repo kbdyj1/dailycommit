@@ -9,4 +9,6 @@ SOURCES += \
         test_exception.cpp \
         test_fileio.cpp \
         test_lambda.cpp \
+        test_macro.cpp \
+        test_move.cpp \
         test_weak_ptr.cpp
