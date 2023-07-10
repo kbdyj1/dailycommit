@@ -11,4 +11,5 @@ SOURCES += \
         test_lambda.cpp \
         test_macro.cpp \
         test_move.cpp \
+        test_vtemplate.cpp \
         test_weak_ptr.cpp

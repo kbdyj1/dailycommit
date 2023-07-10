@@ -9,6 +9,7 @@ void test_lambda();
 void test_fileio();
 void test_macro();
 void test_move();
+void test_vtemplate();
 
 int main()
 {
@@ -19,9 +20,10 @@ int main()
     test_lambda();
     test_fileio();
     test_macro();
+    test_move();
 #endif
 
-    test_move();
+    test_vtemplate();
 
     return 0;
 }
