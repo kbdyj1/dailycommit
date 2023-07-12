@@ -23,6 +23,7 @@ public:
 protected slots:
     void onPostFinished();
     void onGetFinished();
+    void onError(QNetworkReply::NetworkError);
 
 private:
     QNetworkAccessManager* network;
@@ -54,20 +55,34 @@ void TestCurl::post()
 
     qDebug() << data;
 
+    auto config = QSslConfiguration{};
+    config.setProtocol(QSsl::TlsV1_2);
+    req.setSslConfiguration(config);
+
     QNetworkReply* reply = network->post(req, data);
     connect(reply, SIGNAL(finished()), this, SLOT(onPostFinished()));
+    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
 }
 
 void TestCurl::onPostFinished()
 {
     auto* reply = dynamic_cast<QNetworkReply*>(sender());
     if (reply) {
-        auto bytes = reply->readAll();
-        QFile file("post.html");
-        if (file.open(QFile::WriteOnly)) {
-            file.write(bytes);
+        if (reply->error() != QNetworkReply::NoError) {
+            qDebug() << reply->errorString();
+        } else {
+            auto bytes = reply->readAll();
+            QFile file("post.html");
+            if (file.open(QFile::WriteOnly)) {
+                file.write(bytes);
+            }
         }
     }
+}
+
+void TestCurl::onError(QNetworkReply::NetworkError error)
+{
+    qDebug() << "onError: " << error;
 }
 
 void TestCurl::get()
