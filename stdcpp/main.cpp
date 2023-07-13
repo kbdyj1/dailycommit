@@ -10,6 +10,7 @@ void test_fileio();
 void test_macro();
 void test_move();
 void test_vtemplate();
+void test_assert();
 
 int main()
 {
@@ -21,9 +22,10 @@ int main()
     test_fileio();
     test_macro();
     test_move();
+    test_vtemplate();
 #endif
 
-    test_vtemplate();
+    test_assert();
 
     return 0;
 }
