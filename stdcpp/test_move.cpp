@@ -87,6 +87,26 @@ void test()
 
 namespace _2 {
 
+#define USE_TEMPLATE
+
+class A {
+    std::vector<std::string> names;
+public:
+#if defined(USE_TEMPLATE)
+    template<typename T>
+    void addName(T&& name) {
+        names.push_back(std::forward<T>(name));
+    }
+#else
+    void addName(const std::string& name) {
+        names.push_back(name);
+    }
+    void addName(std::string&& name) {
+        names.push_back(std::move(name));
+    }
+#endif
+};
+
 
 } //_2 --------------------------------------------------------------
 
