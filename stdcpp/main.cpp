@@ -11,6 +11,7 @@ void test_macro();
 void test_move();
 void test_vtemplate();
 void test_assert();
+void test_memalign();
 
 int main()
 {
@@ -23,9 +24,10 @@ int main()
     test_macro();
     test_move();
     test_vtemplate();
+    test_assert();
 #endif
 
-    test_assert();
+    test_memalign();
 
     return 0;
 }
