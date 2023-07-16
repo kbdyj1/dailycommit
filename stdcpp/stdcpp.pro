@@ -7,6 +7,7 @@ SOURCES += \
         main.cpp \
         test_assert.cpp \
         test_constexpr.cpp \
+        test_emplaceback.cpp \
         test_exception.cpp \
         test_fileio.cpp \
         test_lambda.cpp \
