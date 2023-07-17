@@ -1,0 +1,116 @@
+/tmp/:
+합계 56K
+4.0K QtCreator-oEFzAZ
+4.0K VMwareDnD
+4.0K snap-private-tmp
+4.0K ssh-Hmfqv7cjY5XG
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-ModemManager.service-DkJb3f
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-colord.service-wZ0h3i
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-fwupd.service-IJF5Re
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-switcheroo-control.service-RxCHkh
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-systemd-logind.service-ExX9Ye
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-systemd-resolved.service-Jq3bUe
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-systemd-timesyncd.service-yFbNti
+4.0K systemd-private-457ef4b457ca45269951930c2b161a42-upower.service-mgDgEi
+4.0K tracker-extract-files.1000
+4.0K tracker-extract-files.125
+   0 config-err-LWjeov
+   0 qipc_sharedmemory_qtsingleapplicationebe297d2e336ab08fe29406a369ff59513146b603ce
+   0 qipc_systemsem_qtsingleapplicationebe297d2e336ab08fe29406a369ff59513146b603ce
+   0 qtsingleapplication-1662-3e8
+   0 qtsingleapplication-1662-3e8-lockfile
+
+/tmp/QtCreator-oEFzAZ:
+합계 8.0K
+4.0K clang-uiheader-OjTMGQ
+4.0K clangbackend-VLZnls
+   0 ClangBackEnd-2824
+
+/tmp/QtCreator-oEFzAZ/clang-uiheader-OjTMGQ:
+합계 0
+
+/tmp/QtCreator-oEFzAZ/clangbackend-VLZnls:
+합계 30M
+ 11M preamble-4a1e30.pch
+9.4M preamble-989ded.pch
+9.2M preamble-a9e9b9.pch
+
+/tmp/VMwareDnD:
+합계 0
+
+/tmp/snap-private-tmp:
+합계 4.0K
+4.0K snap.snap-store
+
+/tmp/snap-private-tmp/snap.snap-store:
+합계 4.0K
+4.0K tmp
+
+/tmp/snap-private-tmp/snap.snap-store/tmp:
+합계 0
+
+/tmp/ssh-Hmfqv7cjY5XG:
+합계 0
+0 agent.1885
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-ModemManager.service-DkJb3f:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-ModemManager.service-DkJb3f/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-colord.service-wZ0h3i:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-colord.service-wZ0h3i/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-fwupd.service-IJF5Re:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-fwupd.service-IJF5Re/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-switcheroo-control.service-RxCHkh:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-switcheroo-control.service-RxCHkh/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-logind.service-ExX9Ye:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-logind.service-ExX9Ye/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-resolved.service-Jq3bUe:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-resolved.service-Jq3bUe/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-timesyncd.service-yFbNti:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-systemd-timesyncd.service-yFbNti/tmp:
+합계 0
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-upower.service-mgDgEi:
+합계 4.0K
+4.0K tmp
+
+/tmp/systemd-private-457ef4b457ca45269951930c2b161a42-upower.service-mgDgEi/tmp:
+합계 0
+
+/tmp/tracker-extract-files.1000:
+합계 0
+
+/tmp/tracker-extract-files.125:
+합계 0

@@ -8,6 +8,7 @@ void test_qvarlengtharray();
 void test_exec(QObject* parent);
 void test_qbytearray();
 void test_ownership();
+void test_implicitsharing();
 
 int main(int argc, char *argv[])
 {
@@ -17,9 +18,10 @@ int main(int argc, char *argv[])
     test_qvarlengtharray();
     test_exec(&a);
     test_qbytearray();
+    test_ownership();
 #endif
 
-    test_ownership();
+    test_implicitsharing();
 
     return a.exec();
 }
