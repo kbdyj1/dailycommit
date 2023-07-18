@@ -13,6 +13,7 @@ void test_vtemplate();
 void test_assert();
 void test_memalign();
 void test_emplaceback();
+void test_container_size();
 
 int main()
 {
@@ -27,9 +28,10 @@ int main()
     test_vtemplate();
     test_assert();
     test_memalign();
+    test_emplaceback();
 #endif
 
-    test_emplaceback();
+    test_container_size();
 
     return 0;
 }
