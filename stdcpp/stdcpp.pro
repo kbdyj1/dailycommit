@@ -6,6 +6,7 @@ CONFIG -= qt
 SOURCES += \
         main.cpp \
         test_assert.cpp \
+        test_cacheline.cpp \
         test_constexpr.cpp \
         test_container_size.cpp \
         test_emplaceback.cpp \

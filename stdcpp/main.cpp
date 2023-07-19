@@ -14,6 +14,7 @@ void test_assert();
 void test_memalign();
 void test_emplaceback();
 void test_container_size();
+void test_cacheline();
 
 int main()
 {
@@ -29,9 +30,10 @@ int main()
     test_assert();
     test_memalign();
     test_emplaceback();
+    test_container_size();
 #endif
 
-    test_container_size();
+    test_cacheline();
 
     return 0;
 }
