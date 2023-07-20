@@ -9,6 +9,7 @@ void test_exec(QObject* parent);
 void test_qbytearray();
 void test_ownership();
 void test_implicitsharing();
+void test_jason();
 
 int main(int argc, char *argv[])
 {
@@ -19,9 +20,10 @@ int main(int argc, char *argv[])
     test_exec(&a);
     test_qbytearray();
     test_ownership();
+    test_implicitsharing();
 #endif
 
-    test_implicitsharing();
+    test_jason();
 
     return a.exec();
 }

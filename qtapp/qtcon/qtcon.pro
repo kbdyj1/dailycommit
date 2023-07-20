@@ -14,6 +14,7 @@ SOURCES += \
         TestExec.cpp \
         main.cpp \
         test_implcitsharing.cpp \
+        test_jason.cpp \
         test_ownership.cpp
 
 # Default rules for deployment.
