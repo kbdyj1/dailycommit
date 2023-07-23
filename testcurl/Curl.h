@@ -15,6 +15,8 @@ public:
 
     int get(const char* url, const std::vector<std::string>& list);
 
+    void printVersionInfo();
+
 private:
     CurlPrivate *d = nullptr;
 };
