@@ -112,6 +112,9 @@ public:
 
     CURL* curl;
     std::string response;
+    bool debugModeOn = false;
+    std::string user;
+    std::string password;
 };
 
 Curl::Curl() : d(new CurlPrivate)
@@ -136,7 +139,19 @@ int Curl::get(const char *url, const std::vector<std::string>& header)
 
     curl_easy_setopt(d->curl, CURLOPT_HTTPHEADER, slist);
 
+    curl_easy_setopt(d->curl, CURLOPT_WRITEFUNCTION, &Curl::invokeWriteData);
+    curl_easy_setopt(d->curl, CURLOPT_WRITEDATA, this);
+
+    if (d->user.length()) {
+        auto userpwd = d->user;
+        userpwd += ":";
+        userpwd += d->password;
+        curl_easy_setopt(d->curl, CURLOPT_PASSWORD, userpwd.c_str());
+    }
+
     CURLcode res = curl_easy_perform(d->curl);
+
+    curl_slist_free_all(slist);
 
     return (int)res;
 }
@@ -149,8 +164,8 @@ int Curl::post(const char *url, const std::vector<std::string> &headers, const s
     curl_easy_setopt(d->curl, CURLOPT_URL, url);
 
     // HEADER
+    curl_slist* slist = NULL;
     if (0 < headers.size()) {
-        curl_slist* slist = NULL;
         for (auto header : headers) {
             slist = curl_slist_append(slist, header.c_str());
         }
@@ -170,10 +185,20 @@ int Curl::post(const char *url, const std::vector<std::string> &headers, const s
         curl_easy_setopt(d->curl, CURLOPT_POSTFIELDS, body.c_str());
     }
 
+#if (1)
+    d->response.clear();
+
     curl_easy_setopt(d->curl, CURLOPT_WRITEFUNCTION, &Curl::invokeWriteData);
     curl_easy_setopt(d->curl, CURLOPT_WRITEDATA, this);
+#endif
+
+    if (d->debugModeOn) {
+        curl_easy_setopt(d->curl, CURLOPT_VERBOSE, 1);
+    }
 
     CURLcode res = curl_easy_perform(d->curl);
+
+    curl_slist_free_all(slist);
 
     return (int)res;
 }
@@ -182,13 +207,8 @@ size_t Curl::writeCallback(void *data, size_t size, size_t memBytes)
 {
     std::cout << "writeCallback(" << data << ", " << size << ", " << memBytes << ")\n\n";
     size_t totalSize = size*memBytes;
-    d->response = std::string((char*)data, totalSize);
+    d->response += std::string((char*)data, totalSize);
 
-    FILE* fp = fopen("response.txt", "wt");
-    if (fp) {
-        fwrite(data, 1, totalSize, fp);
-        fclose(fp);
-    }
     return totalSize;
 }
 
@@ -206,4 +226,26 @@ void Curl::printError(int error)
 {
     const char* errorString = curl_easy_strerror((CURLcode)error);
     std::cout << "error(" << error << "): " << errorString << "\n";
+}
+
+void Curl::saveResponse(const char *filename)
+{
+    FILE* fp = fopen(filename, "wt");
+    if (fp) {
+        std::cout << "response: " << d->response.size() << " bytes.\n";
+
+        fwrite(d->response.c_str(), 1, d->response.size(), fp);
+        fclose(fp);
+    }
+}
+
+void Curl::setDebugOn(bool b)
+{
+    d->debugModeOn = b;
+}
+
+void Curl::setPassword(const std::string &user, const std::string &password)
+{
+    d->user = user;
+    d->password = password;
 }

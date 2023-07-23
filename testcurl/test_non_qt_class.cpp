@@ -46,10 +46,13 @@ void test()
 
     headers.push_back(contentsLength);
 
+    curl.setDebugOn(true);
+
     auto ret = curl.post(url, headers, body);
     std::cout << "curl.post(" << url << "): " << ret << "\n";
     if (0 == ret) {
         curl.printResponse();
+        //curl.saveResponse("response.html");
     } else {
         curl.printError(ret);
     }
@@ -58,13 +61,32 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test()
+{
+    Curl curl;
+
+    auto ret = curl.get("https://@github.com");
+    curl.setPassword(":");
+    if (ret == 0) {
+        //curl.printResponse();
+        curl.saveResponse("response.html");
+    } else {
+        curl.printError(ret);
+    }
+}
+
+} //_3 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_non_qt_class()
 {
 #if (0) //done
     _1::test();
+    _2::test();
 #endif
 
-    _2::test();
+    _3::test();
 }
