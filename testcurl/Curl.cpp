@@ -111,6 +111,7 @@ public:
     }
 
     CURL* curl;
+    std::string response;
 };
 
 Curl::Curl() : d(new CurlPrivate)
@@ -124,6 +125,7 @@ Curl::~Curl()
 
 int Curl::get(const char *url, const std::vector<std::string>& header)
 {
+    curl_easy_reset(d->curl);
     curl_easy_setopt(d->curl, CURLOPT_URL, url);
 
     curl_slist* slist = NULL;
@@ -139,7 +141,69 @@ int Curl::get(const char *url, const std::vector<std::string>& header)
     return (int)res;
 }
 
+int Curl::post(const char *url, const std::vector<std::string> &headers, const std::string &body)
+{
+    curl_easy_reset(d->curl);
+
+    // URL
+    curl_easy_setopt(d->curl, CURLOPT_URL, url);
+
+    // HEADER
+    if (0 < headers.size()) {
+        curl_slist* slist = NULL;
+        for (auto header : headers) {
+            slist = curl_slist_append(slist, header.c_str());
+        }
+
+        curl_easy_setopt(d->curl, CURLOPT_HTTPHEADER, slist);
+    }
+
+    // METHOD
+    curl_easy_setopt(d->curl, CURLOPT_POST, 1L);
+
+    // SSL
+    curl_easy_setopt(d->curl, CURLOPT_SSL_VERIFYPEER, 1L);
+    curl_easy_setopt(d->curl, CURLOPT_SSL_VERIFYHOST, 1L);
+
+    // DATA
+    if (0 < body.length()) {
+        curl_easy_setopt(d->curl, CURLOPT_POSTFIELDS, body.c_str());
+    }
+
+    curl_easy_setopt(d->curl, CURLOPT_WRITEFUNCTION, &Curl::invokeWriteData);
+    curl_easy_setopt(d->curl, CURLOPT_WRITEDATA, this);
+
+    CURLcode res = curl_easy_perform(d->curl);
+
+    return (int)res;
+}
+
+size_t Curl::writeCallback(void *data, size_t size, size_t memBytes)
+{
+    std::cout << "writeCallback(" << data << ", " << size << ", " << memBytes << ")\n\n";
+    size_t totalSize = size*memBytes;
+    d->response = std::string((char*)data, totalSize);
+
+    FILE* fp = fopen("response.txt", "wt");
+    if (fp) {
+        fwrite(data, 1, totalSize, fp);
+        fclose(fp);
+    }
+    return totalSize;
+}
+
 void Curl::printVersionInfo()
 {
     d->checkVersion();
+}
+
+void Curl::printResponse()
+{
+    std::cout << d->response;
+}
+
+void Curl::printError(int error)
+{
+    const char* errorString = curl_easy_strerror((CURLcode)error);
+    std::cout << "error(" << error << "): " << errorString << "\n";
 }
