@@ -9,7 +9,7 @@ void test_exec(QObject* parent);
 void test_qbytearray();
 void test_ownership();
 void test_implicitsharing();
-void test_jason();
+void test_jason(const char* filename);
 
 int main(int argc, char *argv[])
 {
@@ -23,7 +23,9 @@ int main(int argc, char *argv[])
     test_implicitsharing();
 #endif
 
-    test_jason();
+    if (1 < argc) {
+        test_jason(argv[1]);
+    }
 
     return a.exec();
 }

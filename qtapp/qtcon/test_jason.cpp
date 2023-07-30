@@ -2,6 +2,9 @@
 #include <QJsonValue>
 #include <QByteArray>
 #include <QDebug>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 namespace { //=================================================================
 
@@ -21,10 +24,57 @@ void test()
 
 } //_1 --------------------------------------------------------------
 
+namespace _2 {
+
+void printArray(const QJsonArray& array, const QString& subject)
+{
+    qDebug() << subject;
+
+    for (auto iter = array.begin(); iter != array.end(); iter++) {
+
+        auto value = (*iter);
+        switch (value.type()) {
+        case QJsonValue::String:
+            qDebug() << "\t" << value.toString();
+            break;
+        case QJsonValue::Double:
+            qDebug() << "\t" << value.toInt();
+            break;
+        case QJsonValue::Bool:
+            qDebug() << "\t" << value.toBool();
+            break;
+        default:
+            qDebug() << "\t" << value;
+            break;
+        }
+    }
+}
+
+void test(const char* filename)
+{
+    QFile file(filename);
+    if (file.open(QFile::ReadOnly)) {
+        auto data = file.readAll();
+        file.close();
+
+        auto doc = QJsonDocument::fromJson(data);
+
+        auto id = doc["id"].toString().toInt();
+        qDebug() << "id: " << id;
+
+        //...
+    }
+}
+
+} //_2 --------------------------------------------------------------
+
 } //namespace =================================================================
 
-
-void test_jason()
+void test_jason(const char* filename)
 {
+#if (0)
     _1::test();
+#endif
+
+    _2::test(filename);
 }
