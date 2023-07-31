@@ -10,6 +10,7 @@ void test_qbytearray();
 void test_ownership();
 void test_implicitsharing();
 void test_jason(const char* filename);
+void test_datetime();
 
 int main(int argc, char *argv[])
 {
@@ -21,11 +22,12 @@ int main(int argc, char *argv[])
     test_qbytearray();
     test_ownership();
     test_implicitsharing();
-#endif
-
     if (1 < argc) {
         test_jason(argv[1]);
     }
+#endif
+
+    test_datetime();
 
     return a.exec();
 }
