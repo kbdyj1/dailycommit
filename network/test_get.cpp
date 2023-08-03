@@ -18,11 +18,31 @@ protected Q_SLOTS:
         auto* reply = dynamic_cast<QNetworkReply*>(sender());
         {
             auto responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+            auto reasonPhrase = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+            auto redirect = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+            if (redirect.isValid()) {
+                qDebug() << "Redirect -> " << redirect.toUrl();
+            }
+            auto sourceFromCache = reply->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
+            if (sourceFromCache.isValid()) {
+                qDebug() << "Cached? -> " << sourceFromCache.toBool();
+            }
+
             auto url = reply->url();
-            qDebug() << url << " -> " << responseCode;
+            qDebug() << url << " -> " << responseCode << "(" << reasonPhrase << ")\n";
+
+            printHeaderInfo(reply);
         }
     }
+
 private:
+    void printHeaderInfo(QNetworkReply* reply)
+    {
+        auto headers = reply->rawHeaderList();
+        for (const auto& header : headers) {
+            qDebug() << header << ": " << reply->rawHeader(header);
+        }
+    }
     QNetworkAccessManager nam;
 };
 
