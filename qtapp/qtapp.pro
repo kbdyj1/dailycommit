@@ -15,6 +15,7 @@ SOURCES += \
         Server.cpp \
         main.cpp \
         test_atomic.cpp \
+        test_buffer.cpp \
         test_process.cpp \
         test_semaphore.cpp
 
