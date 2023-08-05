@@ -13,6 +13,7 @@ SOURCES += \
         03_bytearray.cpp \
         TestExec.cpp \
         main.cpp \
+        test_bytearray.cpp \
         test_datetime.cpp \
         test_implcitsharing.cpp \
         test_jason.cpp \
