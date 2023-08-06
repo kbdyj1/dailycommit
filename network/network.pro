@@ -17,7 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        test_get.cpp
+        test_get.cpp \
+        test_multipart.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
