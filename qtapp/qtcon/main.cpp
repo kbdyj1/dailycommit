@@ -11,7 +11,7 @@ void test_ownership();
 void test_implicitsharing();
 void test_jason(const char* filename);
 void test_datetime();
-void test_bytearray();
+void test_bytearray(int argc, char* argv[]);
 
 int main(int argc, char *argv[])
 {
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     test_datetime();
 #endif
 
-    test_bytearray();
+    test_bytearray(argc, argv);
 
     return a.exec();
 }
