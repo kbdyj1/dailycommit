@@ -26,10 +26,10 @@ int main(int argc, char *argv[])
     if (1 < argc) {
         test_jason(argv[1]);
     }
-    test_datetime();
+    test_bytearray(argc, argv);
 #endif
 
-    test_bytearray(argc, argv);
+    test_datetime();
 
     return a.exec();
 }

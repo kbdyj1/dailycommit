@@ -1,5 +1,6 @@
 #include <QDateTime>
 #include <QDebug>
+#include <QElapsedTimer>
 
 namespace { //=================================================================
 
@@ -27,13 +28,40 @@ void test()
 
 } //_2 --------------------------------------------------------------
 
+namespace _3 {
+
+void test()
+{
+    auto et = QElapsedTimer{};
+    et.start();
+
+    qDebug() << "msecsSinceReference: " << et.msecsSinceReference() << "msecs";
+
+    auto msecs = et.msecsSinceReference();
+
+    auto sec = msecs / 1000;
+    auto min = sec / 60;
+    auto hour = min / 60;
+
+    qDebug() << hour << ":" << (min % 60) << ":" << (sec % 60);
+
+    auto current = QDateTime::currentDateTime();
+    auto past = current.addSecs(-sec);
+
+    qDebug() << "current : " << current;
+    qDebug() << "boot time: " << past;
+}
+
+} //_3 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_datetime()
 {
 #if (0) //done
     _1::test();
+    _2::test();
 #endif
 
-    _2::test();
+    _3::test();
 }
