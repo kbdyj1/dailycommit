@@ -1,4 +1,5 @@
 QT -= gui
+QT += network
 
 CONFIG += c++2a console
 CONFIG -= app_bundle
@@ -17,6 +18,7 @@ SOURCES += \
         test_datetime.cpp \
         test_implcitsharing.cpp \
         test_jason.cpp \
+        test_network.cpp \
         test_ownership.cpp
 
 # Default rules for deployment.

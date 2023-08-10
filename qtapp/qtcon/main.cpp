@@ -12,6 +12,7 @@ void test_implicitsharing();
 void test_jason(const char* filename);
 void test_datetime();
 void test_bytearray(int argc, char* argv[]);
+void test_network(QObject* parent);
 
 int main(int argc, char *argv[])
 {
@@ -27,9 +28,10 @@ int main(int argc, char *argv[])
         test_jason(argv[1]);
     }
     test_bytearray(argc, argv);
+    test_datetime();
 #endif
 
-    test_datetime();
+    test_network(&a);
 
     return a.exec();
 }
