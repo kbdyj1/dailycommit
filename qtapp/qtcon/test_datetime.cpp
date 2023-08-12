@@ -42,8 +42,11 @@ void test()
     auto sec = msecs / 1000;
     auto min = sec / 60;
     auto hour = min / 60;
+    auto ss = sec % 60;
+    auto mm = min % 60;
+    auto str = QString{"PT%1H%2M%3S"}.arg(hour).arg(mm).arg(ss);
 
-    qDebug() << hour << ":" << (min % 60) << ":" << (sec % 60);
+    qDebug() << hour << ":" << (min % 60) << ":" << (sec % 60) << " -> " << str;
 
     auto current = QDateTime::currentDateTime();
     auto past = current.addSecs(-sec);

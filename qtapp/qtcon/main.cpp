@@ -28,10 +28,10 @@ int main(int argc, char *argv[])
         test_jason(argv[1]);
     }
     test_bytearray(argc, argv);
-    test_datetime();
+    test_network(&a);
 #endif
 
-    test_network(&a);
+    test_datetime();
 
     return a.exec();
 }
