@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
+        test_cache.cpp \
         test_get.cpp \
         test_multipart.cpp
 
