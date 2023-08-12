@@ -10,10 +10,10 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
 #if (0) //done
-    test_get(&a);
+    test_cache(&a);
 #endif
 
-    test_cache(&a);
+    test_get(&a);
 
     return a.exec();
 }

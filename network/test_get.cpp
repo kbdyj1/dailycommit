@@ -2,6 +2,31 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+void printRequestAttribute(QNetworkRequest* req)
+{
+    qDebug() << "peerVerifyName: " << req->peerVerifyName();
+    qDebug() << "HttpStatusCodeAttribute : " << req->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    qDebug() << "HttpReasonPhraseAttribute : " << req->attribute(QNetworkRequest::HttpReasonPhraseAttribute);
+    qDebug() << "RedirectionTargetAttribute : " << req->attribute(QNetworkRequest::RedirectionTargetAttribute);
+    qDebug() << "ConnectionEncryptedAttribute : " << req->attribute(QNetworkRequest::ConnectionEncryptedAttribute);
+    qDebug() << "CacheLoadControlAttribute : " << req->attribute(QNetworkRequest::CacheLoadControlAttribute);
+    qDebug() << "CacheSaveControlAttribute : " << req->attribute(QNetworkRequest::CacheSaveControlAttribute);
+    qDebug() << "SourceIsFromCacheAttribute : " << req->attribute(QNetworkRequest::SourceIsFromCacheAttribute);
+    qDebug() << "DoNotBufferUploadDataAttribute : " << req->attribute(QNetworkRequest::DoNotBufferUploadDataAttribute);
+    qDebug() << "HttpPipeliningAllowedAttribute : " << req->attribute(QNetworkRequest::HttpPipeliningAllowedAttribute);
+    qDebug() << "HttpPipeliningWasUsedAttribute : " << req->attribute(QNetworkRequest::HttpPipeliningWasUsedAttribute);
+    qDebug() << "CustomVerbAttribute : " << req->attribute(QNetworkRequest::CustomVerbAttribute);
+    qDebug() << "CookieLoadControlAttribute : " << req->attribute(QNetworkRequest::CookieLoadControlAttribute);
+    qDebug() << "CookieSaveControlAttribute : " << req->attribute(QNetworkRequest::CookieSaveControlAttribute);
+    qDebug() << "AuthenticationReuseAttribute : " << req->attribute(QNetworkRequest::AuthenticationReuseAttribute);
+    qDebug() << "BackgroundRequestAttribute : " << req->attribute(QNetworkRequest::BackgroundRequestAttribute);
+    qDebug() << "EmitAllUploadProgressSignalsAttribute : " << req->attribute(QNetworkRequest::EmitAllUploadProgressSignalsAttribute);
+    qDebug() << "OriginalContentLengthAttribute : " << req->attribute(QNetworkRequest::OriginalContentLengthAttribute);
+    qDebug() << "RedirectPolicyAttribute : " << req->attribute(QNetworkRequest::RedirectPolicyAttribute);
+    qDebug() << "Http2DirectAttribute : " << req->attribute(QNetworkRequest::Http2DirectAttribute);
+    qDebug() << "AutoDeleteReplyOnFinishAttribute : " << req->attribute(QNetworkRequest::AutoDeleteReplyOnFinishAttribute);
+}
+
 class Test : public QObject
 {
 public:
@@ -32,6 +57,11 @@ protected Q_SLOTS:
             qDebug() << url << " -> " << responseCode << "(" << reasonPhrase << ")\n";
 
             printHeaderInfo(reply);
+
+            qDebug() << "\n\nRequest attributes.\n";
+
+            auto req = reply->request();
+            printRequestAttribute(&req);
         }
     }
 
