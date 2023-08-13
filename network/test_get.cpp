@@ -34,14 +34,41 @@ public:
     {
         auto* req = new QNetworkRequest(url);
         auto* reply = nam.get(*req);
-        connect(reply, &QNetworkReply::finished, this, &Test::onFinished);
+        if (reply) {
+            reply->setReadBufferSize(2048);
+
+            connect(reply, &QNetworkReply::finished, this, &Test::onFinished);
+            connect(reply, &QNetworkReply::readyRead, this, &Test::onReadyRead);
+            connect(reply, &QNetworkReply::downloadProgress, this, &Test::onDownloadProgress);
+            connect(reply, &QNetworkReply::encrypted, this, &Test::onEncrypted);
+        }
     }
 
 protected Q_SLOTS:
+    void onReadyRead()
+    {
+        auto* reply = dynamic_cast<QNetworkReply*>(sender());
+        if (reply) {
+            qDebug() << "ready read. " << reply->size() << " bytes.";
+
+            buffer += reply->readAll();
+        }
+    }
+    void onDownloadProgress(qint64 received, qint64 total)
+    {
+        qDebug() << "download: " << received << "/" << total << " bytes.";
+    }
+    void onEncrypted()
+    {
+        qDebug() << "Encrypted.";
+    }
     void onFinished()
     {
         auto* reply = dynamic_cast<QNetworkReply*>(sender());
         {
+            qDebug() << "finished.\n";
+            qDebug() << reply->size() << " bytes.";
+
             auto responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
             auto reasonPhrase = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
             auto redirect = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
@@ -56,12 +83,19 @@ protected Q_SLOTS:
             auto url = reply->url();
             qDebug() << url << " -> " << responseCode << "(" << reasonPhrase << ")\n";
 
+#if (0)
             printHeaderInfo(reply);
 
             qDebug() << "\n\nRequest attributes.\n";
 
             auto req = reply->request();
             printRequestAttribute(&req);
+#endif
+
+            auto response = reply->readAll();
+            qDebug() << "response.size(): " << response.size() << " bytes.";
+            qDebug() << "buffer.size(): " << buffer.size() << " bytes.";
+            qDebug() << "readBufferSize(): " << reply->readBufferSize() << " bytes.";
         }
     }
 
@@ -74,6 +108,7 @@ private:
         }
     }
     QNetworkAccessManager nam;
+    QByteArray buffer;
 };
 
 void test_get(QObject* parent)
