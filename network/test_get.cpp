@@ -41,6 +41,9 @@ public:
             connect(reply, &QNetworkReply::readyRead, this, &Test::onReadyRead);
             connect(reply, &QNetworkReply::downloadProgress, this, &Test::onDownloadProgress);
             connect(reply, &QNetworkReply::encrypted, this, &Test::onEncrypted);
+
+            qDebug() << "channel count: " << reply->readChannelCount();
+            qDebug() << "sequential? " << reply->isSequential();
         }
     }
 
@@ -50,6 +53,8 @@ protected Q_SLOTS:
         auto* reply = dynamic_cast<QNetworkReply*>(sender());
         if (reply) {
             qDebug() << "ready read. " << reply->size() << " bytes.";
+            qDebug() << "ready read. " << reply->bytesAvailable() << " bytes available.";
+
 
             buffer += reply->readAll();
         }

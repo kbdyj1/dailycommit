@@ -12,10 +12,10 @@ int main(int argc, char *argv[])
 
 #if (0) //done
     test_cache(&a);
-    test_get(&a);
+    test_auth(&a, argv[1]);
 #endif
 
-    test_auth(&a, argv[1]);
+    test_get(&a);
 
     return a.exec();
 }
