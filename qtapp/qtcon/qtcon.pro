@@ -9,13 +9,11 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        01_qvarlengtharray.cpp \
-        02_exec.cpp \
-        03_bytearray.cpp \
         TestExec.cpp \
         main.cpp \
         test_bytearray.cpp \
         test_datetime.cpp \
+        test_fileinfo.cpp \
         test_implcitsharing.cpp \
         test_jason.cpp \
         test_network.cpp \

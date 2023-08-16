@@ -13,6 +13,7 @@ void test_jason(const char* filename);
 void test_datetime();
 void test_bytearray(int argc, char* argv[]);
 void test_network(QObject* parent);
+void test_fileinfo(const char* filename);
 
 int main(int argc, char *argv[])
 {
@@ -29,9 +30,12 @@ int main(int argc, char *argv[])
     }
     test_bytearray(argc, argv);
     test_network(&a);
+    test_datetime();
 #endif
 
-    test_datetime();
+    if (1 < argc) {
+        test_fileinfo(argv[1]);
+    }
 
     return a.exec();
 }
