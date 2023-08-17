@@ -29,13 +29,13 @@ int main(int argc, char *argv[])
         test_jason(argv[1]);
     }
     test_bytearray(argc, argv);
-    test_network(&a);
     test_datetime();
-#endif
-
     if (1 < argc) {
         test_fileinfo(argv[1]);
     }
+#endif
+
+    test_network(&a);
 
     return a.exec();
 }

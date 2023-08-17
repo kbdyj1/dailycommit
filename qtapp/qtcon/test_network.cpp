@@ -32,6 +32,11 @@ void test(QObject* parent)
 {
     auto* net = new Test(parent);
 
+    auto* metaObject = net->metaObject();
+    auto classCount = metaObject->classInfoCount();
+    qDebug() << "classInfo: " << classCount;
+    qDebug() << "className: " << metaObject->className();
+
     net->printDebugMessage();
 }
 
