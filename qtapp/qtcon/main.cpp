@@ -14,10 +14,13 @@ void test_datetime();
 void test_bytearray(int argc, char* argv[]);
 void test_network(QObject* parent);
 void test_fileinfo(const char* filename);
+void test_ioprio();
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+
+    test_ioprio();
 
 #if (0) //done
     test_qvarlengtharray();

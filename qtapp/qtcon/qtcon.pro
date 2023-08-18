@@ -15,6 +15,7 @@ SOURCES += \
         test_datetime.cpp \
         test_fileinfo.cpp \
         test_implcitsharing.cpp \
+        test_ioprio.cpp \
         test_jason.cpp \
         test_network.cpp \
         test_ownership.cpp
