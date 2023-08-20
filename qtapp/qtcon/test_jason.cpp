@@ -70,7 +70,7 @@ void test(const char* filename)
 
 } //namespace =================================================================
 
-void test_jason(const char* filename)
+void test_json(const char* filename)
 {
 #if (0)
     _1::test();

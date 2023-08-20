@@ -9,12 +9,13 @@ void test_exec(QObject* parent);
 void test_qbytearray();
 void test_ownership();
 void test_implicitsharing();
-void test_jason(const char* filename);
+void test_json(const char* filename);
 void test_datetime();
 void test_bytearray(int argc, char* argv[]);
 void test_network(QObject* parent);
 void test_fileinfo(const char* filename);
 void test_ioprio();
+void test_cbor();
 
 int main(int argc, char *argv[])
 {
@@ -29,16 +30,17 @@ int main(int argc, char *argv[])
     test_ownership();
     test_implicitsharing();
     if (1 < argc) {
-        test_jason(argv[1]);
+        test_json(argv[1]);
     }
     test_bytearray(argc, argv);
     test_datetime();
     if (1 < argc) {
         test_fileinfo(argv[1]);
     }
+    test_network(&a);
 #endif
 
-    test_network(&a);
+    test_cbor();
 
     return a.exec();
 }
