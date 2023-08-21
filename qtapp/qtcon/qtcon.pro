@@ -12,6 +12,7 @@ SOURCES += \
         #TestExec.cpp \
         main.cpp \
         test_bytearray.cpp \
+        test_cache.cpp \
         test_cbor.cpp \
         test_datetime.cpp \
         test_fileinfo.cpp \
