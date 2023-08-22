@@ -17,6 +17,7 @@ void test_fileinfo(const char* filename);
 void test_ioprio();
 void test_cbor();
 void test_cache();
+void test_future(QObject* parent);
 
 int main(int argc, char *argv[])
 {
@@ -40,9 +41,10 @@ int main(int argc, char *argv[])
     }
     test_network(&a);
     test_cbor();
+    test_cache();
 #endif
 
-    test_cache();
+    test_future(&a);
 
     return a.exec();
 }

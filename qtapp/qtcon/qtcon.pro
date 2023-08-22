@@ -1,5 +1,5 @@
 QT -= gui
-QT += network
+QT += network concurrent
 
 CONFIG += c++2a console
 CONFIG -= app_bundle
@@ -16,6 +16,7 @@ SOURCES += \
         test_cbor.cpp \
         test_datetime.cpp \
         test_fileinfo.cpp \
+        test_future.cpp \
         test_implcitsharing.cpp \
         test_ioprio.cpp \
         test_jason.cpp \
