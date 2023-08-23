@@ -15,6 +15,7 @@ SOURCES += \
         test_cache.cpp \
         test_cbor.cpp \
         test_datetime.cpp \
+        test_file.cpp \
         test_fileinfo.cpp \
         test_future.cpp \
         test_implcitsharing.cpp \

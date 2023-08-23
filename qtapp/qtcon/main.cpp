@@ -18,14 +18,15 @@ void test_ioprio();
 void test_cbor();
 void test_cache();
 void test_future(QObject* parent);
+void test_file(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+#if (0) //done
     test_ioprio();
 
-#if (0) //done
     test_qvarlengtharray();
     test_exec(&a);
     test_qbytearray();
@@ -42,9 +43,10 @@ int main(int argc, char *argv[])
     test_network(&a);
     test_cbor();
     test_cache();
+    test_future(&a);
 #endif
 
-    test_future(&a);
+    test_file(argc, argv);
 
     return a.exec();
 }
