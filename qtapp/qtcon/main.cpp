@@ -19,6 +19,7 @@ void test_cbor();
 void test_cache();
 void test_future(QObject* parent);
 void test_file(int argc, char *argv[]);
+void test_eventloop(QCoreApplication* app);
 
 int main(int argc, char *argv[])
 {
@@ -44,9 +45,10 @@ int main(int argc, char *argv[])
     test_cbor();
     test_cache();
     test_future(&a);
+    test_file(argc, argv);
 #endif
 
-    test_file(argc, argv);
+    test_eventloop(&a);
 
     return a.exec();
 }
