@@ -1,4 +1,4 @@
-QT -= gui
+QT += gui
 QT += network concurrent
 
 CONFIG += c++2a console
@@ -19,6 +19,7 @@ SOURCES += \
         test_file.cpp \
         test_fileinfo.cpp \
         test_future.cpp \
+        test_image.cpp \
         test_implcitsharing.cpp \
         test_ioprio.cpp \
         test_jason.cpp \
