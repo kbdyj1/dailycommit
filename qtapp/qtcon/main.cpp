@@ -21,6 +21,7 @@ void test_future(QObject* parent);
 void test_file(int argc, char *argv[]);
 void test_eventloop(QCoreApplication* app);
 void test_image(const QStringList& filename);
+void test_thread(QObject* parent);
 
 int main(int argc, char *argv[])
 {
@@ -48,8 +49,6 @@ int main(int argc, char *argv[])
     test_future(&a);
     test_file(argc, argv);
     test_eventloop(&a);
-#endif
-
     if (1 < argc) {
         QStringList filenames;
         for (int i=1; i<argc; i++)
@@ -57,6 +56,9 @@ int main(int argc, char *argv[])
 
         test_image(filenames);
     }
+#endif
+
+    test_thread(&a);
 
     return a.exec();
 }

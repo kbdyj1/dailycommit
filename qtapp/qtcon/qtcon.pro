@@ -24,7 +24,8 @@ SOURCES += \
         test_ioprio.cpp \
         test_jason.cpp \
         test_network.cpp \
-        test_ownership.cpp
+        test_ownership.cpp \
+        test_thread.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
