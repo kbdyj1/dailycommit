@@ -23,6 +23,7 @@ SOURCES += \
         test_implcitsharing.cpp \
         test_ioprio.cpp \
         test_jason.cpp \
+        test_list.cpp \
         test_metaobject.cpp \
         test_network.cpp \
         test_ownership.cpp \

@@ -23,6 +23,7 @@ void test_eventloop(QCoreApplication* app);
 void test_image(const QStringList& filename);
 void test_thread(QObject* parent);
 void test_metaobject();
+void test_list();
 
 int main(int argc, char *argv[])
 {
@@ -58,9 +59,10 @@ int main(int argc, char *argv[])
         test_image(filenames);
     }
     test_thread(&a);
+    test_metaobject();
 #endif
 
-    test_metaobject();
+    test_list();
 
     return a.exec();
 }
