@@ -24,6 +24,7 @@ void test_image(const QStringList& filename);
 void test_thread(QObject* parent);
 void test_metaobject();
 void test_list();
+void test_latin1string();
 
 int main(int argc, char *argv[])
 {
@@ -60,9 +61,10 @@ int main(int argc, char *argv[])
     }
     test_thread(&a);
     test_metaobject();
+    test_list();
 #endif
 
-    test_list();
+    test_latin1string();
 
     return a.exec();
 }
