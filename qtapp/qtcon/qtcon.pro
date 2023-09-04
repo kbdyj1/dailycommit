@@ -28,6 +28,7 @@ SOURCES += \
         test_metaobject.cpp \
         test_network.cpp \
         test_ownership.cpp \
+        test_stringview.cpp \
         test_thread.cpp
 
 # Default rules for deployment.

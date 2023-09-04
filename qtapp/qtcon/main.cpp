@@ -25,6 +25,7 @@ void test_thread(QObject* parent);
 void test_metaobject();
 void test_list();
 void test_latin1string();
+void test_stringview();
 
 int main(int argc, char *argv[])
 {
@@ -62,9 +63,10 @@ int main(int argc, char *argv[])
     test_thread(&a);
     test_metaobject();
     test_list();
+    test_latin1string();
 #endif
 
-    test_latin1string();
+    test_stringview();
 
     return a.exec();
 }
