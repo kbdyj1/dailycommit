@@ -26,6 +26,7 @@ void test_metaobject();
 void test_list();
 void test_latin1string();
 void test_stringview();
+void test_locale();
 
 int main(int argc, char *argv[])
 {
@@ -64,9 +65,10 @@ int main(int argc, char *argv[])
     test_metaobject();
     test_list();
     test_latin1string();
+    test_stringview();
 #endif
 
-    test_stringview();
+    test_locale();
 
     return a.exec();
 }

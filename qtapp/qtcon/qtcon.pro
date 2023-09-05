@@ -25,6 +25,7 @@ SOURCES += \
         test_jason.cpp \
         test_latin1string.cpp \
         test_list.cpp \
+        test_locale.cpp \
         test_metaobject.cpp \
         test_network.cpp \
         test_ownership.cpp \
