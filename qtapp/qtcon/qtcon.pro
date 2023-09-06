@@ -15,6 +15,7 @@ SOURCES += \
         test_cache.cpp \
         test_cbor.cpp \
         test_datetime.cpp \
+        test_dlt.cpp \
         test_eventloop.cpp \
         test_file.cpp \
         test_fileinfo.cpp \
@@ -41,3 +42,4 @@ HEADERS += \
     #TestExec.h
 
 #LIBS += -lssl -lcrypto
+LIBS += -ldlt
