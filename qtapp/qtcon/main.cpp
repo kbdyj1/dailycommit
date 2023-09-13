@@ -28,6 +28,7 @@ void test_latin1string();
 void test_stringview();
 void test_locale();
 void test_dlt();
+void test_user(int argc, char* argv[]);
 
 int main(int argc, char *argv[])
 {
@@ -68,9 +69,10 @@ int main(int argc, char *argv[])
     test_latin1string();
     test_stringview();
     test_locale();
+    test_dlt();
 #endif
 
-    test_dlt();
+    test_user(argc, argv);
 
     return a.exec();
 }

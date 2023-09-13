@@ -31,7 +31,8 @@ SOURCES += \
         test_network.cpp \
         test_ownership.cpp \
         test_stringview.cpp \
-        test_thread.cpp
+        test_thread.cpp \
+        test_user.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
