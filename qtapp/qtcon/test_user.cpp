@@ -3,6 +3,7 @@
 #include <shadow.h>
 #include <QDebug>
 #include <string.h>
+#include <unistd.h>
 
 namespace { //=================================================================
 
@@ -118,6 +119,49 @@ void test(int argc, char* argv[])
 
 } //_4 --------------------------------------------------------------
 
+namespace _5 {
+
+void test(int argc, char* argv[])
+{
+    if (1 < argc) {
+        const char* username = argv[1];
+
+        passwd* pwd = getpwnam(username);
+        spwd* spwd = getspnam(username);
+        if (spwd == NULL && errno == EACCES) {
+            fprintf(stderr, "no permission");
+            return;
+        }
+        pwd->pw_passwd = spwd->sp_pwdp;
+
+        char* input = getpass("enter passwd: ");    //legacy
+
+        char* encrypted = crypt(input, pwd->pw_passwd);
+
+        for (auto* p = input; *p != '\0'; p++)
+            *p = '\0';
+
+        //qDebug() << "crypt(" << input << ", " << pwd->pw_passwd << "): " << encrypted;
+
+        if (encrypted == NULL) {
+            fprintf(stderr, "crypt error");
+            return;
+        }
+
+        auto authOk = strcmp(encrypted, pwd->pw_passwd) == 0;
+        if (!authOk) {
+            fprintf(stdout, "incorrect password.");
+            fflush(stdout);
+
+            return;
+        }
+
+        printf("successfully authenticated: uid=%ld\n", (long)pwd->pw_uid);
+    }
+}
+
+} //_5 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_user(int argc, char* argv[])
@@ -126,7 +170,8 @@ void test_user(int argc, char* argv[])
     _1::test(argc, argv);
     _2::test(argc, argv);
     _3::test(argc, argv);
+    _4::test(argc, argv);
 #endif
 
-    _4::test(argc, argv);
+    _5::test(argc, argv);
 }

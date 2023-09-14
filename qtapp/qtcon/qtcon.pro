@@ -42,5 +42,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     #TestExec.h
 
-#LIBS += -lssl -lcrypto
-LIBS += -ldlt
+LIBS += -ldlt -lcrypt
