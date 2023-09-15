@@ -162,6 +162,18 @@ void test(int argc, char* argv[])
 
 } //_5 --------------------------------------------------------------
 
+namespace _6 {
+
+void test()
+{
+    qDebug() << "uid: " << getuid();
+    qDebug() << "euid: " << geteuid();
+    qDebug() << "gid: " << getgid();
+    qDebug() << "egid: " << getegid();
+}
+
+} //_6 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_user(int argc, char* argv[])
@@ -171,7 +183,8 @@ void test_user(int argc, char* argv[])
     _2::test(argc, argv);
     _3::test(argc, argv);
     _4::test(argc, argv);
+    _5::test(argc, argv);
 #endif
 
-    _5::test(argc, argv);
+    _6::test();
 }
