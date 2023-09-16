@@ -164,12 +164,41 @@ void test(int argc, char* argv[])
 
 namespace _6 {
 
-void test()
+void test_getuid()
 {
     qDebug() << "uid: " << getuid();
     qDebug() << "euid: " << geteuid();
     qDebug() << "gid: " << getgid();
     qDebug() << "egid: " << getegid();
+}
+
+void test_setuid(uid_t id)
+{
+    auto ret = setuid(id);
+    if (0 != ret) {
+        qDebug() << "setuid: " << strerror(errno);
+    } else {
+        test_getuid();
+    }
+}
+
+void test_seteuid(uid_t id)
+{
+    auto ret = seteuid(id);
+    if (0 != ret) {
+        qDebug() << "seteuid: " << strerror(errno);
+    } else {
+        test_getuid();
+    }
+}
+
+void test(int argc, char* argv[])
+{
+    if (argc <= 1)
+        return;
+
+    uid_t id = atoi(argv[1]);
+    test_seteuid(id);
 }
 
 } //_6 --------------------------------------------------------------
@@ -186,5 +215,5 @@ void test_user(int argc, char* argv[])
     _5::test(argc, argv);
 #endif
 
-    _6::test();
+    _6::test(argc, argv);
 }
