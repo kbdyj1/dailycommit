@@ -1,9 +1,11 @@
 #include <pwd.h>
 #include <grp.h>
+#include <sys/fsuid.h>
 #include <shadow.h>
 #include <QDebug>
 #include <string.h>
 #include <unistd.h>
+#include <limits.h>
 
 namespace { //=================================================================
 
@@ -203,6 +205,37 @@ void test(int argc, char* argv[])
 
 } //_6 --------------------------------------------------------------
 
+namespace _7 {
+
+void test()
+{
+    uid_t rid;
+    uid_t eid;
+    uid_t sid;
+
+    if (0 != getresuid(&rid, &eid, &sid)) {
+        fprintf(stderr, strerror(errno));
+        return;
+    } else {
+        qDebug() << "rid: " << rid << ", eid: " << eid << ", sid: " << sid;
+    }
+
+    auto before = setfsuid(0);
+    qDebug() << "setfsuid(0) return " << before;
+
+    qDebug() << "NGROUPS_MAX: " << NGROUPS_MAX;
+
+    gid_t groups[NGROUPS_MAX +1];
+    auto ret = getgroups(NGROUPS_MAX+1, groups);
+    if (-1 != ret) {
+        for (auto i=0; i<ret; i++) {
+            qDebug() << "[" << i << "] " << groups[i];
+        }
+    }
+}
+
+} //_7 --------------------------------------------------------------
+
 } //===========================================================================
 
 void test_user(int argc, char* argv[])
@@ -213,7 +246,8 @@ void test_user(int argc, char* argv[])
     _3::test(argc, argv);
     _4::test(argc, argv);
     _5::test(argc, argv);
+    _6::test(argc, argv);
 #endif
 
-    _6::test(argc, argv);
+    _7::test();
 }
