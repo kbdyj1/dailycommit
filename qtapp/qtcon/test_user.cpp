@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <QFile>
 
 namespace { //=================================================================
 
@@ -224,6 +225,14 @@ void test()
     qDebug() << "setfsuid(0) return " << before;
 
     qDebug() << "NGROUPS_MAX: " << NGROUPS_MAX;
+    qDebug() << "sysconf(_SC_NGROUPS_MAX): " << sysconf(_SC_NGROUPS_MAX);
+    QFile file("/proc/sys/kernel/ngroups_max");
+    if (file.open(QFile::ReadOnly)) {
+        auto bytes = file.readAll();
+        file.close();
+
+        qDebug() << "/proc/sys/kernel/ngroups_max: " << bytes;
+    }
 
     gid_t groups[NGROUPS_MAX +1];
     auto ret = getgroups(NGROUPS_MAX+1, groups);
@@ -232,6 +241,9 @@ void test()
             qDebug() << "[" << i << "] " << groups[i];
         }
     }
+
+    ret = getgroups(0, groups);
+    qDebug() << "getgroups(0, ...): " << ret;
 }
 
 } //_7 --------------------------------------------------------------
