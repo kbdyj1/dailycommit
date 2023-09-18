@@ -14,6 +14,7 @@ SOURCES += \
         test_bytearray.cpp \
         test_cache.cpp \
         test_cbor.cpp \
+        test_char.cpp \
         test_datetime.cpp \
         test_dlt.cpp \
         test_eventloop.cpp \
