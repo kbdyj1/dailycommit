@@ -31,6 +31,7 @@ SOURCES += \
         test_metaobject.cpp \
         test_network.cpp \
         test_ownership.cpp \
+        test_qpointer.cpp \
         test_stringview.cpp \
         test_thread.cpp \
         test_user.cpp

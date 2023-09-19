@@ -30,6 +30,7 @@ void test_locale();
 void test_dlt();
 void test_user(int argc, char* argv[]);
 void test_char();
+void test_qpointer();
 
 int main(int argc, char *argv[])
 {
@@ -72,9 +73,10 @@ int main(int argc, char *argv[])
     test_locale();
     test_dlt();
     test_user(argc, argv);
+    test_char();
 #endif
 
-    test_char();
+    test_qpointer();
 
     return a.exec();
 }
