@@ -1,6 +1,7 @@
 #include <QSettings>
 #include <QMetaEnum>
 #include <QDir>
+#include <QDebug>
 
 namespace Setting
 {

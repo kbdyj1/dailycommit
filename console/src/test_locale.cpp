@@ -1,5 +1,7 @@
 #include <QLocale>
 #include <QDate>
+#include <QDebug>
+#include <QDataStream>
 
 namespace internal
 {
@@ -24,10 +26,10 @@ void print_locale_info(const QLocale &locale)
 {
     auto language = locale.language();
     auto languageStr = locale.languageToString(language);
-    auto territory = locale.territory();
-    auto territoryStr = locale.territoryToString(territory);
+//    auto territory = locale.territory();
+//    auto territoryStr = locale.territoryToString(territory);
 
-    qDebug() << "lang:" << languageStr << ", country:" << territoryStr;
+//    qDebug() << "lang:" << languageStr << ", country:" << territoryStr;
 
     qDebug() << "currency symbole:" << locale.currencySymbol();
     qDebug() << "formatted data size:" << locale.formattedDataSize(1024*1024);

@@ -2,6 +2,8 @@
 #include <QElapsedTimer>
 #include <QDebug>
 #include <QVector>
+#include <QList>
+#include <QString>
 
 namespace internal //==========================================================
 {
@@ -43,7 +45,7 @@ void testQList()
 {
     QList<QString> list;
 
-    qDebug() << "QList<QString>.capacity(): " << list.capacity(); // 0
+//    qDebug() << "QList<QString>.capacity(): " << list.capacity(); // 0
 
     list.append("one");
     list.append("two");
@@ -51,7 +53,7 @@ void testQList()
     list.append(std::move(three));
     list.append("two");
 
-    list.emplace(1, 4, 'b');
+//    list.emplace(1, 4, 'b');
 
     list.removeOne("two");
     //list.resize(8);
@@ -59,11 +61,11 @@ void testQList()
     qDebug() << list;
     qDebug() << three;
 
-    qDebug() << "QList<QString>.capacity(): " << list.capacity(); // 4
+//    qDebug() << "QList<QString>.capacity(): " << list.capacity(); // 4
 
-    list.squeeze();
+//    list.squeeze();
     list.swapItemsAt(0, 1);
-    qDebug() << "squized: " << list << ", capacity: " << list.capacity();
+//    qDebug() << "squized: " << list << ", capacity: " << list.capacity();
 
 
 }
@@ -71,7 +73,7 @@ void testQList()
 void testQListImplicitSharing()
 {
     QList<int> a, b;
-    a.resize(100000);
+    a.reserve(100000);
 
     auto i = a.begin();
 

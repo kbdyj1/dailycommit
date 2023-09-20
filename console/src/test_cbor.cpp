@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QBitArray>
 #include <QDateTime>
+#include <numeric>
 
 namespace { //=================================================================
 
@@ -94,7 +95,7 @@ void test()
     qDebug() << "SNAN: " << b2;
 
 #if !defined(__APPLE__)
-    qDebug() << "SNAN == SNAN: " << (SNAN == SNAN);
+//    qDebug() << "SNAN == SNAN: " << (SNAN == SNAN);
 #endif
 }
 

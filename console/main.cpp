@@ -39,10 +39,11 @@ void test_cbor();
 void test_adl();
 void test_partial_function();
 void test_strategy_pattern();
+void test_fork();
 
 void testConsole()
 {
-    test_strategy_pattern();
+    test_fork();
 }
 
 //-----------------------------------------------------------------------------

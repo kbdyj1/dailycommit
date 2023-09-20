@@ -1,4 +1,5 @@
 #include <QRegularExpression>
+#include <QDebug>
 
 namespace { //=================================================================
 
@@ -84,7 +85,7 @@ void test_global_matching()
 {
     auto rx = QRegularExpression(R"(\w+)");
     auto i = rx.globalMatch("The qt company");
-#if (0)
+#if (1)
     while (i.hasNext()) {
         qDebug() << "peekNext: " << i.peekNext();
         auto match = i.next();

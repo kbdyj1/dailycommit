@@ -3,6 +3,7 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QFile>
+#include <QDebug>
 
 #define TAB_SIZE    3
 

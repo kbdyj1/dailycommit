@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QTemporaryDir>
 #include <QTemporaryFile>
+#include <QDataStream>
 
 namespace internal
 {
@@ -55,7 +56,7 @@ void test_serialize()
     if (file.open(QFile::WriteOnly)) {
         auto out = QDataStream{&file};
 
-        out << QDataStream::Qt_6_2;
+//        out << QDataStream::Qt_6_2;
 
 #ifdef WRITE_QSTRING
         auto str = QString{text};
