@@ -55,3 +55,5 @@ HEADERS +=
 
 RESOURCES += \
     console.qrc
+
+LIBS += -lc
