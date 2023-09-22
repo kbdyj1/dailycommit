@@ -7,7 +7,7 @@ CONFIG += c++2a console
 CONFIG -= app_bundle
 
 INCLUDEPATH += ./include \
-    ./include/kdbindings
+#    ./include/kdbindings
 
 SOURCES = main.cpp \
         src/law_of_demeter.cpp \
@@ -47,7 +47,7 @@ SOURCES = main.cpp \
         src/test_sql.cpp \
         src/test_strategy_pattern.cpp \
 #        src/test_stringview.cpp \
-        src/test_kdbindings.cpp \
+#        src/test_kdbindings.cpp \
         src/test_typetraits.cpp \
         src/test_xml.cpp
 
