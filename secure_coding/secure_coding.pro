@@ -1,13 +1,13 @@
 TEMPLATE = app
-CONFIG += console -std=c11
+CONFIG += console -std=c++11
 CONFIG -= app_bundle
 CONFIG -= qt
 
-#QMAKE_CXX = gcc
-#QMAKE_CXXFLAGS = -x c
-
 SOURCES += \
-        main.c \
-        test_gets.c
+        main.cpp \
+        test_cin.cpp \
+        test_gets.c \
+        test_memstream.c \
+        test_string_out_of_range.cpp
 
 HEADERS +=

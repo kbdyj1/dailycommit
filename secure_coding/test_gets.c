@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//#define USE_FGETS
+#define USE_GETLINE
+
+#if defined(USE_FGETS)
 static void get_y_or_n()
 {
     char res[8];
@@ -17,11 +21,29 @@ static void get_y_or_n()
         exit(-1);
     }
 }
+#endif
+
+#if defined(USE_GETLINE)
+static void get_y_or_n()
+{
+    char* res = NULL;
+    size_t len;
+
+    puts("continue? [y] n: ");
+    int exit_code = 0;
+    if ((0 > getline(&res, &len, stdin)) || (len && res[0] == 'n')) {
+        printf("len: %ld\n", len);
+    } else {
+        exit_code = -1;
+    }
+
+    free(res);
+    exit(exit_code);
+}
+#endif
 
 static void test()
 {
-    //constraint_handler_t constraint = set_constraint_handler_s(ignore_handler_s);
-
     get_y_or_n();
 }
 
