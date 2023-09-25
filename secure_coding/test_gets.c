@@ -1,6 +1,7 @@
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //#define USE_FGETS
 #define USE_GETLINE
@@ -11,7 +12,7 @@ static void get_y_or_n()
     char res[8];
     size_t len = sizeof(res);
     puts("continue? [y] n: ");
-    char* ret = fgets(res, len+1, stdin);
+    char* ret = fgets(res, len, stdin);
     puts("\ninput is: ");
     puts(ret);
 
@@ -42,9 +43,30 @@ static void get_y_or_n()
 }
 #endif
 
+static void test_fgets()
+{
+    char buf[10];
+    int c;
+    char* p;
+
+    if (fgets(buf, sizeof(buf), stdin)) {
+        p = strchr(buf, '\n');
+        if (p) {
+            *p = '\0';
+        } else {
+            while (((c = getchar()) != '\n') && !feof(stdin) && !ferror(stdin))
+                ;
+        }
+        printf("\nentered: %s\n", buf);
+    } else {
+        fprintf(stderr, "fgets() return NULL.\n");
+    }
+}
+
 static void test()
 {
-    get_y_or_n();
+    //get_y_or_n();
+    test_fgets();
 }
 
 void test_gets()
