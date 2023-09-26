@@ -6,8 +6,7 @@
 //#define USE_FGETS
 #define USE_GETLINE
 
-#if defined(USE_FGETS)
-static void get_y_or_n()
+static void get_y_or_n_with_fgets()
 {
     char res[8];
     size_t len = sizeof(res);
@@ -22,10 +21,8 @@ static void get_y_or_n()
         exit(-1);
     }
 }
-#endif
 
-#if defined(USE_GETLINE)
-static void get_y_or_n()
+static void get_y_or_n_with_getline()
 {
     char* res = NULL;
     size_t len;
@@ -41,7 +38,6 @@ static void get_y_or_n()
     free(res);
     exit(exit_code);
 }
-#endif
 
 static void test_fgets()
 {
@@ -63,10 +59,35 @@ static void test_fgets()
     }
 }
 
+static void test_getline()
+{
+    const size_t BufferSize = 10;
+    char* buf = malloc(BufferSize);
+    ssize_t size;
+
+    if (-1 == (size = getline(&buf, &BufferSize, stdin))) {
+        fprintf(stderr, "getline() error.\n");
+    } else {
+        char* p = strchr(buf, '\n');
+        if (p) {
+            *p = '\0';
+        } else {
+            char c;
+            while ((c = getchar()) != '\n' && !feof(stdin) && !ferror(stdin))
+                ;
+        }
+    }
+
+    fprintf(stdout, "\ninput: %s\n", buf);
+
+    free(buf);
+}
+
 static void test()
 {
     //get_y_or_n();
-    test_fgets();
+    //test_fgets();
+    test_getline();
 }
 
 void test_gets()
