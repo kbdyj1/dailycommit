@@ -2,6 +2,7 @@ extern "C" {
 
 void test_gets();
 void test_memstream();
+void test_fotify_source();
 
 }
 
@@ -19,9 +20,10 @@ int main(int argc, char* argv[])
     test_memstream();
     test_cin();
     test_string_out_of_range();
+    test_strcpy();
 #endif
 
-    test_strcpy();
+    test_fotify_source();
 
     return 0;
 }
